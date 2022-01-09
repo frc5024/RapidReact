@@ -9,7 +9,10 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.DriveTrain;
+import frc.robot.subsystem.Intake;
+import frc.robot.subsystem.Shooter;
 import io.github.frc5024.lib5k.autonomous.RobotProgram;
 
 /**
@@ -23,16 +26,26 @@ public class Robot extends RobotProgram {
 
 	// Subsystem instance variables
 	private DriveTrain driveTrain;
+	private Climber climber;
+	private Shooter shooter;
+	private Intake intake;
 
 	public Robot() {
 		super(false, true, null);
 
 		// Initalize subsystem variables
 		driveTrain = DriveTrain.getInstance();
+		climber = Climber.getInstance();
+		shooter = Shooter.getInstance();
+		intake = Intake.getInstance();
+
 
 
 		// Register subsystems
 		driveTrain.register();
+		climber.register();
+		shooter.register();
+		intake.register();
 		
 
 
