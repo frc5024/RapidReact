@@ -34,7 +34,7 @@ public class Robot extends RobotProgram {
 		super(false, true, null);
 
 		// Initalize subsystem variables
-		driveTrain = DriveTrain.getInstance();
+		
 		climber = Climber.getInstance();
 		shooter = Shooter.getInstance();
 		intake = Intake.getInstance();
