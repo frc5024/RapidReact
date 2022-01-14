@@ -7,9 +7,8 @@ public final class Constants {
 	// Controller Constants
 	public static final class Controllers{
 
-		public static final int driveController = 0;
-
-		public static final int operatorContoller = 1;
+		public static final int driverController = 0;
+		public static final int operatorController = 1;
 
 	}
 
@@ -27,7 +26,7 @@ public final class Constants {
 
 		public static final CTREConfig rightSideConfig = new CTREConfig();
 
-
+		
 
 		// Left side TalonFX
 		public static final int leftMaster = 2;

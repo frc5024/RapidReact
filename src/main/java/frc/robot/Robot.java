@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.commands.DriveCommand;
 import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
@@ -23,6 +24,7 @@ import io.github.frc5024.lib5k.autonomous.RobotProgram;
  */
 public class Robot extends RobotProgram {
 	
+	
 
 	// Subsystem instance variables
 	private DriveTrain driveTrain;
@@ -30,11 +32,16 @@ public class Robot extends RobotProgram {
 	private Shooter shooter;
 	private Intake intake;
 
+	// Commands
+	private DriveCommand driveCommand;
+	
+
+
 	public Robot() {
 		super(false, true, null);
 
 		// Initalize subsystem variables
-		
+		driveTrain = DriveTrain.getInstance();
 		climber = Climber.getInstance();
 		shooter = Shooter.getInstance();
 		intake = Intake.getInstance();
@@ -47,6 +54,8 @@ public class Robot extends RobotProgram {
 		shooter.register();
 		intake.register();
 		
+		// Commands
+		driveCommand = new DriveCommand();
 
 
 	}
@@ -66,13 +75,17 @@ public class Robot extends RobotProgram {
 
 	@Override
 	public void teleop(boolean init) {
-		// TODO Auto-generated method stub
+		if(init){
+			driveCommand.schedule();
+		}
 
 	}
 
 	@Override
 	public void disabled(boolean init) {
-		// TODO Auto-generated method stub
+		if(init){
+			driveCommand.end(false);
+		}
 
 	}
 

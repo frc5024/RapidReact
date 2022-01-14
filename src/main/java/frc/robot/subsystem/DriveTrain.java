@@ -131,38 +131,39 @@ public class DriveTrain extends DualPIDTankDriveTrain{
 
 	@Override
 	protected void enableBrakes(boolean enabled) {
-		rightMaster.setNeutralMode(enabled ? NeutralMode.Brake : NeutralMode.Brake);
-		leftMaster.setNeutralMode(enabled ? NeutralMode.Brake : NeutralMode.Brake);
+		rightMaster.setNeutralMode(enabled ? NeutralMode.Brake : NeutralMode.Coast);
+		leftMaster.setNeutralMode(enabled ? NeutralMode.Brake : NeutralMode.Coast);
 	}
 
 
 	@Override
 	protected Rotation2d getCurrentHeading() {
-		// TODO Auto-generated method stub
 		return new Rotation2d(gyro.getHeading());
-		
 	}
 
 
 	@Override
 	protected void runIteration() {
-		drive();
+		
+
+
 		
 	}
 
 
 	@Override
 	public void setRampRate(double rampTimeSeconds) {
-		// TODO Auto-generated method stub
 		rightMaster.configOpenloopRamp(rampTimeSeconds);
 		leftMaster.configOpenloopRamp(rampTimeSeconds);
 	}
 
-	private void drive(){
-		rightMaster.set(OI.getInstance().getSpeed());
-		leftMaster.set(OI.getInstance().getSpeed());
-	
+	public void drive(double rightSpeed, double leftSpeed){
+		rightMaster.set(rightSpeed);
+		leftMaster.set(leftSpeed);
+		
 	}
+
+	
 
 	
 
