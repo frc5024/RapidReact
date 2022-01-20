@@ -45,6 +45,12 @@ public class OI {
     }
 
 
+    public boolean shouldDeployClimb(){
+        return driverController.getYButton();
+    }
 
-	
+    public boolean shouldPullClimb(){
+        return driverController.getXButton();
+        
+    }
 }

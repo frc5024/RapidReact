@@ -18,6 +18,8 @@ import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 import io.github.frc5024.lib5k.autonomous.RobotProgram;
+import io.github.frc5024.lib5k.logging.RobotLogger;
+import io.github.frc5024.lib5k.logging.USBLogger;
 
 /**
  * The VM is configured to automatically run this class. If you change the name
@@ -28,6 +30,9 @@ import io.github.frc5024.lib5k.autonomous.RobotProgram;
 public class Robot extends RobotProgram {
 	
 	private static ShuffleboardTab mainShuffleboardTab = Shuffleboard.getTab("Main Tab");
+	
+	private RobotLogger logger = RobotLogger.getInstance();
+
 
 	// Subsystem instance variables
 	private DriveTrain driveTrain;
@@ -39,7 +44,7 @@ public class Robot extends RobotProgram {
 	private DriveCommand driveCommand;
 	
 
-	// TODO REMOVE IF NESSASACRY
+	// TODO REMOVE IF NEEDED
 	@Override
 	public void startCompetition() {
 		super.startCompetition();
@@ -47,6 +52,12 @@ public class Robot extends RobotProgram {
 
 	public Robot() {
 		super(false, true, mainShuffleboardTab);
+
+		// Set up logger
+		if (Constants.shouldLogToUSB){
+			logger.enableUSBLogging(new USBLogger());
+		}
+
 
 		// Initalize subsystem variables
 		driveTrain = DriveTrain.getInstance();
@@ -64,6 +75,8 @@ public class Robot extends RobotProgram {
 		
 		// Commands
 		driveTrain.setDefaultCommand(new DriveCommand());
+
+
 
 
 	}

@@ -3,6 +3,9 @@ package frc.robot;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREConfig;
 
 public final class Constants {
+
+	// Should log to USB
+	public static final boolean shouldLogToUSB = false;
 	
 	// Controller Constants
 	public static final class Controllers{
