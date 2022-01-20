@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.DriveTrain;
@@ -26,7 +27,7 @@ import io.github.frc5024.lib5k.autonomous.RobotProgram;
  */
 public class Robot extends RobotProgram {
 	
-	
+	private static ShuffleboardTab mainShuffleboardTab = Shuffleboard.getTab("Main Tab");
 
 	// Subsystem instance variables
 	private DriveTrain driveTrain;
@@ -38,9 +39,14 @@ public class Robot extends RobotProgram {
 	private DriveCommand driveCommand;
 	
 
+	// TODO REMOVE IF NESSASACRY
+	@Override
+	public void startCompetition() {
+		super.startCompetition();
+	}
 
 	public Robot() {
-		super(false, true, null);
+		super(false, true, mainShuffleboardTab);
 
 		// Initalize subsystem variables
 		driveTrain = DriveTrain.getInstance();
@@ -77,9 +83,7 @@ public class Robot extends RobotProgram {
 
 	@Override
 	public void teleop(boolean init) {
-		if(init){
-			driveCommand.schedule();
-		}
+		
 
 	}
 

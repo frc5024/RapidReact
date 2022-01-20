@@ -3,6 +3,8 @@ package frc.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
@@ -56,6 +58,9 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 				Constants.DriveTrain.rightSideConfig);
 		rightSlave = rightMaster.makeSlave(Constants.DriveTrain.rightSlave);
 
+		rightMaster.setInverted(true);
+		rightSlave.setInverted(true);
+
 		leftMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.leftMaster,
 				Constants.DriveTrain.leftSideConfig);
 		leftSlave = leftMaster.makeSlave(Constants.DriveTrain.leftSlave);
@@ -73,14 +78,15 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 	@Override
 	public double getLeftMeters() {
-		return (Math.PI * Constants.DriveTrain.wheelDiameter) * leftSideEncoder.getPosition()
-				* encoderInversionMultiplier;
+		return (((Math.PI * Constants.DriveTrain.wheelDiameter) * leftSideEncoder.getPosition())
+				/ Constants.DriveTrain.leftSideGearRatio) * encoderInversionMultiplier;
 
 	}
 
 	@Override
 	public double getRightMeters() {
-		return (Math.PI * Constants.DriveTrain.wheelDiameter) * rightSideEncoder.getPosition()
+		return (((Math.PI * Constants.DriveTrain.wheelDiameter) * rightSideEncoder.getPosition())
+				/ Constants.DriveTrain.rightSideGearRatio)
 				* encoderInversionMultiplier;
 
 	}
@@ -94,8 +100,8 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 	@Override
 	protected void handleVoltage(double leftVolts, double rightVolts) {
 
-		rightMaster.setVoltage(rightVolts);
-		leftMaster.setVoltage(leftVolts);
+		rightMaster.setVoltage(rightVolts * motorInversionMultiplier);
+		leftMaster.setVoltage(leftVolts * motorInversionMultiplier);
 	}
 
 	@Override
@@ -125,7 +131,7 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 	@Override
 	protected void enableBrakes(boolean enabled) {
-		if(enabled){
+		if (enabled) {
 			rightMaster.setNeutralMode(NeutralMode.Brake);
 			leftMaster.setNeutralMode(NeutralMode.Brake);
 			return;
@@ -133,7 +139,7 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 		rightMaster.setNeutralMode(NeutralMode.Coast);
 		leftMaster.setNeutralMode(NeutralMode.Coast);
-		
+
 	}
 
 	@Override
@@ -143,7 +149,8 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 	@Override
 	protected void runIteration() {
-
+		SmartDashboard.putNumber("Value", getLeftMeters());
+		Shuffleboard.getTab("Main Tab");
 	}
 
 	@Override
@@ -151,6 +158,5 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 		rightMaster.configOpenloopRamp(rampTimeSeconds);
 		leftMaster.configOpenloopRamp(rampTimeSeconds);
 	}
-
 
 }
