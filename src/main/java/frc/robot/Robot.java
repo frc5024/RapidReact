@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -55,7 +57,7 @@ public class Robot extends RobotProgram {
 		intake.register();
 		
 		// Commands
-		driveCommand = new DriveCommand();
+		driveTrain.setDefaultCommand(new DriveCommand());
 
 
 	}
@@ -83,9 +85,9 @@ public class Robot extends RobotProgram {
 
 	@Override
 	public void disabled(boolean init) {
-		if(init){
-			driveCommand.end(false);
-		}
+		if (init) {
+            DriveTrain.getInstance().stop();
+        }
 
 	}
 

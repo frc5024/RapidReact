@@ -2,7 +2,7 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
@@ -16,14 +16,13 @@ import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonFX;
 import io.github.frc5024.lib5k.hardware.generic.gyroscopes.ADGyro;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
 
-
 /**
  * Subsystem for controlling the drivetrain
  */
-public class DriveTrain extends DualPIDTankDriveTrain{
+public class DriveTrain extends DualPIDTankDriveTrain {
 
 	private static DriveTrain mInstance = null;
-	
+
 	private ExtendedTalonFX rightMaster;
 	private ExtendedTalonFX rightSlave;
 	private ExtendedTalonFX leftMaster;
@@ -31,7 +30,10 @@ public class DriveTrain extends DualPIDTankDriveTrain{
 
 	private CommonEncoder rightSideEncoder;
 	private CommonEncoder leftSideEncoder;
-	
+
+	private int encoderInversionMultiplier = 1;
+	private int motorInversionMultiplier = 1;
+
 	private ADGyro gyro;
 
 	/**
@@ -39,65 +41,62 @@ public class DriveTrain extends DualPIDTankDriveTrain{
 	 * 
 	 * @return DriveTrain instance
 	 */
-	public static DriveTrain getInstance(){
-		if(mInstance == null){
+	public static DriveTrain getInstance() {
+		if (mInstance == null) {
 			mInstance = new DriveTrain();
 		}
-	
+
 		return mInstance;
 	}
 
 	private DriveTrain() {
-		// TODO correct values
 		super(new ExtendedPIDController(1, 1, 1), .1);
 
-		
-
-		rightMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.rightMaster, Constants.DriveTrain.rightSideConfig);
+		rightMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.rightMaster,
+				Constants.DriveTrain.rightSideConfig);
 		rightSlave = rightMaster.makeSlave(Constants.DriveTrain.rightSlave);
 
-		rightSideEncoder = rightMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
-		
-		leftMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.leftMaster, Constants.DriveTrain.leftSideConfig);
+		leftMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.leftMaster,
+				Constants.DriveTrain.leftSideConfig);
 		leftSlave = leftMaster.makeSlave(Constants.DriveTrain.leftSlave);
-		
+
+		rightMaster.setSensorPhase(false);
+		leftMaster.setSensorPhase(false);
+
 		leftSideEncoder = leftMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
-		
+		rightSideEncoder = rightMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
+
 		setRampRate(.12);
 
 		gyro = new ADGyro();
 	}
 
-
-
 	@Override
 	public double getLeftMeters() {
-		double leftMeters = (Math.PI * Constants.DriveTrain.wheelDiameter) * leftSideEncoder.getPosition();
-		return leftMeters;
-	}
+		return (Math.PI * Constants.DriveTrain.wheelDiameter) * leftSideEncoder.getPosition()
+				* encoderInversionMultiplier;
 
+	}
 
 	@Override
 	public double getRightMeters() {
-		double rightMeters = (Math.PI * Constants.DriveTrain.wheelDiameter) * rightSideEncoder.getPosition();
-		return rightMeters;
-	}
+		return (Math.PI * Constants.DriveTrain.wheelDiameter) * rightSideEncoder.getPosition()
+				* encoderInversionMultiplier;
 
+	}
 
 	@Override
 	public double getWidthMeters() {
-		
+
 		return Constants.DriveTrain.driveTrainWidth;
 	}
 
-
 	@Override
 	protected void handleVoltage(double leftVolts, double rightVolts) {
-		
+
 		rightMaster.setVoltage(rightVolts);
 		leftMaster.setVoltage(leftVolts);
 	}
-
 
 	@Override
 	protected void resetEncoders() {
@@ -105,71 +104,53 @@ public class DriveTrain extends DualPIDTankDriveTrain{
 		leftSideEncoder.reset();
 	}
 
-
 	@Override
 	protected void setMotorsInverted(boolean motorsInverted) {
-		// TODO Auto-generated method stub
-		rightMaster.setInverted(motorsInverted);
-		leftMaster.setInverted(motorsInverted);
-	}
 
+		motorInversionMultiplier = motorsInverted ? -1 : 1;
+
+	}
 
 	@Override
 	protected void setEncodersInverted(boolean encodersInverted) {
-		// TODO Auto-generated method stub
-		rightSideEncoder.setPhaseInverted(encodersInverted);		
-		leftSideEncoder.setPhaseInverted(encodersInverted);
-	}
 
+		encoderInversionMultiplier = encodersInverted ? -1 : 1;
+	}
 
 	@Override
 	protected void handleGearShift(Gear gear) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	@Override
 	protected void enableBrakes(boolean enabled) {
-		rightMaster.setNeutralMode(enabled ? NeutralMode.Brake : NeutralMode.Coast);
-		leftMaster.setNeutralMode(enabled ? NeutralMode.Brake : NeutralMode.Coast);
-	}
+		if(enabled){
+			rightMaster.setNeutralMode(NeutralMode.Brake);
+			leftMaster.setNeutralMode(NeutralMode.Brake);
+			return;
+		}
 
+		rightMaster.setNeutralMode(NeutralMode.Coast);
+		leftMaster.setNeutralMode(NeutralMode.Coast);
+		
+	}
 
 	@Override
 	protected Rotation2d getCurrentHeading() {
-		return new Rotation2d(gyro.getHeading());
+		return gyro.getRotation();
 	}
-
 
 	@Override
 	protected void runIteration() {
-		
 
-
-		
 	}
-
 
 	@Override
 	public void setRampRate(double rampTimeSeconds) {
 		rightMaster.configOpenloopRamp(rampTimeSeconds);
 		leftMaster.configOpenloopRamp(rampTimeSeconds);
 	}
-
-	public void drive(double rightSpeed, double leftSpeed){
-		rightMaster.set(rightSpeed);
-		leftMaster.set(leftSpeed);
-		
-	}
-
-	
-
-	
-
-
-
-
 
 
 }

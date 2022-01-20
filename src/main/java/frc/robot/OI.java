@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import io.github.frc5024.lib5k.utils.InputUtils;
 
 public class OI {
@@ -32,8 +31,8 @@ public class OI {
 
     public double getSpeed(){
         double speed = 0;
-        speed += driverController.getTriggerAxis(Hand.kRight);
-        speed -= driverController.getTriggerAxis(Hand.kLeft);
+        speed += driverController.getRightTriggerAxis();
+        speed -= driverController.getLeftTriggerAxis();
 
         return speed;
     }
@@ -41,7 +40,7 @@ public class OI {
     
     public double getRotation(){
         
-        return driverController.getX(Hand.kLeft);
+        return driverController.getLeftX();
        
     }
 
