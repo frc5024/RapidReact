@@ -1,0 +1,4 @@
+https://cs.5024.ca/lib5k/javadoc/index.html
+https://cs.5024.ca/lib5k/
+https://github.com/frc5024/lib5k/tree/master/examples/src/main/java/io/github/frc5024/lib5k/examples
+https://docs.wpilib.org/en/stable/
