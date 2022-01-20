@@ -4,11 +4,15 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.DriveCommand;
 import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
@@ -23,6 +27,7 @@ import io.github.frc5024.lib5k.autonomous.RobotProgram;
  */
 public class Robot extends RobotProgram {
 	
+	private static ShuffleboardTab mainShuffleboardTab = Shuffleboard.getTab("Main Tab");
 
 	// Subsystem instance variables
 	private DriveTrain driveTrain;
@@ -30,11 +35,21 @@ public class Robot extends RobotProgram {
 	private Shooter shooter;
 	private Intake intake;
 
+	// Commands
+	private DriveCommand driveCommand;
+	
+
+	// TODO REMOVE IF NESSASACRY
+	@Override
+	public void startCompetition() {
+		super.startCompetition();
+	}
+
 	public Robot() {
-		super(false, true, null);
+		super(false, true, mainShuffleboardTab);
 
 		// Initalize subsystem variables
-		
+		driveTrain = DriveTrain.getInstance();
 		climber = Climber.getInstance();
 		shooter = Shooter.getInstance();
 		intake = Intake.getInstance();
@@ -47,6 +62,8 @@ public class Robot extends RobotProgram {
 		shooter.register();
 		intake.register();
 		
+		// Commands
+		driveTrain.setDefaultCommand(new DriveCommand());
 
 
 	}
@@ -66,13 +83,15 @@ public class Robot extends RobotProgram {
 
 	@Override
 	public void teleop(boolean init) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void disabled(boolean init) {
-		// TODO Auto-generated method stub
+		if (init) {
+            DriveTrain.getInstance().stop();
+        }
 
 	}
 
