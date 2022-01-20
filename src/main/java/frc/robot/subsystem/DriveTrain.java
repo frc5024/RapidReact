@@ -16,6 +16,7 @@ import io.github.frc5024.lib5k.hardware.common.sensors.interfaces.CommonEncoder;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonFX;
 import io.github.frc5024.lib5k.hardware.generic.gyroscopes.ADGyro;
+import io.github.frc5024.lib5k.hardware.kauai.gyroscopes.NavX;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
 
 /**
@@ -36,7 +37,7 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 	private int encoderInversionMultiplier = 1;
 	private int motorInversionMultiplier = 1;
 
-	private ADGyro gyro;
+	private NavX gyro;
 
 	/**
 	 * Gets the instance for the drivetrain
@@ -73,7 +74,9 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 		setRampRate(.12);
 
-		gyro = new ADGyro();
+		gyro = new NavX();
+		gyro.calibrate();
+		
 	}
 
 	@Override
@@ -144,6 +147,7 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 	@Override
 	protected Rotation2d getCurrentHeading() {
+		
 		return gyro.getRotation();
 	}
 
