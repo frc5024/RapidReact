@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.auto.TestPath;
+import frc.robot.auto.TestTurnPath;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.DriveTrain;
@@ -48,6 +50,7 @@ public class Robot extends RobotProgram {
 	@Override
 	public void startCompetition() {
 		super.startCompetition();
+
 	}
 
 	public Robot() {
@@ -76,8 +79,9 @@ public class Robot extends RobotProgram {
 		// Commands
 		driveTrain.setDefaultCommand(new DriveCommand());
 
-
-
+		// Creating Auto Commands
+		addAutonomous(new TestPath());
+		addAutonomous(new TestTurnPath());
 
 	}
 
