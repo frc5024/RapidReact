@@ -36,6 +36,7 @@ public class Intake extends SubsystemBase {
         return mInstance;
     }
 
+
     /**
 	 * Constructor for the intake
 	 */
