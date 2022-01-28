@@ -56,9 +56,16 @@ public final class Constants {
 
 	}
 
+
 	// Intake Constants
 	public static final class Intake{
 
+		// TODO MOTOR ID AND CONFIG NEEDS TO BE CHANGED
+		// Motor used for spinning intake and feeding balls
+		public static final int spinnerID = 50;
+
+		// Motor used for spinning intake and feeding balls config
+		public static final CTREConfig spinnerConfig = new CTREConfig(false);
 	}
 
 	// Climb Constants
