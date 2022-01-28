@@ -69,6 +69,8 @@ public class RestrictedMotor{
             currentOwner = owner.NONE;
             logger.log("Share motor has been freed by: %s", user);  
 
+            sharedMotor.set(0);
+
             return;
         }
 

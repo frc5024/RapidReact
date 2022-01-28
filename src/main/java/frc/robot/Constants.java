@@ -2,6 +2,8 @@ package frc.robot;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import io.github.frc5024.lib5k.control_loops.models.DCBrushedMotor;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREConfig;
 import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevConfig;
 
@@ -79,6 +81,19 @@ public final class Constants {
 	// Shooter Constants
 	public static final class Shooter{
 		
+		
+		
+
+		
+
+		// Linebreak
+		public static final int lineBreakChannelId = 2;
+
+		// Shooter Values
+
+		// Shooter Epsilon
+		public static final double shooterEpsilon = 100;
+
 		// TODO These are just guess as to what motors will be assigned
 		// Flywheel motor id
 		public static final int flyWheelID = 49;
@@ -89,13 +104,12 @@ public final class Constants {
 		// Flywheel encoder tpr
 		public static final int flyWheelEncoderTPR = 2048;
 
-		// Linebreak
-		public static final int lineBreakChannelId = 2;
+		// PID values
+		public static final double kP = 0;
+		public static final double kI = 0;
+		public static final double kD = 0;
 
-
-
-
-
+		
 	}
 
 	
