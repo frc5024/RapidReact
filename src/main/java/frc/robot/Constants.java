@@ -1,6 +1,9 @@
 package frc.robot;
 
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREConfig;
+import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevConfig;
 
 public final class Constants {
 
@@ -75,6 +78,23 @@ public final class Constants {
 
 	// Shooter Constants
 	public static final class Shooter{
+		
+		// TODO These are just guess as to what motors will be assigned
+		// Flywheel motor id
+		public static final int flyWheelID = 49;
+
+		// Fly wheel config
+		public static final RevConfig flywheelConfig = new RevConfig(MotorType.kBrushless);
+
+		// Flywheel encoder tpr
+		public static final int flyWheelEncoderTPR = 2048;
+
+		// Linebreak
+		public static final int lineBreakChannelId = 2;
+
+
+
+
 
 	}
 

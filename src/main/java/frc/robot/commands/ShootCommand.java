@@ -20,7 +20,7 @@ public class ShootCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Shooter.getInstance().isDoneShooting();
+        return Shooter.getInstance().isDoneShooting(); 
     }
 
 
