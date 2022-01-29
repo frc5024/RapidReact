@@ -2,6 +2,7 @@ package frc.robot.subsystem;
 
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.OI;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
@@ -19,7 +20,21 @@ public class Climber extends SubsystemBase {
 
     private static Climber mInstance = null;
 
-    
+        private enum climberState{
+            Idle,
+            Deploying,
+            Retracting,
+            FinishClimb
+        }
+
+        private StateMachine<climberState> stateMachine;
+
+        private ExtendedTalonSRX pullMotor;
+        private SmartServo pin;
+        private HallEffect bottomSensor;
+       // private HallEffect topSensor;
+
+
     /**
 	 * Gets the instance for the climber
 	 * 
@@ -38,21 +53,66 @@ public class Climber extends SubsystemBase {
 	 * Constructor for the climber
 	 */
     private Climber(){
-        
+        stateMachine = new StateMachine<>("Climber Subsystem");
+
+        stateMachine.setDefaultState(climberState.Idle, this::handleIdle);
+        stateMachine.addState(climberState.Deploying, this::handleDeploying);
+        stateMachine.addState(climberState.Retracting, this::handleRetracting);
+        stateMachine.addState(climberState.FinishClimb, this::handleFinishClimb);
+
+        pullMotor = CTREMotorFactory.createTalonSRX(1);
+
+        pin = new SmartServo(0);
+
+        bottomSensor = new HallEffect(Constants.Climb.bottomHallEffectID);
+      //  topSensor = new HallEffect(Constants.Climb.topHallEffectID);
 
     }
 
 
     @Override
     public void periodic(){
-        
-
-
-
-
+        stateMachine.update();
 
     }
 
+    private void handleIdle(StateMetadata<climberState> metadata){
+        if(metadata.isFirstRun()){
+            pullMotor.stopMotor();
+            pin.stop();
+        }
 
+        if(OI.getInstance().shouldDeployClimb()){
+            stateMachine.setState(climberState.Deploying);
+        }
+    }
+
+    private void handleDeploying(StateMetadata<climberState>metadata){
+        if(metadata.isFirstRun()){
+            pin.set(1);
+        }
+        stateMachine.setState(climberState.Retracting);
+    }
+    
+    private void handleRetracting(StateMetadata<climberState>metadata){
+
+        if(bottomSensor.get()){
+            pullMotor.set(0);
+            stateMachine.setState(climberState.FinishClimb);
+            return;
+        }
+
+        if(OI.getInstance().shouldPullClimb()){
+            pullMotor.set(1);
+        } else {
+            pullMotor.stopMotor();
+        }
+    }
+    
+    private void handleFinishClimb(StateMetadata<climberState>metadata){
+        if(metadata.isFirstRun()){
+
+        }
+    }
 
 }

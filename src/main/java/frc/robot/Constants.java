@@ -64,6 +64,12 @@ public final class Constants {
 	// Climb Constants
 	public static final class Climb{
 
+
+
+		// Hall effects for determining position
+		public static final int topHallEffectID = 1;
+		public static final int bottomHallEffectID = 2;
+		
 	}
 
 	// Shooter Constants
