@@ -104,10 +104,10 @@ public final class Constants {
 		// Flywheel encoder tpr
 		public static final int flyWheelEncoderTPR = 2048;
 
-		// PID values
-		public static final double kP = 0;
-		public static final double kI = 0;
-		public static final double kD = 0;
+		// PID values Current are from last year
+		public static final double kP = 0.00048;
+		public static final double kI = 3e-7;
+		public static final double kD = 0.355;
 
 		
 	}

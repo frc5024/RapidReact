@@ -15,6 +15,10 @@ import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 
 /**
  * Subsystem for controlling the Shooter
+ * 
+ *  
+ * 
+ * 
  */
 public class Shooter extends SubsystemBase {
 
