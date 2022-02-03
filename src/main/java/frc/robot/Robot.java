@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auto.TestPath;
 import frc.robot.auto.TestTurnPath;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.OperatorCommand;
 import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
@@ -36,6 +37,7 @@ public class Robot extends RobotProgram {
 	
 	private RobotLogger logger = RobotLogger.getInstance();
 
+	private OperatorCommand operatorCommand;
 
 	// Subsystem instance variables
 	private DriveTrain driveTrain;
@@ -80,6 +82,8 @@ public class Robot extends RobotProgram {
 		
 		// Commands
 		driveTrain.setDefaultCommand(new DriveCommand());
+		operatorCommand = new OperatorCommand();
+
 
 		// Creating Auto Commands
 		addAutonomous(new TestPath());
@@ -102,6 +106,9 @@ public class Robot extends RobotProgram {
 
 	@Override
 	public void teleop(boolean init) {
+		if(init){
+			operatorCommand.schedule();
+		}
 		
 
 	}
@@ -111,6 +118,10 @@ public class Robot extends RobotProgram {
 		if (init) {
             DriveTrain.getInstance().stop();
         }
+
+		operatorCommand.cancel();
+
+
 
 	}
 
