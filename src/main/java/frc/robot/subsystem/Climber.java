@@ -102,6 +102,7 @@ public class Climber extends SubsystemBase {
             return;
         }
 
+
         if(OI.getInstance().shouldPullClimb()){
             pullMotor.set(1);
         } else {
@@ -114,5 +115,6 @@ public class Climber extends SubsystemBase {
 
         }
     }
+
 
 }
