@@ -61,8 +61,10 @@ public class RestrictedMotor{
      * Makes the motor avaliable for others to use, can only be done by current owner
      * 
      * @param user subsystem attempting to free the motor
+     * 
+     * @return whether it was successful or not
      */
-    public void free(owner user){
+    public boolean free(owner user){
 
         // if the user attempting to free owns allow it to free
         if(user == currentOwner){
@@ -71,17 +73,21 @@ public class RestrictedMotor{
 
             sharedMotor.set(0);
 
-            return;
+            return true;
         }
+
 
         logger.log("Attempted to free motor without ownership", Level.kWarning);  
 
+        return false;
     }
 
     /**
      * Used to claim ownership of motor, must use free method after uses
      * 
      * @param user the subsystem claiming the motor
+     * 
+     * @return whether it was successful or not
      */
     public void obtain(owner user){
 
