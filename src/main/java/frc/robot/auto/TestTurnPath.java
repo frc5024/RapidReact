@@ -5,7 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.ShootCommand;
+import frc.robot.commands.SubsystemCommands.ShootCommand;
 import frc.robot.subsystem.DriveTrain;
 import io.github.frc5024.lib5k.autonomous.AutonomousSequence;
 
