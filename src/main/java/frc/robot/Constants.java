@@ -109,6 +109,11 @@ public final class Constants {
 		public static final double kI = 3e-7;
 		public static final double kD = 0.355;
 
+		// The speed for ejecting
+		public static final double ejectSetSpeed = 150;
+
+		
+
 		
 	}
 

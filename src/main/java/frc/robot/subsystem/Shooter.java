@@ -1,10 +1,12 @@
 package frc.robot.subsystem;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystem.RestrictedMotor.owner;
 import io.github.frc5024.lib5k.hardware.common.sensors.interfaces.CommonEncoder;
+import io.github.frc5024.lib5k.hardware.generic.pneumatics.LazySolenoid;
 import io.github.frc5024.lib5k.hardware.generic.sensors.LineBreak;
 import io.github.frc5024.lib5k.hardware.revrobotics.motors.ExtendedSparkMax;
 import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevMotorFactory;
@@ -124,7 +126,11 @@ public class Shooter extends SubsystemBase {
      * Method ran while ejecting
      */
     private void handleEjecting(StateMetadata<shooterState> metaData) {
+        flywheelMotor.set(shooterController.calculate(getShooterRPM(), Constants.Shooter.ejectSetSpeed));
 
+        if(atTarget(Constants.Shooter.ejectSetSpeed)){
+            
+        }
     }
 
     /**
@@ -145,7 +151,7 @@ public class Shooter extends SubsystemBase {
 
         flywheelMotor.set(shooterController.calculate(getShooterRPM(), targetRPM));
 
-        if(atTarget()){
+        if(atTarget(targetRPM)){
             stateMachine.setState(shooterState.FEED);
         }
 
@@ -244,13 +250,13 @@ public class Shooter extends SubsystemBase {
      * 
      * @return if we are within the epsilon of our target
      */
-    private boolean atTarget() {
+    private boolean atTarget(double target) {
 
         double currentRPM = getShooterRPM();
 
         // Check if our RPM is within epsilon
-        if ((currentRPM > targetRPM - Constants.Shooter.shooterEpsilon)
-                && (currentRPM < targetRPM + Constants.Shooter.shooterEpsilon)){
+        if ((currentRPM > target - Constants.Shooter.shooterEpsilon)
+                && (currentRPM < target + Constants.Shooter.shooterEpsilon)){
                     
             logger.log("Flywheel at target RPM of: %d", Level.kRobot, String.valueOf(targetRPM));   
                     
