@@ -1,6 +1,10 @@
 package frc.robot.subsystem;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonFX;
+import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
+import io.github.frc5024.lib5k.hardware.generic.sensors.LineBreak;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
 import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 
@@ -11,6 +15,10 @@ import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 public class Intake extends SubsystemBase {
 
     private static Intake mInstance = null;
+
+    private ExtendedTalonSRX intakeMotor;
+
+    private LineBreak ballSensor;
 
     private enum intakeState{
         ARMSTOWED,
@@ -51,7 +59,8 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic(){
-
+        // Update statemachine
+        stateMachine.update();
     }
 
     private void handleArmStowed(StateMetadata<intakeState> meta){
@@ -59,11 +68,17 @@ public class Intake extends SubsystemBase {
     }
 
     private void handleBallStowed(StateMetadata<intakeState> meta){
-    
+        // If ball is no longer detected then set state to arms stowed
+        if (!ballSensor.get()) {
+            stateMachine.setState(intakeState.ARMSTOWED);
+        }
     }
 
     private void handleIntaking(StateMetadata<intakeState> meta){
-        
+        // If ball is detected then stow it with the arms
+        if (ballSensor.get()) {
+            stowBall();
+        }
     }
 
     /**
@@ -78,5 +93,25 @@ public class Intake extends SubsystemBase {
 
 
     }
+
+    public void stowBall() {
+        stateMachine.setState(intakeState.BALLSTOWED);
+
+    }
+
+    public void stowArms() {
+        if (!ballSensor.get()) {
+            stateMachine.setState(intakeState.ARMSTOWED);
+
+        }
+        
+    }
+
+    public boolean getBallReading() {
+        return ballSensor.get();
+
+    }
+
+
 
 }
