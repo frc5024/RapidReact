@@ -89,7 +89,7 @@ public class RestrictedMotor{
      * 
      * @return whether it was successful or not
      */
-    public void obtain(owner user){
+    public boolean obtain(owner user){
 
         // If the motor is free allow it to be claimed
         if(isFree()){
@@ -97,11 +97,12 @@ public class RestrictedMotor{
 
             logger.log("Motor ownership transferred to: %s", user);
 
-            return;
+            return true;
         }
         
         logger.log("Attempted to obtain motor illegally", Level.kWarning);  
 
+        return false;
     }
 
 

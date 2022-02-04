@@ -31,11 +31,16 @@ public class OperatorCommand extends CommandBase {
      */
     @Override
     public void execute() {
-        if(oi.shouldShoot()){
+        // TODO FIX
+        if(oi.shouldShootPressed()){
             shootCommand.schedule();
-        }else{
+        }
+        
+        if(oi.shouldShootReleased()){
             shootCommand.cancel();
         }
+
+
     }
 
 

@@ -45,8 +45,12 @@ public class OI {
     }
 
 
-    public boolean shouldShoot(){
-        return driverController.getAButton();
+    public boolean shouldShootPressed(){
+        return driverController.getAButtonPressed();
+    }
+
+    public boolean shouldShootReleased(){
+        return driverController.getAButtonPressed();
     }
 
 

@@ -103,6 +103,8 @@ public final class Constants {
 
 		// The speed for ejecting
 		public static final double ejectSetSpeed = 150;
+
+		// Speed for setting feed motor
 		public static final double beltFeedSpeed = .5;
 
 

@@ -167,15 +167,6 @@ public class Shooter extends SubsystemBase {
      * Method for feeding balls into the shooter
      */
     private void handleFeeding(StateMetadata<shooterState> metaData) {
-        if(metaData.isFirstRun()){
-            // Try to get the shared motor
-            if(feedMotor.isFree()){
-                feedMotor.obtain(owner.SHOOTER);
-            }else{
-                logger.log("Trying to handle feed, shooter can't claim motor", Level.kWarning);
-            }
-        }
-
         // If we are the owner, start spinning the ball
         if(feedMotor.getCurrentOwner() == owner.SHOOTER){
             feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
@@ -265,5 +256,7 @@ public class Shooter extends SubsystemBase {
         return false;
             
     }
+
+    
 
 }
