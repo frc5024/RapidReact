@@ -82,9 +82,7 @@ public final class Constants {
 	public static final class Shooter{
 		
 		
-		
-
-		
+	
 
 		// Linebreak
 		public static final int lineBreakChannelId = 2;
@@ -111,6 +109,11 @@ public final class Constants {
 
 		// The speed for ejecting
 		public static final double ejectSetSpeed = 150;
+		public static final double beltFeedSpeed = .5;
+
+
+		// Target RPM TODO placeholder value
+		public static final double shootingTargetRPM = 500;
 
 		
 

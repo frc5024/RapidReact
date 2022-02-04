@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystem.RestrictedMotor.owner;
 import io.github.frc5024.lib5k.hardware.common.sensors.interfaces.CommonEncoder;
+import io.github.frc5024.lib5k.hardware.ctre.motors.CTREConfig;
 import io.github.frc5024.lib5k.hardware.generic.pneumatics.LazySolenoid;
 import io.github.frc5024.lib5k.hardware.generic.sensors.LineBreak;
 import io.github.frc5024.lib5k.hardware.revrobotics.motors.ExtendedSparkMax;
@@ -40,7 +41,8 @@ public class Shooter extends SubsystemBase {
     // Sensor for telling if the ball exists
     private LineBreak ballSensor;
 
-    private double targetRPM = 500;
+    // Value for the target rpm
+    private double targetRPM = Constants.Shooter.shootingTargetRPM;
 
     private PIDController shooterController;
 
@@ -87,6 +89,9 @@ public class Shooter extends SubsystemBase {
         // Get the shared motor instance
         this.feedMotor = RestrictedMotor.getInstance();
 
+        // Ball Sensor
+        ballSensor = new LineBreak(Constants.Shooter.lineBreakChannelId);
+
         // PID Setup
         shooterController = new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
         shooterController.reset();
@@ -97,7 +102,7 @@ public class Shooter extends SubsystemBase {
         stateMachine.addState(shooterState.TARGETING, this::handleTargeting);
         stateMachine.addState(shooterState.SPINNINGUP, this::handleSpinningUp);
         stateMachine.addState(shooterState.FEED, this::handleFeeding);
-
+        
     }
 
     @Override
@@ -112,7 +117,6 @@ public class Shooter extends SubsystemBase {
     private void handleIdle(StateMetadata<shooterState> metaData) {
         if (metaData.isFirstRun()) {
             flywheelMotor.set(0);
-            shooterController.reset();
 
             if(feedMotor.getCurrentOwner() == owner.SHOOTER){
                 feedMotor.free(owner.SHOOTER);
@@ -126,10 +130,17 @@ public class Shooter extends SubsystemBase {
      * Method ran while ejecting
      */
     private void handleEjecting(StateMetadata<shooterState> metaData) {
-        flywheelMotor.set(shooterController.calculate(getShooterRPM(), Constants.Shooter.ejectSetSpeed));
+        if(metaData.isFirstRun()){
+            // Clears controller
+            shooterController.reset();
+        }
 
+        // Sets the voltage until we are at target speed
+        flywheelMotor.setVoltage(shooterController.calculate(getShooterRPM(), Constants.Shooter.ejectSetSpeed));
+
+        // At target switch state to feed
         if(atTarget(Constants.Shooter.ejectSetSpeed)){
-            
+            stateMachine.setState(shooterState.FEED);
         }
     }
 
@@ -146,11 +157,14 @@ public class Shooter extends SubsystemBase {
      */
     private void handleSpinningUp(StateMetadata<shooterState> metaData) {
         if (metaData.isFirstRun()) {
-            
+            // Clears controller
+            shooterController.reset();
         }
 
-        flywheelMotor.set(shooterController.calculate(getShooterRPM(), targetRPM));
+        // set voltage until we are at the appropriate spped
+        flywheelMotor.setVoltage(shooterController.calculate(getShooterRPM(), targetRPM));
 
+        // Switch to feeding
         if(atTarget(targetRPM)){
             stateMachine.setState(shooterState.FEED);
         }
@@ -172,7 +186,7 @@ public class Shooter extends SubsystemBase {
 
         // If we are the owner, start spinning the ball
         if(feedMotor.getCurrentOwner() == owner.SHOOTER){
-            feedMotor.set(.5, owner.SHOOTER);
+            feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
 
 
         }else{
@@ -183,10 +197,7 @@ public class Shooter extends SubsystemBase {
         }
 
 
-        // If we no longer detect the ball finish shooting
-        if(!ballSensor.get()){
-            finishShooting();
-        }
+        
 
 
     }
@@ -215,10 +226,13 @@ public class Shooter extends SubsystemBase {
     /**
      * Returns system to idle, but notifies the intake subsystem of changes
      */
-    private void finishShooting() {
+    public void finishShooting() {
 
         // Stops the feed motor
         feedMotor.stopMotor(owner.SHOOTER);
+
+        // Sets shooter motor to zero
+        
 
         // Invoke some method to tell intake to switch states
         feedMotor.free(owner.SHOOTER);
@@ -232,7 +246,12 @@ public class Shooter extends SubsystemBase {
      * @return if the system is finished shooting
      */
     public boolean isDoneShooting() {
+        if(stateMachine.getCurrentState() == shooterState.FEED && !ballSensor.get()){
+            return true;
+        }
+
         return false;
+        
     }
 
     /**

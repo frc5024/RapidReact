@@ -14,8 +14,7 @@ public class ShootCommand extends CommandBase {
 
     @Override
     public void execute() {
-        // TODO Auto-generated method stub
-        super.execute();
+        
     }
 
     @Override
@@ -26,8 +25,13 @@ public class ShootCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        // TODO Auto-generated method stub
-        super.end(interrupted);
+        if(interrupted){
+            Shooter.getInstance().stop();
+            return;
+        }
+
+        Shooter.getInstance().finishShooting();
+        
     }
 
 
