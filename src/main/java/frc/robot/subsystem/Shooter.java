@@ -1,14 +1,11 @@
 package frc.robot.subsystem;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystem.RestrictedMotor.owner;
 import io.github.frc5024.lib5k.hardware.common.sensors.interfaces.CommonEncoder;
-import io.github.frc5024.lib5k.hardware.ctre.motors.CTREConfig;
-import io.github.frc5024.lib5k.hardware.generic.pneumatics.LazySolenoid;
-import io.github.frc5024.lib5k.hardware.generic.sensors.LineBreak;
 import io.github.frc5024.lib5k.hardware.revrobotics.motors.ExtendedSparkMax;
 import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevMotorFactory;
 import io.github.frc5024.lib5k.logging.RobotLogger;
@@ -37,9 +34,6 @@ public class Shooter extends SubsystemBase {
 
     // Sensors
     private CommonEncoder flywheelEncoder;
-
-    // Sensor for telling if the ball exists
-    private LineBreak ballSensor;
 
     // Value for the target rpm
     private double targetRPM = Constants.Shooter.shootingTargetRPM;
@@ -89,12 +83,10 @@ public class Shooter extends SubsystemBase {
         // Get the shared motor instance
         this.feedMotor = RestrictedMotor.getInstance();
 
-        // Ball Sensor
-        ballSensor = new LineBreak(Constants.Shooter.lineBreakChannelId);
-
         // PID Setup
         shooterController = new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
         shooterController.reset();
+        
         
         // Setup Statemachine default state is idle
         stateMachine.setDefaultState(shooterState.IDLE, this::handleIdle);
@@ -135,8 +127,8 @@ public class Shooter extends SubsystemBase {
             shooterController.reset();
         }
 
-        // Sets the voltage until we are at target speed
-        flywheelMotor.setVoltage(shooterController.calculate(getShooterRPM(), Constants.Shooter.ejectSetSpeed));
+        // Sets the motor until we are at target speed
+        flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
 
         // At target switch state to feed
         if(atTarget(Constants.Shooter.ejectSetSpeed)){
@@ -161,8 +153,8 @@ public class Shooter extends SubsystemBase {
             shooterController.reset();
         }
 
-        // set voltage until we are at the appropriate spped
-        flywheelMotor.setVoltage(shooterController.calculate(getShooterRPM(), targetRPM));
+        // set the motor until we are at the appropriate speed
+        flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
 
         // Switch to feeding
         if(atTarget(targetRPM)){
@@ -196,10 +188,6 @@ public class Shooter extends SubsystemBase {
 
         }
 
-
-        
-
-
     }
 
     /**
@@ -220,23 +208,15 @@ public class Shooter extends SubsystemBase {
      * Returns the system to idle
      */
     public void stop() {
-        stateMachine.setState(shooterState.IDLE);
-    }
 
-    /**
-     * Returns system to idle, but notifies the intake subsystem of changes
-     */
-    public void finishShooting() {
-
-        // Stops the feed motor
+        // Stop and free the feed motor
         feedMotor.stopMotor(owner.SHOOTER);
-
-        // Sets shooter motor to zero
-        
-
-        // Invoke some method to tell intake to switch states
         feedMotor.free(owner.SHOOTER);
 
+        // Stop the flywheel
+        flywheelMotor.set(0);
+
+        // Switch to idle
         stateMachine.setState(shooterState.IDLE);
     }
 
@@ -246,7 +226,7 @@ public class Shooter extends SubsystemBase {
      * @return if the system is finished shooting
      */
     public boolean isDoneShooting() {
-        if(stateMachine.getCurrentState() == shooterState.FEED && !ballSensor.get()){
+        if(stateMachine.getCurrentState() == shooterState.FEED && !Intake.getInstance().getBallReading()){
             return true;
         }
 

@@ -81,13 +81,7 @@ public final class Constants {
 	// Shooter Constants
 	public static final class Shooter{
 		
-		
-	
-
-		// Linebreak
-		public static final int lineBreakChannelId = 2;
-
-		// Shooter Values
+		/* Shooter Values */ 
 
 		// Shooter Epsilon
 		public static final double shooterEpsilon = 100;

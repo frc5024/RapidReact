@@ -25,12 +25,8 @@ public class ShootCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        if(interrupted){
-            Shooter.getInstance().stop();
-            return;
-        }
-
-        Shooter.getInstance().finishShooting();
+        
+        Shooter.getInstance().stop();        
         
     }
 
