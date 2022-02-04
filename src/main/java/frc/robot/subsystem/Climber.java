@@ -1,6 +1,8 @@
 package frc.robot.subsystem;
 
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
@@ -13,33 +15,41 @@ import io.github.frc5024.libkontrol.statemachines.StateMachine;
 import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 
 
-/**
+/*
  * Subsystem for controlling the climber
  */
 public class Climber extends SubsystemBase {
 
     private static Climber mInstance = null;
 
-        private enum climberState{
-            Idle,
-            Deploying,
-            Retracting,
-            FinishClimb
-        }
-
-        private StateMachine<climberState> stateMachine;
+    private StateMachine<climberState> stateMachine;
 
         private ExtendedTalonSRX pullMotor;
         private SmartServo pin;
         private HallEffect bottomSensor;
-       // private HallEffect topSensor;
+        private HallEffect topSensor;
+
+        // System states
+        private enum climberState{
+            Idle, // climber not in use
+            Deploying, // arms are deployed for climb
+            Retracting, // arms are retracting and pulling the robot up
+            FinishClimb // robot has climed and is off the ground
+        }
+
+        // System positions
+        private enum Position {
+            Current, // Hold at current position
+            Retracted, // Low Climb position
+            Level, // High Climb position
+        }
 
 
-    /**
-	 * Gets the instance for the climber
-	 * 
-	 * @return Climber instance
-	 */
+    /*
+     * Gets the instance for the climber
+     * 
+     * @return Climber instance
+     */
     public static Climber getInstance(){
         if(mInstance == null){
             mInstance = new Climber();
@@ -47,11 +57,9 @@ public class Climber extends SubsystemBase {
 
         return mInstance;
     }
-
-
-    /**
-	 * Constructor for the climber
-	 */
+/**
+     * Constructor for the climber
+     */
     private Climber(){
         stateMachine = new StateMachine<>("Climber Subsystem");
 
@@ -63,9 +71,11 @@ public class Climber extends SubsystemBase {
         pullMotor = CTREMotorFactory.createTalonSRX(1);
 
         pin = new SmartServo(0);
+        addChild("Release", pin);
 
         bottomSensor = new HallEffect(Constants.Climb.bottomHallEffectID);
-      //  topSensor = new HallEffect(Constants.Climb.topHallEffectID);
+        topSensor = new HallEffect(Constants.Climb.topHallEffectID);
+
 
     }
 
@@ -84,20 +94,22 @@ public class Climber extends SubsystemBase {
 
         if(OI.getInstance().shouldDeployClimb()){
             stateMachine.setState(climberState.Deploying);
+
         }
     }
 
     private void handleDeploying(StateMetadata<climberState>metadata){
         if(metadata.isFirstRun()){
-            pin.set(1);
+            pullMotor.stopMotor();
+            pin.rip();
         }
         stateMachine.setState(climberState.Retracting);
     }
-    
+    // clear all sensors before retracting
     private void handleRetracting(StateMetadata<climberState>metadata){
-
         if(bottomSensor.get()){
             pullMotor.set(0);
+            Position Current = getPosition();
             stateMachine.setState(climberState.FinishClimb);
             return;
         }
@@ -109,10 +121,25 @@ public class Climber extends SubsystemBase {
             pullMotor.stopMotor();
         }
     }
-    
+
     private void handleFinishClimb(StateMetadata<climberState>metadata){
         if(metadata.isFirstRun()){
+            pullMotor.setNeutralMode(NeutralMode.Coast);
+        }
+    }
 
+// public void setPosition(Position position) {
+//     this.wantedPosition = position;
+//     this.state = climberState.Retracting;
+// }
+
+    public Position getPosition() {
+        if(topSensor.get()){
+            return Position.Level;
+        } else if (bottomSensor.get()) {
+            return Position.Retracted;
+        } else {
+            return Position.Current;
         }
     }
 
