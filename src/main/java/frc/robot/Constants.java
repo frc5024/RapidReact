@@ -1,6 +1,11 @@
 package frc.robot;
 
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.math.system.plant.DCMotor;
+import io.github.frc5024.lib5k.control_loops.models.DCBrushedMotor;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREConfig;
+import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevConfig;
 
 public final class Constants {
 
@@ -56,8 +61,24 @@ public final class Constants {
 
 	}
 
+
 	// Intake Constants
 	public static final class Intake{
+
+		// TODO MOTOR ID AND CONFIG NEEDS TO BE CHANGED
+		// Motor used for spinning intake and feeding balls
+		public static final int spinnerID = 50;
+
+		// Motor used for spinning intake and feeding balls config
+		public static final CTREConfig spinnerConfig = new CTREConfig(false);
+
+		// Speed for intake the balls
+		public static final double intakeSpeed = 0.5;
+
+		// Solenoid forward and reverse channel ids
+		public static final int solenoidForward = 1;
+		public static final int solenoidReverse = 2;
+
 
 	}
 
@@ -68,7 +89,41 @@ public final class Constants {
 
 	// Shooter Constants
 	public static final class Shooter{
+		
+		
+		
 
+		
+
+		// Linebreak
+		public static final int lineBreakChannelId = 2;
+
+		// Shooter Values
+
+		// Shooter Epsilon
+		public static final double shooterEpsilon = 100;
+
+		// TODO These are just guess as to what motors will be assigned
+		// Flywheel motor id
+		public static final int flyWheelID = 49;
+
+		// Fly wheel config
+		public static final RevConfig flywheelConfig = new RevConfig(MotorType.kBrushless);
+
+		// Flywheel encoder tpr
+		public static final int flyWheelEncoderTPR = 2048;
+
+		// PID values Current are from last year
+		public static final double kP = 0.00048;
+		public static final double kI = 3e-7;
+		public static final double kD = 0.355;
+
+		// The speed for ejecting
+		public static final double ejectSetSpeed = 150;
+
+		
+
+		
 	}
 
 	
