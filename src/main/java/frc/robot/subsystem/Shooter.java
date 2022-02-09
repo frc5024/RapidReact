@@ -43,6 +43,8 @@ public class Shooter extends SubsystemBase {
 	 */
     private Shooter(){
         
+		stateMachine = new StateMachine<>("Shooter");
+
         stateMachine.setDefaultState(shooterState.IDLE, this::handleIdle);
         stateMachine.addState(shooterState.HOLDING, this::handleHolding);
         stateMachine.addState(shooterState.SPINNINGUP, this::handleSpinningUp);

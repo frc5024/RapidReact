@@ -8,6 +8,7 @@ import frc.robot.Constants;
 import frc.robot.subsystem.RestrictedMotor.owner;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonFX;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
+import io.github.frc5024.lib5k.hardware.generic.cameras.AutoCamera;
 import io.github.frc5024.lib5k.hardware.generic.sensors.LineBreak;
 import io.github.frc5024.lib5k.logging.RobotLogger;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
@@ -21,7 +22,9 @@ public class Intake extends SubsystemBase {
 
     private static Intake mInstance = null;
 
-    private RobotLogger logger;
+	private AutoCamera intakeCamera;
+	
+	private RobotLogger logger;
 
     private DoubleSolenoid intakeSolenoid;
 
@@ -67,6 +70,12 @@ public class Intake extends SubsystemBase {
         // Initialize Restricted Motor
         this.intakeMotor = RestrictedMotor.getInstance();
 
+		intakeCamera = new AutoCamera();
+
+		intakeCamera.keepCameraAwake(true);
+		intakeCamera.showCamera(true);
+
+		stateMachine = new StateMachine<>("Intake");
 
         // Setup statemachine
         stateMachine.setDefaultState(intakeState.ARMSTOWED, this::handleArmStowed);
