@@ -89,6 +89,8 @@ public class Shooter extends SubsystemBase {
         
         
         // Setup Statemachine default state is idle
+        stateMachine = new StateMachine<>("Shooter");
+
         stateMachine.setDefaultState(shooterState.IDLE, this::handleIdle);
         stateMachine.addState(shooterState.EJECTING, this::handleEjecting);
         stateMachine.addState(shooterState.TARGETING, this::handleTargeting);
