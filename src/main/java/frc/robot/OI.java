@@ -49,7 +49,9 @@ public class OI {
         return driverController.getAButton();
     }
 
-
+    public boolean shouldIntake(){
+        return driverController.getXButtonPressed();
+    }
 
 
 }
