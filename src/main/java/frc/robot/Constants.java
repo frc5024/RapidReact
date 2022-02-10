@@ -64,7 +64,14 @@ public final class Constants {
 	// Climb Constants
 	public static final class Climb{
 
+		// Create Climber Config and configured
+		public static final CTREConfig climbConfig = new CTREConfig(false, true, false, true, 33, 0, 30, 15, true);
 
+		// Create Smart Servo ID
+		public static final int smartServoChannel = 9;
+
+		// Climber ID
+		public static final int climberID = 12;
 
 		// Hall effects for determining position
 		public static final int topHallEffectID = 1;
