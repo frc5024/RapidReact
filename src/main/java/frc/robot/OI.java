@@ -49,7 +49,13 @@ public class OI {
         return driverController.getAButton();
     }
 
+    public boolean shouldClimbDeploy(){
+        return operatorController.getStartButtonPressed() && operatorController.getBackButtonPressed();
+    }
 
+    public boolean shouldRetractClimb(){
+        return operatorController.getPOV() == 180;
+    }
 
 
 }
