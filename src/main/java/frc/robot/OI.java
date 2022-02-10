@@ -61,5 +61,9 @@ public class OI {
         return operatorController.getPOV() == 180;
     }
 
+    public boolean shouldIntake(){
+        return driverController.getXButtonPressed();
+    }
+
 
 }

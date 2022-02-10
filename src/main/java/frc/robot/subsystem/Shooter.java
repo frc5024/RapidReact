@@ -2,10 +2,12 @@ package frc.robot.subsystem;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystem.RestrictedMotor.owner;
 import io.github.frc5024.lib5k.hardware.common.sensors.interfaces.CommonEncoder;
+import io.github.frc5024.lib5k.hardware.generic.sensors.LineBreak;
 import io.github.frc5024.lib5k.hardware.revrobotics.motors.ExtendedSparkMax;
 import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevMotorFactory;
 import io.github.frc5024.lib5k.logging.RobotLogger;
@@ -219,7 +221,7 @@ public class Shooter extends SubsystemBase {
      * @return if the system is finished shooting
      */
     public boolean isDoneShooting() {
-        if(stateMachine.getCurrentState() == shooterState.FEED && !Intake.getInstance().getBallReading()){
+        if(stateMachine.getCurrentState() == shooterState.FEED && !Intake.getInstance().hasBallStored()){
             return true;
         }
 

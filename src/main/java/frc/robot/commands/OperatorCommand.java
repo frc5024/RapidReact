@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.OI;
+import frc.robot.commands.SubsystemCommands.IntakeCommand;
 import frc.robot.commands.SubsystemCommands.ShootCommand;
 
 public class OperatorCommand extends CommandBase {
@@ -10,15 +11,18 @@ public class OperatorCommand extends CommandBase {
 
     // Define commands here
     private ShootCommand shootCommand;
-
+    
+    private IntakeCommand intakeCommand;
 
     /**
      * Initialize Commands here
      */
     public OperatorCommand(){
         shootCommand = new ShootCommand();
+        intakeCommand = new IntakeCommand();
     }
 
+    
     
     @Override
     public void initialize() {
@@ -31,16 +35,20 @@ public class OperatorCommand extends CommandBase {
      */
     @Override
     public void execute() {
-        // TODO FIX
-        if(oi.shouldShootPressed()){
+        if(oi.shouldShoot()){
             shootCommand.schedule();
-        }
-        
-        if(oi.shouldShootReleased()){
+        }else{
             shootCommand.cancel();
         }
 
+        if(oi.shouldIntake()){
+            intakeCommand.schedule();
+        }else{
+            intakeCommand.cancel();
+        }
 
+
+        
     }
 
 
