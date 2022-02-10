@@ -9,7 +9,6 @@ import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
 import io.github.frc5024.lib5k.hardware.generic.sensors.HallEffect;
 import io.github.frc5024.lib5k.hardware.generic.servos.SmartServo;
-import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevMotorFactory;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
 import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 
