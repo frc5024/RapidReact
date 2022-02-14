@@ -71,7 +71,7 @@ public final class Constants {
 		public static final int smartServoChannel = 9;
 
 		// Climber ID
-		public static final int climberID = 12;
+		public static final int climberID = 9;
 
 		// Hall effects for determining position
 		public static final int topHallEffectID = 1;

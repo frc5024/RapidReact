@@ -86,6 +86,7 @@ public class Climber extends SubsystemBase {
             pin.stop();
         }
 
+		
         // If operator deploys switch to deploying
         if (OI.getInstance().shouldClimbDeploy()) {
             stateMachine.setState(climberState.Deploying);
@@ -94,11 +95,12 @@ public class Climber extends SubsystemBase {
     }
 
     private void handleDeploying(StateMetadata<climberState> metadata) {
-        if (metadata.isFirstRun()) {
+		if (metadata.isFirstRun()) {
             // Release pin to send climber up
             pin.rip();
         }
 
+		
         // Switch to retracting state once sensor tells us we are in the right spot
         // Stop the pin at the same time
         if (topSensor.get()) {
@@ -118,6 +120,7 @@ public class Climber extends SubsystemBase {
 
         // If done retracting stop the motor
         if (OI.getInstance().shouldRetractClimb()) {
+			//positive number for climb
             pullMotor.set(1);
         } else {
             pullMotor.stopMotor();
