@@ -63,6 +63,7 @@ public final class Constants {
 
 	// Climb Constants
 	public static final class Climb{
+<<<<<<< Updated upstream
 
 		// Create Climber Config and configured
 		public static final CTREConfig climbConfig = new CTREConfig(false, true, false, true, 33, 0, 30, 15, true);
@@ -73,6 +74,11 @@ public final class Constants {
 		// Climber ID
 		public static final int climberID = 9;
 
+=======
+		public static final int climbMotorID = 1;
+		public static final CTREConfig climbMotorConfig = new CTREConfig(false, true, 34, 32, 15, 0, true);
+		
+>>>>>>> Stashed changes
 		// Hall effects for determining position
 		public static final int topHallEffectID = 1;
 		public static final int bottomHallEffectID = 2;

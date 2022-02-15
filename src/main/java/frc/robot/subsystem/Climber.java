@@ -7,6 +7,7 @@ import frc.robot.Constants;
 import frc.robot.OI;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
+import io.github.frc5024.lib5k.hardware.ctre.util.TalonHelper;
 import io.github.frc5024.lib5k.hardware.generic.sensors.HallEffect;
 import io.github.frc5024.lib5k.hardware.generic.servos.SmartServo;
 import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevMotorFactory;
@@ -31,6 +32,7 @@ public class Climber extends SubsystemBase {
     private HallEffect bottomSensor;
     private HallEffect topSensor;
 
+<<<<<<< Updated upstream
     // System states
     private enum climberState {
         Idle, // climber not in use
@@ -39,6 +41,9 @@ public class Climber extends SubsystemBase {
         FinishClimb // robot has climbed and is off the ground
     }
 
+=======
+    
+>>>>>>> Stashed changes
     /*
      * Gets the instance for the climber
      * 
@@ -63,9 +68,17 @@ public class Climber extends SubsystemBase {
         stateMachine.addState(climberState.Retracting, this::handleRetracting);
         stateMachine.addState(climberState.FinishClimb, this::handleFinishClimb);
 
+<<<<<<< Updated upstream
         pullMotor = CTREMotorFactory.createTalonSRX(Constants.Climb.climberID, Constants.Climb.climbConfig);
 
         pin = new SmartServo(Constants.Climb.smartServoChannel);
+=======
+        pullMotor = CTREMotorFactory.createTalonSRX(Constants.Climb.climbMotorID, Constants.Climb.climbMotorConfig);
+
+        // climber release
+        pin = new SmartServo(0);
+        pin.stop();
+>>>>>>> Stashed changes
         addChild("Release", pin);
 
         bottomSensor = new HallEffect(Constants.Climb.bottomHallEffectID);
@@ -135,4 +148,23 @@ public class Climber extends SubsystemBase {
         }
     }
 
+<<<<<<< Updated upstream
+=======
+      /*public void setPosition(Position position) {
+        this.wantedPosition = position;
+        this.state = climberState.Retracting; }
+     */ 
+
+    public Position getPosition() {
+        if(topSensor.get()){
+            return Position.Level;
+        } else if (bottomSensor.get()) {
+            return Position.Retracted;
+        } else {
+            return Position.Current;
+        }
+    }
+
+
+>>>>>>> Stashed changes
 }
