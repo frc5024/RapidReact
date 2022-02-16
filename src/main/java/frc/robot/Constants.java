@@ -57,8 +57,6 @@ public final class Constants {
 
 
 
-
-
 	}
 
 
@@ -97,6 +95,9 @@ public final class Constants {
 		// Hall effects for determining position
 		public static final int topHallEffectID = 1;
 		public static final int bottomHallEffectID = 2;
+
+		//Motor ID
+		public static final double pullMotorSpeed = 0.8;
 		
 	}
 

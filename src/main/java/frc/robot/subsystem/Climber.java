@@ -81,7 +81,7 @@ public class Climber extends SubsystemBase {
     private void handleIdle(StateMetadata<climberState> metadata) {
         // Stop Motor and Pin if climber is not in use
         if (metadata.isFirstRun()) {
-            pullMotor.stopMotor();
+            pullMotor.stopMotor();;
             pin.stop();
         }
 
@@ -110,14 +110,14 @@ public class Climber extends SubsystemBase {
     private void handleRetracting(StateMetadata<climberState> metadata) {
         // If the bottom sensor tells us we are off the ground stop the motor
         if (bottomSensor.get()) {
-            pullMotor.set(0);
+            pullMotor.stopMotor();
             stateMachine.setState(climberState.FinishClimb);
             return;
         }
 
         // If done retracting stop the motor
         if (OI.getInstance().shouldRetractClimb()) {
-            pullMotor.set(1);
+            pullMotor.set(Constants.Climb.pullMotorSpeed);
         } else {
             pullMotor.stopMotor();
         }
@@ -127,8 +127,9 @@ public class Climber extends SubsystemBase {
         // Stop motor and win points
         if (metadata.isFirstRun()) {
             pullMotor.setNeutralMode(NeutralMode.Coast);
-            pullMotor.set(0);
+            pullMotor.stopMotor();
         }
     }
 
 }
+
