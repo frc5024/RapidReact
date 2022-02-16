@@ -7,6 +7,7 @@ import frc.robot.Constants;
 import frc.robot.OI;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
+import io.github.frc5024.lib5k.hardware.ctre.util.TalonHelper;
 import io.github.frc5024.lib5k.hardware.generic.sensors.HallEffect;
 import io.github.frc5024.lib5k.hardware.generic.servos.SmartServo;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
@@ -62,9 +63,14 @@ public class Climber extends SubsystemBase {
         stateMachine.addState(climberState.Retracting, this::handleRetracting);
         stateMachine.addState(climberState.FinishClimb, this::handleFinishClimb);
 
+		
         pullMotor = CTREMotorFactory.createTalonSRX(Constants.Climb.climberID, Constants.Climb.climbConfig);
 
-        pin = new SmartServo(Constants.Climb.smartServoChannel);
+
+        // climber release
+        pin = new SmartServo(0);
+        pin.stop();
+
         addChild("Release", pin);
 
         bottomSensor = new HallEffect(Constants.Climb.bottomHallEffectID);
@@ -85,6 +91,7 @@ public class Climber extends SubsystemBase {
             pin.stop();
         }
 
+		
         // If operator deploys switch to deploying
         if (OI.getInstance().shouldClimbDeploy()) {
             stateMachine.setState(climberState.Deploying);
@@ -93,11 +100,12 @@ public class Climber extends SubsystemBase {
     }
 
     private void handleDeploying(StateMetadata<climberState> metadata) {
-        if (metadata.isFirstRun()) {
+		if (metadata.isFirstRun()) {
             // Release pin to send climber up
             pin.rip();
         }
 
+		
         // Switch to retracting state once sensor tells us we are in the right spot
         // Stop the pin at the same time
         if (topSensor.get()) {
@@ -117,6 +125,7 @@ public class Climber extends SubsystemBase {
 
         // If done retracting stop the motor
         if (OI.getInstance().shouldRetractClimb()) {
+			//positive number for climb
             pullMotor.set(1);
         } else {
             pullMotor.stopMotor();
