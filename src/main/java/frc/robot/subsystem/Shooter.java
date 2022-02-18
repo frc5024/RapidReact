@@ -42,6 +42,8 @@ public class Shooter extends SubsystemBase {
 	 * Constructor for the shooter
 	 */
     private Shooter(){
+
+        stateMachine = new StateMachine<>("Shooter");
         
         stateMachine.setDefaultState(shooterState.IDLE, this::handleIdle);
         stateMachine.addState(shooterState.HOLDING, this::handleHolding);
