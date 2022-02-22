@@ -97,7 +97,7 @@ public final class Constants {
 		public static final int bottomHallEffectID = 2;
 
 		//Motor ID
-		public static final double pullMotorSpeed = 0.8;
+		public static final double pullMotorSpeed = 0.9;
 		
 	}
 
