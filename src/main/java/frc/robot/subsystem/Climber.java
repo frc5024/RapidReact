@@ -48,7 +48,7 @@ public class Climber extends SubsystemBase {
         if (mInstance == null) {
             mInstance = new Climber();
         }
-
+		
         return mInstance;
     }
 
