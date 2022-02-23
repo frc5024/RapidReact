@@ -24,6 +24,8 @@ public class IntakeCommand extends CommandBase {
         if(!sensorTrip){
             Intake.getInstance().idle();
         }
+        Intake.getInstance().idle();
+
     }
 
     

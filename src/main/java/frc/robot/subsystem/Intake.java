@@ -64,7 +64,7 @@ public class Intake extends SubsystemBase {
     private Intake(){
 
         // Initialize the camera
-        intakeCamera = new AutoCamera();
+        intakeCamera = new AutoCamera("Intake Camera", 0);
         intakeCamera.keepCameraAwake(true);
         intakeCamera.showCamera(true);
 
@@ -76,6 +76,10 @@ public class Intake extends SubsystemBase {
 
         // Initialize Restricted Motor
         this.intakeMotor = RestrictedMotor.getInstance();
+
+        retractSensor = new LineBreak(1);
+
+        ballSensor = new LineBreak(2);
 
         stateMachine = new StateMachine<>("Intake");
 
@@ -114,6 +118,7 @@ public class Intake extends SubsystemBase {
     }
 
     private void handleIntaking(StateMetadata<intakeState> meta){
+        RobotLogger.getInstance().log("Handling intake");
         // Extend arms on first run
         if (meta.isFirstRun()) {
             intakeSolenoid.set(Value.kForward);
@@ -122,14 +127,16 @@ public class Intake extends SubsystemBase {
         // Set the motor if we own it, otherwise try to claim it
         if (intakeMotor.getCurrentOwner() == owner.INTAKE) {
             intakeMotor.set(Constants.Intake.intakeSpeed, owner.INTAKE);
+            RobotLogger.getInstance().log("Own motor");
         } else {
+            RobotLogger.getInstance().log("Do not own motor");
             intakeMotor.obtain(owner.INTAKE);
         }
         
         // If ball is detected then stow it with the arms
-        if (retractSensor.get()) {
-            stateMachine.setState(intakeState.BALLSTOWED);
-        }
+        // if (retractSensor.get()) {
+        //     stateMachine.setState(intakeState.BALLSTOWED);
+        // }
 
     }
 
