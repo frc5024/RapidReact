@@ -179,7 +179,6 @@ public class Intake extends SubsystemBase {
 
     }
 
-
     /**
      * Method to force change state to ARMSTOWED
      */
