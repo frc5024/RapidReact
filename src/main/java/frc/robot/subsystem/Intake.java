@@ -102,8 +102,6 @@ public class Intake extends SubsystemBase {
     public void periodic(){
         // Update statemachine
         stateMachine.update();
-		
-		SmartDashboard.putBoolean("Solenoid in reverse", intakeSolenoid.get() == Value.kReverse ? true : false);
     }
     
     private void handleArmStowed(StateMetadata<intakeState> meta){
