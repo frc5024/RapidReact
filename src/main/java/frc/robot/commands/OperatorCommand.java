@@ -32,13 +32,13 @@ public class OperatorCommand extends CommandBase {
     @Override
     public void execute() {
         // TODO FIX
-        if(oi.shouldShootPressed()){
+        if(oi.shouldShoot()){
             shootCommand.schedule();
-        }
+        }else{
+			shootCommand.cancel();
+		}
         
-        if(oi.shouldShootReleased()){
-            shootCommand.cancel();
-        }
+        
 
 
     }

@@ -50,6 +50,8 @@ public class Intake extends SubsystemBase {
 	 */
     private Intake(){
 
+		stateMachine = new StateMachine<>("Intake");
+
         stateMachine.setDefaultState(intakeState.ARMSTOWED, this::handleArmStowed);
         stateMachine.addState(intakeState.BALLSTOWED, this::handleBallStowed);
         stateMachine.addState(intakeState.INTAKING, this::handleIntaking);
