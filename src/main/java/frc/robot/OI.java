@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import io.github.frc5024.lib5k.utils.InputUtils;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class OI {
     private static OI mInstance = null;
@@ -50,7 +51,9 @@ public class OI {
     }
 
     public boolean shouldClimbDeploy(){
-        return operatorController.getStartButtonPressed() && operatorController.getBackButtonPressed();
+		SmartDashboard.putBoolean("Read", operatorController.getStartButton());
+		SmartDashboard.putBoolean("Back", operatorController.getBackButton());
+        return operatorController.getStartButton() && operatorController.getBackButton();
     }
 
     public boolean shouldRetractClimb(){

@@ -2,6 +2,8 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
@@ -23,6 +25,8 @@ public class Climber extends SubsystemBase {
 
     // Creating Statemachine
     private StateMachine<climberState> stateMachine;
+
+	private Timer climbDeployTimer;
 
     // Creating Motors and Sensors
     private ExtendedTalonSRX pullMotor;
@@ -76,12 +80,12 @@ public class Climber extends SubsystemBase {
         bottomSensor = new HallEffect(Constants.Climb.bottomHallEffectID);
         topSensor = new HallEffect(Constants.Climb.topHallEffectID);
 
+		climbDeployTimer = new Timer();
     }
 
     @Override
     public void periodic() {
         stateMachine.update();
-
     }
 
     private void handleIdle(StateMetadata<climberState> metadata) {
@@ -95,7 +99,7 @@ public class Climber extends SubsystemBase {
         // If operator deploys switch to deploying
         if (OI.getInstance().shouldClimbDeploy()) {
             stateMachine.setState(climberState.Deploying);
-
+			climbDeployTimer.start();
         }
     }
 
@@ -108,7 +112,8 @@ public class Climber extends SubsystemBase {
 		
         // Switch to retracting state once sensor tells us we are in the right spot
         // Stop the pin at the same time
-        if (topSensor.get()) {
+        if (topSensor.get() || climbDeployTimer.get() > 3) {
+			climbDeployTimer.stop();
             pin.stop();
             stateMachine.setState(climberState.Retracting);
         }
@@ -126,7 +131,7 @@ public class Climber extends SubsystemBase {
         // If done retracting stop the motor
         if (OI.getInstance().shouldRetractClimb()) {
 			//positive number for climb
-            pullMotor.set(1);
+            pullMotor.set(.5);
         } else {
             pullMotor.stopMotor();
         }
