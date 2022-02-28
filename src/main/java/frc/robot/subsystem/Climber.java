@@ -2,6 +2,8 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
@@ -11,6 +13,7 @@ import io.github.frc5024.lib5k.hardware.ctre.util.TalonHelper;
 import io.github.frc5024.lib5k.hardware.generic.sensors.HallEffect;
 import io.github.frc5024.lib5k.hardware.generic.servos.SmartServo;
 import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevMotorFactory;
+import io.github.frc5024.lib5k.logging.RobotLogger;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
 import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 
@@ -25,6 +28,8 @@ public class Climber extends SubsystemBase {
     // Creating Statemachine
     private StateMachine<climberState> stateMachine;
 
+	private Timer climbDeployTimer;
+
     // Creating Motors and Sensors
     private ExtendedTalonSRX pullMotor;
     private SmartServo pin;
@@ -32,7 +37,6 @@ public class Climber extends SubsystemBase {
     private HallEffect bottomSensor;
     private HallEffect topSensor;
 
-<<<<<<< Updated upstream
     // System states
     private enum climberState {
         Idle, // climber not in use
@@ -41,9 +45,6 @@ public class Climber extends SubsystemBase {
         FinishClimb // robot has climbed and is off the ground
     }
 
-=======
-    
->>>>>>> Stashed changes
     /*
      * Gets the instance for the climber
      * 
@@ -68,28 +69,22 @@ public class Climber extends SubsystemBase {
         stateMachine.addState(climberState.Retracting, this::handleRetracting);
         stateMachine.addState(climberState.FinishClimb, this::handleFinishClimb);
 
-<<<<<<< Updated upstream
         pullMotor = CTREMotorFactory.createTalonSRX(Constants.Climb.climberID, Constants.Climb.climbConfig);
-
-        pin = new SmartServo(Constants.Climb.smartServoChannel);
-=======
-        pullMotor = CTREMotorFactory.createTalonSRX(Constants.Climb.climbMotorID, Constants.Climb.climbMotorConfig);
 
         // climber release
         pin = new SmartServo(0);
         pin.stop();
->>>>>>> Stashed changes
         addChild("Release", pin);
 
         bottomSensor = new HallEffect(Constants.Climb.bottomHallEffectID);
         topSensor = new HallEffect(Constants.Climb.topHallEffectID);
 
+		climbDeployTimer = new Timer();
     }
 
     @Override
     public void periodic() {
         stateMachine.update();
-
     }
 
     private void handleIdle(StateMetadata<climberState> metadata) {
@@ -103,7 +98,7 @@ public class Climber extends SubsystemBase {
         // If operator deploys switch to deploying
         if (OI.getInstance().shouldClimbDeploy()) {
             stateMachine.setState(climberState.Deploying);
-
+			climbDeployTimer.start();
         }
     }
 
@@ -116,7 +111,8 @@ public class Climber extends SubsystemBase {
 		
         // Switch to retracting state once sensor tells us we are in the right spot
         // Stop the pin at the same time
-        if (topSensor.get()) {
+        if (topSensor.get() || climbDeployTimer.get() > 3) {
+			climbDeployTimer.stop();
             pin.stop();
             stateMachine.setState(climberState.Retracting);
         }
@@ -134,7 +130,7 @@ public class Climber extends SubsystemBase {
         // If done retracting stop the motor
         if (OI.getInstance().shouldRetractClimb()) {
 			//positive number for climb
-            pullMotor.set(1);
+            pullMotor.set(.5);
         } else {
             pullMotor.stopMotor();
         }
@@ -148,23 +144,6 @@ public class Climber extends SubsystemBase {
         }
     }
 
-<<<<<<< Updated upstream
-=======
-      /*public void setPosition(Position position) {
-        this.wantedPosition = position;
-        this.state = climberState.Retracting; }
-     */ 
+   
 
-    public Position getPosition() {
-        if(topSensor.get()){
-            return Position.Level;
-        } else if (bottomSensor.get()) {
-            return Position.Retracted;
-        } else {
-            return Position.Current;
-        }
-    }
-
-
->>>>>>> Stashed changes
 }
