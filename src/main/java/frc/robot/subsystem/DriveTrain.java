@@ -153,7 +153,8 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 	@Override
 	protected void runIteration() {
-		SmartDashboard.putNumber("Value", getLeftMeters());
+		SmartDashboard.putNumber("Left Meters", getLeftMeters());
+		SmartDashboard.putNumber("Right Meters", getRightMeters());
 		Shuffleboard.getTab("Main Tab");
 	}
 

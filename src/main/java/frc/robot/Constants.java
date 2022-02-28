@@ -67,13 +67,13 @@ public final class Constants {
 
 		// TODO MOTOR ID AND CONFIG NEEDS TO BE CHANGED
 		// Motor used for spinning intake and feeding balls
-		public static final int spinnerID = 50;
+		public static final int spinnerID = 7;
 
 		// Motor used for spinning intake and feeding balls config
 		public static final CTREConfig spinnerConfig = new CTREConfig(false);
 
-		// Speed for intake the balls
-		public static final double intakeSpeed = 0.5;
+		// Speed for intaking the balls
+		public static final double intakeSpeed = 0.36;
 
 		// Solenoid forward and reverse channel ids
 		public static final int solenoidForward = 1;
