@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystem.RestrictedMotor.owner;
@@ -11,6 +12,7 @@ import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
 import io.github.frc5024.lib5k.hardware.generic.cameras.AutoCamera;
 import io.github.frc5024.lib5k.hardware.generic.sensors.LineBreak;
 import io.github.frc5024.lib5k.logging.RobotLogger;
+import io.github.frc5024.lib5k.logging.RobotLogger.Level;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
 import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 
@@ -41,8 +43,6 @@ public class Intake extends SubsystemBase {
     }
 
     private StateMachine<intakeState> stateMachine;
-
-    private AutoCamera intakeCamera;
 
 
     /**
@@ -102,12 +102,15 @@ public class Intake extends SubsystemBase {
     public void periodic(){
         // Update statemachine
         stateMachine.update();
+		
+		SmartDashboard.putBoolean("Solenoid in reverse", intakeSolenoid.get() == Value.kReverse ? true : false);
     }
     
     private void handleArmStowed(StateMetadata<intakeState> meta){
         // Stow arms on first run
         if (meta.isFirstRun()) {
             retractArms();
+			
         }
         
     }
@@ -129,8 +132,10 @@ public class Intake extends SubsystemBase {
         // Extend arms on first run
         if (meta.isFirstRun()) {
             intakeSolenoid.set(Value.kForward);
+			RobotLogger.getInstance().log("solenoid set -------------------------------------------------------");
         }
-        
+        RobotLogger.getInstance().log("Solenoid Begin Done",Level.kWarning);
+
         // Set the motor if we own it, otherwise try to claim it
         if (intakeMotor.getCurrentOwner() == owner.INTAKE) {
             intakeMotor.set(Constants.Intake.intakeSpeed, owner.INTAKE);
@@ -144,6 +149,7 @@ public class Intake extends SubsystemBase {
         // if (retractSensor.get()) {
         //     stateMachine.setState(intakeState.BALLSTOWED);
         // }
+		
 
     }
 
@@ -214,4 +220,5 @@ public class Intake extends SubsystemBase {
         stateMachine.setState(intakeState.INTAKING);
     }
 
+	
 }

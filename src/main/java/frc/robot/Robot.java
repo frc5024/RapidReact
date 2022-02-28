@@ -110,14 +110,7 @@ public class Robot extends RobotProgram {
 			operatorCommand.schedule();
 			
 		}
-		logger.log("Test");
-		if(tempBox.getAButton()){
-			System.out.println("Hellooo");
-			talon.set(1);
-		}else{
-			System.out.println("not working");
-			talon.set(0);
-		}
+		
 
 	}
 

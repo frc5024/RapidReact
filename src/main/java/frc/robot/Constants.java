@@ -77,7 +77,7 @@ public final class Constants {
 
 		// Solenoid forward and reverse channel ids
 		public static final int solenoidForward = 1;
-		public static final int solenoidReverse = 2;
+		public static final int solenoidReverse = 0;
 
 
 	}
