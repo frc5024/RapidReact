@@ -16,18 +16,16 @@ public class IntakeCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         sensorTrip = true;
-
         return Intake.getInstance().shouldRetract();
     }
-
-
-
 
     @Override
     public void end(boolean interrupted) {
         if(!sensorTrip){
             Intake.getInstance().idle();
         }
+        Intake.getInstance().idle();
+
     }
 
     

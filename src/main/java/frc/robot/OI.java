@@ -61,7 +61,7 @@ public class OI {
     }
 
     public boolean shouldIntake(){
-        return driverController.getXButtonPressed();
+        return driverController.getXButton();
     }
 
 

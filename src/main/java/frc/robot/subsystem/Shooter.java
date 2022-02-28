@@ -72,22 +72,22 @@ public class Shooter extends SubsystemBase {
      */
     private Shooter() {
         // Initialize the logger
-        logger = RobotLogger.getInstance();
+        // logger = RobotLogger.getInstance();
 
-        // Initialize flywheel motor
-        this.flywheelMotor = RevMotorFactory.createSparkMax(Constants.Shooter.flyWheelID,
-                Constants.Shooter.flywheelConfig);
+        // // Initialize flywheel motor
+        // this.flywheelMotor = RevMotorFactory.createSparkMax(Constants.Shooter.flyWheelID,
+        //         Constants.Shooter.flywheelConfig);
 
-        // Setup flywheel encoder
-        this.flywheelEncoder = flywheelMotor.getCommonEncoder();
-        this.flywheelEncoder.setPhaseInverted(true);
+        // // Setup flywheel encoder
+        // this.flywheelEncoder = flywheelMotor.getCommonEncoder();
+        // this.flywheelEncoder.setPhaseInverted(true);
 
-        // Get the shared motor instance
-        this.feedMotor = RestrictedMotor.getInstance();
+        // // Get the shared motor instance
+        // this.feedMotor = RestrictedMotor.getInstance();
 
-        // PID Setup
-        shooterController = new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
-        shooterController.reset();
+        // // PID Setup
+        // shooterController = new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
+        // shooterController.reset();
         
         
         // Setup Statemachine default state is idle

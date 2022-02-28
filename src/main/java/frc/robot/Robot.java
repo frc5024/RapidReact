@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -22,6 +23,8 @@ import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 import io.github.frc5024.lib5k.autonomous.RobotProgram;
+import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
+import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
 import io.github.frc5024.lib5k.logging.RobotLogger;
 import io.github.frc5024.lib5k.logging.USBLogger;
 
@@ -44,17 +47,14 @@ public class Robot extends RobotProgram {
 	private Climber climber;
 	private Shooter shooter;
 	private Intake intake;
+	
+	private XboxController tempBox = new XboxController(0);
+	private ExtendedTalonSRX talon = CTREMotorFactory.createTalonSRX(1);
 
 	// Commands
 	private DriveCommand driveCommand;
 	
 
-	// TODO REMOVE IF NEEDED
-	@Override
-	public void startCompetition() {
-		super.startCompetition();
-
-	}
 
 	public Robot() {
 		super(false, true, mainShuffleboardTab);
@@ -67,7 +67,7 @@ public class Robot extends RobotProgram {
 		
 
 		// Initalize subsystem variables
-		driveTrain = DriveTrain.getInstance();
+		//driveTrain = DriveTrain.getInstance();
 		climber = Climber.getInstance();
 		shooter = Shooter.getInstance();
 		intake = Intake.getInstance();
@@ -75,20 +75,20 @@ public class Robot extends RobotProgram {
 
 
 		// Register subsystems
-		driveTrain.register();
+		//driveTrain.register();
 		climber.register();
 		shooter.register();
 		intake.register();
 		
 		// Commands
-		driveTrain.setDefaultCommand(new DriveCommand());
+		//driveTrain.setDefaultCommand(new DriveCommand());
 		operatorCommand = new OperatorCommand();
 
 
 		// Creating Auto Commands
 		addAutonomous(new TestPath());
 		addAutonomous(new TestTurnPath());
-
+		
 	}
 
 
@@ -108,6 +108,7 @@ public class Robot extends RobotProgram {
 	public void teleop(boolean init) {
 		if(init){
 			operatorCommand.schedule();
+			
 		}
 		
 
