@@ -132,9 +132,9 @@ public class Intake extends SubsystemBase {
         // Extend arms on first run
         if (meta.isFirstRun()) {
             intakeSolenoid.set(Value.kForward);
-			RobotLogger.getInstance().log("solenoid set -------------------------------------------------------");
+			
         }
-        RobotLogger.getInstance().log("Solenoid Begin Done",Level.kWarning);
+       
 
         // Set the motor if we own it, otherwise try to claim it
         if (intakeMotor.getCurrentOwner() == owner.INTAKE) {
