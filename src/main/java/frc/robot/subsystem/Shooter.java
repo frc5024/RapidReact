@@ -112,11 +112,11 @@ public class Shooter extends SubsystemBase {
      */
     private void handleIdle(StateMetadata<shooterState> metaData) {
         if (metaData.isFirstRun()) {
-            flywheelMotor.set(0);
+            //flywheelMotor.set(0);
 
-            if(feedMotor.getCurrentOwner() == owner.SHOOTER){
-                feedMotor.free(owner.SHOOTER);
-            }
+            // if(feedMotor.getCurrentOwner() == owner.SHOOTER){
+            //     feedMotor.free(owner.SHOOTER);
+            // }
         }
         
 

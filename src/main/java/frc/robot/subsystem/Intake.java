@@ -66,9 +66,9 @@ public class Intake extends SubsystemBase {
     private Intake(){
 
         // Initialize the camera
-        intakeCamera = new AutoCamera("Intake Camera", 0);
-        intakeCamera.keepCameraAwake(true);
-        intakeCamera.showCamera(true);
+        // intakeCamera = new AutoCamera("Intake Camera", 0);
+        // intakeCamera.keepCameraAwake(true);
+        // intakeCamera.showCamera(true);
 
         // Initialize the logger
         logger = RobotLogger.getInstance();

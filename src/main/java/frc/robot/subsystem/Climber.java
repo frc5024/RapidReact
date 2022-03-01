@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
@@ -84,6 +85,7 @@ public class Climber extends SubsystemBase {
     @Override
     public void periodic() {
         stateMachine.update();
+		SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
     }
 
     private void handleIdle(StateMetadata<climberState> metadata) {
@@ -120,11 +122,13 @@ public class Climber extends SubsystemBase {
 
     private void handleRetracting(StateMetadata<climberState> metadata) {
         // If the bottom sensor tells us we are off the ground stop the motor
-        if (bottomSensor.get()) {
-            pullMotor.set(0);
-            stateMachine.setState(climberState.FinishClimb);
-            return;
-        }
+        // if (bottomSensor.get()) {
+        //     pullMotor.set(0);
+        //     stateMachine.setState(climberState.FinishClimb);
+        //     return;
+        // }
+
+		// Fuck the sensors for the time being
 
         // If done retracting stop the motor
         if (OI.getInstance().shouldRetractClimb()) {

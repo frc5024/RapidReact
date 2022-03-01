@@ -34,7 +34,7 @@ public class OI {
         double speed = 0;
         speed += driverController.getRightTriggerAxis();
         speed -= driverController.getLeftTriggerAxis();
-
+		SmartDashboard.putNumber("Speed", speed);
         return speed;
     }
     
@@ -47,7 +47,8 @@ public class OI {
 
 
     public boolean shouldShoot(){
-        return driverController.getAButton();
+        return false; // driverController.getAButton();
+		// preventing null pointers
     }
 
     public boolean shouldClimbDeploy(){

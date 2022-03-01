@@ -67,7 +67,7 @@ public class Robot extends RobotProgram {
 		
 
 		// Initalize subsystem variables
-		//driveTrain = DriveTrain.getInstance();
+		driveTrain = DriveTrain.getInstance();
 		climber = Climber.getInstance();
 		shooter = Shooter.getInstance();
 		intake = Intake.getInstance();
@@ -75,13 +75,13 @@ public class Robot extends RobotProgram {
 
 
 		// Register subsystems
-		//driveTrain.register();
+		driveTrain.register();
 		climber.register();
 		shooter.register();
 		intake.register();
 		
 		// Commands
-		//driveTrain.setDefaultCommand(new DriveCommand());
+		driveTrain.setDefaultCommand(new DriveCommand());
 		operatorCommand = new OperatorCommand();
 
 

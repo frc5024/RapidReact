@@ -95,8 +95,8 @@ public final class Constants {
 		public static final int climberID = 9;
 
 		// Hall effects for determining position
-		public static final int topHallEffectID = 1;
-		public static final int bottomHallEffectID = 2;
+		public static final int topHallEffectID = 30;
+		public static final int bottomHallEffectID = 29;
 		
 	}
 
