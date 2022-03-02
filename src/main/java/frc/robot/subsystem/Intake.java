@@ -2,6 +2,7 @@ package frc.robot.subsystem;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -35,6 +36,8 @@ public class Intake extends SubsystemBase {
     private LineBreak retractSensor;
 
     private LineBreak ballSensor;
+
+	private Timer time = new Timer();
 
     private enum intakeState{
         ARMSTOWED,
@@ -108,8 +111,20 @@ public class Intake extends SubsystemBase {
         // Stow arms on first run
         if (meta.isFirstRun()) {
             retractArms();
-			
+			time.reset();
+			time.start();
+			intakeMotor.obtain(owner.INTAKE);
         }
+
+		if(!time.hasElapsed(.5)){
+			intakeMotor.set(Constants.Intake.intakeSpeed, owner.INTAKE);
+
+		}else{
+			intakeMotor.set(0, owner.INTAKE);
+			time.stop();
+		}
+
+
         
     }
 
