@@ -110,20 +110,18 @@ public final class Constants {
 		// Shooter Epsilon
 		public static final double shooterEpsilon = 100;
 
-		// TODO These are just guess as to what motors will be assigned
 		// Flywheel motor id
 		public static final int flyWheelID = 16;
 
 		// Fly wheel config
-		public static final RevConfig flywheelConfig = new RevConfig(MotorType.kBrushless);
-
-		// Flywheel encoder tpr
-		//public static final int flyWheelEncoderTPR = 2048;
+		public static final CTREConfig flywheelConfig = new CTREConfig(false, true, false, true, 36, 12, 34, 24, true);
 
 		// PID values Current are from last year
 		public static final double kP = 0.00048;
 		public static final double kI = 3e-7;
 		public static final double kD = 0.355;
+
+		public static final int encoderTPR = 2048;
 
 		// The speed for ejecting
 		public static final double ejectSetSpeed = 150;
@@ -133,7 +131,7 @@ public final class Constants {
 
 
 		// Target RPM TODO placeholder value
-		public static final double shootingTargetRPM = 500;
+		public static final double shootingTargetRPM = 1500;
 
 		
 
