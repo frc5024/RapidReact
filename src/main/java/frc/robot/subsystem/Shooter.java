@@ -84,7 +84,7 @@ public class Shooter extends SubsystemBase {
         // this.flywheelEncoder.setPhaseInverted(true);
 
         // // Get the shared motor instance
-        // this.feedMotor = RestrictedMotor.getInstance();
+        this.feedMotor = RestrictedMotor.getInstance();
 
         // // PID Setup
         shooterController = new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
