@@ -100,7 +100,9 @@ public class Robot extends RobotProgram {
 
 	@Override
 	public void autonomous(boolean init) {
-		// TODO Auto-generated method stub
+		if(init) {
+			Intake.getInstance().disableCompressor();
+		}
 
 	}
 
@@ -108,7 +110,7 @@ public class Robot extends RobotProgram {
 	public void teleop(boolean init) {
 		if(init){
 			operatorCommand.schedule();
-			
+			Intake.getInstance().disableCompressor();
 		}
 		
 
@@ -117,7 +119,8 @@ public class Robot extends RobotProgram {
 	@Override
 	public void disabled(boolean init) {
 		if (init) {
-            DriveTrain.getInstance().stop();
+			DriveTrain.getInstance().stop();
+			Intake.getInstance().disableCompressor();
         }
 
 		operatorCommand.cancel();
@@ -128,7 +131,10 @@ public class Robot extends RobotProgram {
 
 	@Override
 	public void test(boolean init) {
-		// TODO Auto-generated method stub
-
+		if (init) {
+			// enable compressor when in test mode
+			Intake.getInstance().enableCompressor();
+		}
+		
 	}
 }

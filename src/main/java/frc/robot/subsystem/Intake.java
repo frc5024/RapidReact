@@ -1,5 +1,6 @@
 package frc.robot.subsystem;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -29,6 +30,8 @@ public class Intake extends SubsystemBase {
 	private RobotLogger logger;
 
     private DoubleSolenoid intakeSolenoid;
+
+    private Compressor compressor;
 
     private RestrictedMotor intakeMotor;
 
@@ -75,6 +78,10 @@ public class Intake extends SubsystemBase {
 
         // Setup the solenoid
         intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.Intake.solenoidForward, Constants.Intake.solenoidReverse);
+
+        // Intitialize compressor
+        compressor = new Compressor(Constants.Intake.compressorID, PneumaticsModuleType.CTREPCM);
+        compressor.disable();
 
         // Initialize Restricted Motor
         this.intakeMotor = RestrictedMotor.getInstance();
@@ -195,6 +202,21 @@ public class Intake extends SubsystemBase {
         // return the ball sensor's reading
         return ballSensor.get();
 
+    }
+
+
+    /**
+     * Method that disables the compressor
+     */
+    public void disableCompressor() {
+        compressor.disable();
+    }
+
+    /**
+     * Method that enables the compressor
+     */
+    public void enableCompressor() {
+        compressor.enableDigital();
     }
 
     /**
