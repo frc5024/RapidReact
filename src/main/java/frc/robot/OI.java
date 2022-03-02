@@ -47,7 +47,7 @@ public class OI {
 
 
     public boolean shouldShoot(){
-        return false; // driverController.getAButton();
+        return driverController.getAButton();
 		// preventing null pointers
     }
 

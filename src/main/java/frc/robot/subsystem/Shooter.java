@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystem.RestrictedMotor.owner;
@@ -90,6 +91,8 @@ public class Shooter extends SubsystemBase {
         // shooterController.reset();
         
         
+		stateMachine = new StateMachine<>("Shooter");
+
         // Setup Statemachine default state is idle
         stateMachine = new StateMachine<>("Shooter");
 
@@ -105,6 +108,7 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         // Update statemachine
         stateMachine.update();
+		SmartDashboard.putNumber("FLYWHEEL VELOCITY", flywheelEncoder.getVelocity());
     }
 
     /**

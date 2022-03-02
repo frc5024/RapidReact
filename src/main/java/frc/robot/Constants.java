@@ -112,13 +112,13 @@ public final class Constants {
 
 		// TODO These are just guess as to what motors will be assigned
 		// Flywheel motor id
-		public static final int flyWheelID = 49;
+		public static final int flyWheelID = 16;
 
 		// Fly wheel config
 		public static final RevConfig flywheelConfig = new RevConfig(MotorType.kBrushless);
 
 		// Flywheel encoder tpr
-		public static final int flyWheelEncoderTPR = 2048;
+		//public static final int flyWheelEncoderTPR = 2048;
 
 		// PID values Current are from last year
 		public static final double kP = 0.00048;
