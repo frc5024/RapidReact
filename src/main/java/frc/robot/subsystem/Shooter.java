@@ -73,15 +73,16 @@ public class Shooter extends SubsystemBase {
      */
     private Shooter() {
         // Initialize the logger
-        // logger = RobotLogger.getInstance();
+        logger = RobotLogger.getInstance();
 
         // // Initialize flywheel motor
         this.flywheelMotor = RevMotorFactory.createSparkMax(Constants.Shooter.flyWheelID,
                  Constants.Shooter.flywheelConfig);
 
+		flywheelMotor.setInverted(true);
         // // Setup flywheel encoder
         this.flywheelEncoder = flywheelMotor.getCommonEncoder();
-        // this.flywheelEncoder.setPhaseInverted(true);
+        //this.flywheelEncoder.setPhaseInverted(true);
 
         // // Get the shared motor instance
         this.feedMotor = RestrictedMotor.getInstance();
