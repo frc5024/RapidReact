@@ -37,7 +37,7 @@ public class MoveScore implements AutonomousSequence{
             }
         }));
 
-        completeCommand.addCommands(driveTrain.createPathingCommand(new Path(getStartingPose().getTranslation(), new Translation2d(-1, 0)), .1));
+        completeCommand.addCommands(driveTrain.createPathingCommand(new Path(getStartingPose().getTranslation(), new Translation2d(1, 0)), .1));
         
         
 
