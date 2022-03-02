@@ -76,19 +76,19 @@ public class Shooter extends SubsystemBase {
         // logger = RobotLogger.getInstance();
 
         // // Initialize flywheel motor
-        // this.flywheelMotor = RevMotorFactory.createSparkMax(Constants.Shooter.flyWheelID,
-        //         Constants.Shooter.flywheelConfig);
+        this.flywheelMotor = RevMotorFactory.createSparkMax(Constants.Shooter.flyWheelID,
+                 Constants.Shooter.flywheelConfig);
 
         // // Setup flywheel encoder
-        // this.flywheelEncoder = flywheelMotor.getCommonEncoder();
+        this.flywheelEncoder = flywheelMotor.getCommonEncoder();
         // this.flywheelEncoder.setPhaseInverted(true);
 
         // // Get the shared motor instance
         // this.feedMotor = RestrictedMotor.getInstance();
 
         // // PID Setup
-        // shooterController = new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
-        // shooterController.reset();
+        shooterController = new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
+        shooterController.reset();
         
         
 		stateMachine = new StateMachine<>("Shooter");
@@ -116,11 +116,11 @@ public class Shooter extends SubsystemBase {
      */
     private void handleIdle(StateMetadata<shooterState> metaData) {
         if (metaData.isFirstRun()) {
-            //flywheelMotor.set(0);
+            flywheelMotor.set(0);
 
-            // if(feedMotor.getCurrentOwner() == owner.SHOOTER){
-            //     feedMotor.free(owner.SHOOTER);
-            // }
+            if(feedMotor.getCurrentOwner() == owner.SHOOTER){
+                feedMotor.free(owner.SHOOTER);
+            }
         }
         
 
