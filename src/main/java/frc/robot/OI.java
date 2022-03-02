@@ -52,8 +52,6 @@ public class OI {
     }
 
     public boolean shouldClimbDeploy(){
-		SmartDashboard.putBoolean("Read", operatorController.getStartButton());
-		SmartDashboard.putBoolean("Back", operatorController.getBackButton());
         return operatorController.getStartButton() && operatorController.getBackButton();
     }
 
