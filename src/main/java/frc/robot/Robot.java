@@ -63,6 +63,8 @@ public class Robot extends RobotProgram {
 			logger.enableUSBLogging(new USBLogger());
 		}
 
+		
+
 
 		// Initalize subsystem variables
 		driveTrain = DriveTrain.getInstance();
@@ -70,6 +72,7 @@ public class Robot extends RobotProgram {
 		shooter = Shooter.getInstance();
 		intake = Intake.getInstance();
 
+		
 
 
 		// Register subsystems
