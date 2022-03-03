@@ -1,0 +1,80 @@
+{
+  "MainWindow": {
+    "GLOBAL": {
+      "height": "720",
+      "maximized": "0",
+      "style": "1",
+      "userScale": "2",
+      "width": "1280",
+      "xpos": "-1",
+      "ypos": "-1"
+    }
+  },
+  "Window": {
+    "###/FMSInfo": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "169,167"
+    },
+    "###/LiveWindow/Climber": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "148,86"
+    },
+    "###/Shuffleboard/Main Tab/SendableChooser[0]": {
+      "Collapsed": "0",
+      "Pos": "105,26",
+      "Size": "254,54"
+    },
+    "###FMS": {
+      "Collapsed": "0",
+      "Pos": "5,540",
+      "Size": "235,169"
+    },
+    "###Joysticks": {
+      "Collapsed": "0",
+      "Pos": "241,617",
+      "Size": "796,73"
+    },
+    "###NetworkTables": {
+      "Collapsed": "0",
+      "Pos": "240,378",
+      "Size": "750,185"
+    },
+    "###Other Devices": {
+      "Collapsed": "0",
+      "Pos": "1007,16",
+      "Size": "250,695"
+    },
+    "###Plot <0>": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "700,400"
+    },
+    "###RoboRIO": {
+      "Collapsed": "0",
+      "Pos": "5,125",
+      "Size": "119,146"
+    },
+    "###System Joysticks": {
+      "Collapsed": "0",
+      "Pos": "3,318",
+      "Size": "192,218"
+    },
+    "###Timing": {
+      "Collapsed": "0",
+      "Pos": "5,150",
+      "Size": "192,173"
+    },
+    "Debug##Default": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "400,400"
+    },
+    "Robot State": {
+      "Collapsed": "0",
+      "Pos": "5,20",
+      "Size": "92,99"
+    }
+  }
+}
