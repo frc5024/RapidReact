@@ -53,7 +53,7 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 	}
 
 	private DriveTrain() {
-		super(new ExtendedPIDController(1, 1, 1), .1);
+		super(new ExtendedPIDController(.0088, .01, .0106), .478);
 
 		rightMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.rightMaster,
 				Constants.DriveTrain.rightSideConfig);

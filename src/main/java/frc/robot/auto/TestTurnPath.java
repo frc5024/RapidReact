@@ -27,6 +27,8 @@ public class TestTurnPath implements AutonomousSequence {
         // Adding robots initial position
         completeCommand.addCommands(new InstantCommand(() -> {driveTrain.resetPose(getStartingPose());}));
         
+		completeCommand.addCommands(new InstantCommand(()-> {System.out.println("Turning");}));
+
         // Creating and adding turn command with desired parameters 
         completeCommand.addCommands(driveTrain.createTurnCommand(new Rotation2d(90), new Rotation2d(2), .6, false));
         
