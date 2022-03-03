@@ -33,6 +33,8 @@ public class Intake extends SubsystemBase {
 
     private DoubleSolenoid intakeSolenoid;
 
+    private Compressor compressor;
+
     private RestrictedMotor intakeMotor;
 
     private LineBreak retractSensor;
@@ -80,6 +82,10 @@ public class Intake extends SubsystemBase {
 
         // Setup the solenoid
         intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.Intake.solenoidForward, Constants.Intake.solenoidReverse);
+
+        // Intitialize compressor
+        compressor = new Compressor(Constants.Intake.compressorID, PneumaticsModuleType.CTREPCM);
+        compressor.disable();
 
         // Initialize Restricted Motor
         this.intakeMotor = RestrictedMotor.getInstance();
@@ -212,6 +218,21 @@ public class Intake extends SubsystemBase {
         // return the ball sensor's reading
         return ballSensor.get();
 
+    }
+
+
+    /**
+     * Method that disables the compressor
+     */
+    public void disableCompressor() {
+        compressor.disable();
+    }
+
+    /**
+     * Method that enables the compressor
+     */
+    public void enableCompressor() {
+        compressor.enableDigital();
     }
 
     /**

@@ -79,6 +79,8 @@ public final class Constants {
 		public static final int solenoidForward = 1;
 		public static final int solenoidReverse = 0;
 
+		public static final int compressorID = 0;
+
 
 	}
 
