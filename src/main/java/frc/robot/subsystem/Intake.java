@@ -45,8 +45,8 @@ public class Intake extends SubsystemBase {
 
     private enum intakeState{
         ARMSTOWED,
-        BALLSTOWED,
         INTAKING,
+		SPINDOWN,
     }
 
     private StateMachine<intakeState> stateMachine;
@@ -103,8 +103,8 @@ public class Intake extends SubsystemBase {
 
         // Setup statemachine
         stateMachine.setDefaultState(intakeState.ARMSTOWED, this::handleArmStowed);
-        stateMachine.addState(intakeState.BALLSTOWED, this::handleBallStowed);
         stateMachine.addState(intakeState.INTAKING, this::handleIntaking);
+		stateMachine.addState(intakeState.SPINDOWN, this::handleSpinDown);
 
     }
 
@@ -119,34 +119,10 @@ public class Intake extends SubsystemBase {
         // Stow arms on first run
         if (meta.isFirstRun()) {
             retractArms();
-			//time.reset();
-			//time.start();
-			//intakeMotor.obtain(owner.INTAKE);
         }
-
-		// if(!time.hasElapsed(.5)){
-		// 	intakeMotor.set(Constants.Intake.intakeSpeed, owner.INTAKE);
-
-		// }else{
-		// 	intakeMotor.set(0, owner.INTAKE);
-		// 	time.stop();
-		// }
-
-
         
     }
 
-    private void handleBallStowed(StateMetadata<intakeState> meta){
-        // Stow arms and ball on first run
-        if(meta.isFirstRun()){
-            retractArms();
-        }
-
-        // If ball is no longer detected then set state to arms stowed
-        if (!hasBallStored()) {
-            stateMachine.setState(intakeState.ARMSTOWED);
-        }
-    }
 
     private void handleIntaking(StateMetadata<intakeState> meta){
         RobotLogger.getInstance().log("Handling intake");
@@ -174,14 +150,21 @@ public class Intake extends SubsystemBase {
 
     }
 
+	private void handleSpinDown(StateMetadata<intakeState> meta){
+		if(meta.isFirstRun()){
+
+		}
+
+
+	}
+
     /**
      * Method to intake a ball
      */
     public void intakeBall(){
-        //If arms are stowed currently we want to change to intake state
-        if (stateMachine.getCurrentState() == intakeState.ARMSTOWED){
-            stateMachine.setState(intakeState.INTAKING);
-        }
+        // If arms are stowed currently we want to change to intake state
+        stateMachine.setState(intakeState.INTAKING);
+        
 
     }
 
@@ -242,12 +225,6 @@ public class Intake extends SubsystemBase {
         stateMachine.setState(intakeState.ARMSTOWED);
     }
 
-    /**
-     * Method to force change state to BALLSTOWED
-     */
-    public void forceBallStowed() {
-        stateMachine.setState(intakeState.BALLSTOWED);
-    }
 
     /**
      * Method to force change state to INTAKING
