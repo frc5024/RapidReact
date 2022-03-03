@@ -1,9 +1,11 @@
 package frc.robot.subsystem;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -67,7 +69,7 @@ public class Intake extends SubsystemBase {
 	 * Constructor for the intake
 	 */
     private Intake(){
-
+		
         // Initialize the camera
         // intakeCamera = new AutoCamera("Intake Camera", 0);
         // intakeCamera.keepCameraAwake(true);
@@ -111,18 +113,18 @@ public class Intake extends SubsystemBase {
         // Stow arms on first run
         if (meta.isFirstRun()) {
             retractArms();
-			time.reset();
-			time.start();
-			intakeMotor.obtain(owner.INTAKE);
+			//time.reset();
+			//time.start();
+			//intakeMotor.obtain(owner.INTAKE);
         }
 
-		if(!time.hasElapsed(.5)){
-			intakeMotor.set(Constants.Intake.intakeSpeed, owner.INTAKE);
+		// if(!time.hasElapsed(.5)){
+		// 	intakeMotor.set(Constants.Intake.intakeSpeed, owner.INTAKE);
 
-		}else{
-			intakeMotor.set(0, owner.INTAKE);
-			time.stop();
-		}
+		// }else{
+		// 	intakeMotor.set(0, owner.INTAKE);
+		// 	time.stop();
+		// }
 
 
         

@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -45,6 +46,8 @@ public class Shooter extends SubsystemBase {
 
 	private PIDController shooterController;
 
+	private Timer time = new Timer();
+
 	private enum shooterState {
 		IDLE,
 		FEED,
@@ -78,6 +81,7 @@ public class Shooter extends SubsystemBase {
 		// // Initialize flywheel motor
 		this.flywheelMotor = CTREMotorFactory.createTalonFX(Constants.Shooter.flyWheelID,
 				Constants.Shooter.flywheelConfig);
+			flywheelMotor.setInverted(true);
 
 		// // Setup flywheel encoder
 		this.flywheelEncoder = flywheelMotor.getCommonEncoder(Constants.Shooter.encoderTPR);
@@ -129,13 +133,16 @@ public class Shooter extends SubsystemBase {
 		if (metaData.isFirstRun()) {
 			// Clears controller
 			shooterController.reset();
+			time.reset();
+			time.start();
 		}
 
 		// Sets the motor until we are at target speed
 		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
 
 		// At target switch state to feed
-		if (atTarget(Constants.Shooter.ejectSetSpeed)) {
+		
+		if (atTarget(Constants.Shooter.ejectSetSpeed) ) {
 			stateMachine.setState(shooterState.FEED);
 		}
 	}
@@ -155,13 +162,16 @@ public class Shooter extends SubsystemBase {
 		if (metaData.isFirstRun()) {
 			// Clears controller
 			shooterController.reset();
+			time.reset();
+			time.start();
+			
 		}
 
 		// set the motor until we are at the appropriate speed
-		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
-
+		//flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
+		flywheelMotor.set(.7);
 		// Switch to feeding
-		if (atTarget(targetRPM)) {
+		if (atTarget(targetRPM) || time.hasElapsed(5)) {
 			stateMachine.setState(shooterState.FEED);
 		}
 
@@ -171,8 +181,10 @@ public class Shooter extends SubsystemBase {
 	 * Method for feeding balls into the shooter
 	 */
 	private void handleFeeding(StateMetadata<shooterState> metaData) {
+		feedMotor.free(owner.INTAKE);
 		// If we are the owner, start spinning the ball
 		if (feedMotor.getCurrentOwner() == owner.SHOOTER) {
+			
 			feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
 
 		} else {

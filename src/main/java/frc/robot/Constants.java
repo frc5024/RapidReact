@@ -111,7 +111,7 @@ public final class Constants {
 		public static final double shooterEpsilon = 100;
 
 		// Flywheel motor id
-		public static final int flyWheelID = 16;
+		public static final int flyWheelID = 12;
 
 		// Fly wheel config
 		public static final CTREConfig flywheelConfig = new CTREConfig(false, true, false, true, 36, 12, 34, 24, true);
