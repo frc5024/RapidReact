@@ -73,9 +73,9 @@ public class Intake extends SubsystemBase {
     private Intake(){
 		
         // Initialize the camera
-        // intakeCamera = new AutoCamera("Intake Camera", 0);
-        // intakeCamera.keepCameraAwake(true);
-        // intakeCamera.showCamera(true);
+        intakeCamera = new AutoCamera("Intake Camera", 0);
+        intakeCamera.keepCameraAwake(true);
+        intakeCamera.showCamera(true);
 
         // Initialize the logger
         logger = RobotLogger.getInstance();
@@ -95,9 +95,9 @@ public class Intake extends SubsystemBase {
 		intakeCamera.keepCameraAwake(true);
 		intakeCamera.showCamera(true);
 
-        retractSensor = new LineBreak(1);
+        retractSensor = new LineBreak(Constants.Intake.RETRACTBALLSENSORID);
 
-        ballSensor = new LineBreak(2);
+        ballSensor = new LineBreak(Constants.Intake.HOLDBALLSENSORID);
 
         stateMachine = new StateMachine<>("Intake");
 
@@ -113,6 +113,8 @@ public class Intake extends SubsystemBase {
     public void periodic(){
         // Update statemachine
         stateMachine.update();
+		SmartDashboard.putBoolean("Retract Sensor Value", retractSensor.get());
+		SmartDashboard.putBoolean("Ball Sensor Value", ballSensor.get());
     }
     
     private void handleArmStowed(StateMetadata<intakeState> meta){

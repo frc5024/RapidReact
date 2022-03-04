@@ -81,6 +81,9 @@ public final class Constants {
 
 		public static final int compressorID = 0;
 
+		public static final int RETRACTBALLSENSORID = 0;
+		public static final int HOLDBALLSENSORID = 1;
+
 
 	}
 
@@ -88,7 +91,7 @@ public final class Constants {
 	public static final class Climb{
 
 		// Create Climber Config and configured
-		public static final CTREConfig climbConfig = new CTREConfig(false, true, false, true, 33, 0, 30, 15, true);
+		public static final CTREConfig climbConfig = new CTREConfig(false, true, false, true, 36, 32, 10, 0, true);
 
 		// Create Smart Servo ID
 		public static final int smartServoChannel = 9;
@@ -97,8 +100,8 @@ public final class Constants {
 		public static final int climberID = 9;
 
 		// Hall effects for determining position
-		public static final int topHallEffectID = 30;
-		public static final int bottomHallEffectID = 29;
+		public static final int topHallEffectID = 6;
+		public static final int bottomHallEffectID = 2;
 		
 	}
 

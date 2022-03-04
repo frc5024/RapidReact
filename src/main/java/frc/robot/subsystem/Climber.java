@@ -2,13 +2,17 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
+import io.github.frc5024.lib5k.hardware.ctre.util.TalonHelper;
 import io.github.frc5024.lib5k.hardware.generic.sensors.HallEffect;
 import io.github.frc5024.lib5k.hardware.generic.servos.SmartServo;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
@@ -18,6 +22,8 @@ import io.github.frc5024.libkontrol.statemachines.StateMetadata;
  * Subsystem for controlling the climber
  */
 public class Climber extends SubsystemBase {
+
+	PowerDistribution pdp = new PowerDistribution(10, ModuleType.kCTRE);
 
     // Creating Instance
     private static Climber mInstance = null;
@@ -68,7 +74,7 @@ public class Climber extends SubsystemBase {
 
 		
         pullMotor = CTREMotorFactory.createTalonSRX(Constants.Climb.climberID, Constants.Climb.climbConfig);
-
+		//TalonHelper.configCurrentLimit(pullMotor, 35, 32, 15, 0);
 
         // climber release
         pin = new SmartServo(0);
@@ -76,8 +82,8 @@ public class Climber extends SubsystemBase {
 
         addChild("Release", pin);
 
-        bottomSensor = new HallEffect(Constants.Climb.bottomHallEffectID);
-        topSensor = new HallEffect(Constants.Climb.topHallEffectID);
+        bottomSensor = new HallEffect(2);
+        topSensor = new HallEffect(5);
 
 		climbDeployTimer = new Timer();
     }
@@ -86,6 +92,9 @@ public class Climber extends SubsystemBase {
     public void periodic() {
         stateMachine.update();
 		SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
+		SmartDashboard.putNumber("PDP Current", pdp.getCurrent(3));
+		SmartDashboard.putBoolean("Top Sensor", topSensor.get());
+		SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
     }
 
     private void handleIdle(StateMetadata<climberState> metadata) {
@@ -133,7 +142,7 @@ public class Climber extends SubsystemBase {
         // If done retracting stop the motor
         if (OI.getInstance().shouldRetractClimb()) {
 			//positive number for climb
-            pullMotor.set(.5);
+            pullMotor.set(.9);
         } else {
             pullMotor.stopMotor();
         }

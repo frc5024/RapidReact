@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.subsystem.RestrictedMotor.owner;
 import io.github.frc5024.lib5k.hardware.common.sensors.interfaces.CommonEncoder;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
@@ -110,6 +111,12 @@ public class Shooter extends SubsystemBase {
 		// Update statemachine
 		stateMachine.update();
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY", flywheelEncoder.getVelocity());
+		if(OI.getInstance().shouldFeed()){
+			feedMotor.obtain(owner.SHOOTER);
+			feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
+		}else{
+			feedMotor.set(0, owner.SHOOTER);
+		}
 	}
 
 	/**
@@ -169,9 +176,9 @@ public class Shooter extends SubsystemBase {
 
 		// set the motor until we are at the appropriate speed
 		//flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
-		flywheelMotor.set(.7);
+		flywheelMotor.set(.95);
 		// Switch to feeding
-		if (atTarget(targetRPM) || time.hasElapsed(5)) {
+		if (atTarget(targetRPM) || time.hasElapsed(3)) {
 			stateMachine.setState(shooterState.FEED);
 		}
 

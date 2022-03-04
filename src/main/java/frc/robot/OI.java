@@ -63,5 +63,8 @@ public class OI {
         return driverController.getXButton();
     }
 
+	public boolean shouldFeed(){
+		return driverController.getYButton();
+	}
 
 }
