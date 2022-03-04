@@ -94,11 +94,7 @@ public class Intake extends SubsystemBase {
         // Initialize Restricted Motor
         this.intakeMotor = RestrictedMotor.getInstance();
 
-		intakeCamera = new AutoCamera();
-
-		intakeCamera.keepCameraAwake(true);
-		intakeCamera.showCamera(true);
-
+		
         retractSensor = new LineBreak(1);
 
         ballSensor = new LineBreak(2);
@@ -121,7 +117,7 @@ public class Intake extends SubsystemBase {
     public void periodic(){
         // Update statemachine
         stateMachine.update();
-		
+
 		SmartDashboard.putBoolean("Ball Detected", hasBall);
 		SmartDashboard.putString("Intake State", stateMachine.getCurrentState().toString());
     }
