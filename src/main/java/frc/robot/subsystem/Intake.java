@@ -41,7 +41,11 @@ public class Intake extends SubsystemBase {
 
     private LineBreak ballSensor;
 
-	private Timer time = new Timer();
+	private boolean motorSpeedSet = false;
+	
+	private boolean hasBall;
+
+	private Timer extraRollTime;
 
     private enum intakeState{
         ARMSTOWED,
@@ -106,6 +110,10 @@ public class Intake extends SubsystemBase {
         stateMachine.addState(intakeState.INTAKING, this::handleIntaking);
 		stateMachine.addState(intakeState.SPINDOWN, this::handleSpinDown);
 
+		hasBall = false;
+
+		extraRollTime = new Timer();
+
     }
 
 
@@ -113,6 +121,9 @@ public class Intake extends SubsystemBase {
     public void periodic(){
         // Update statemachine
         stateMachine.update();
+		
+		SmartDashboard.putBoolean("Ball Detected", hasBall);
+		SmartDashboard.putString("Intake State", stateMachine.getCurrentState().toString());
     }
     
     private void handleArmStowed(StateMetadata<intakeState> meta){
@@ -125,35 +136,49 @@ public class Intake extends SubsystemBase {
 
 
     private void handleIntaking(StateMetadata<intakeState> meta){
-        RobotLogger.getInstance().log("Handling intake");
+        
         // Extend arms on first run
         if (meta.isFirstRun()) {
             intakeSolenoid.set(Value.kForward);
-			
+			motorSpeedSet = false;
         }
        
-
+		
         // Set the motor if we own it, otherwise try to claim it
-        if (intakeMotor.getCurrentOwner() == owner.INTAKE) {
-            intakeMotor.set(Constants.Intake.intakeSpeed, owner.INTAKE);
-            RobotLogger.getInstance().log("Own motor");
-        } else {
-            RobotLogger.getInstance().log("Do not own motor");
-            intakeMotor.obtain(owner.INTAKE);
-        }
-        
-        // If ball is detected then stow it with the arms
-        // if (retractSensor.get()) {
-        //     stateMachine.setState(intakeState.BALLSTOWED);
-        // }
+		if(motorSpeedSet){
+			if (intakeMotor.getCurrentOwner() != owner.INTAKE) {
+				RobotLogger.getInstance().log("Do not own motor");
+				intakeMotor.obtain(owner.INTAKE);
+			} else {
+				intakeMotor.set(Constants.Intake.intakeSpeed, owner.INTAKE);
+				RobotLogger.getInstance().log("Own motor");
+				motorSpeedSet = true;
+			}
+		}
+
+		// If ball is detected then stow it with the arms
+		if (retractSensor.get()) {
+			stateMachine.setState(intakeState.SPINDOWN);
+		}
+		
 		
 
     }
 
 	private void handleSpinDown(StateMetadata<intakeState> meta){
 		if(meta.isFirstRun()){
-
+			intakeSolenoid.set(Value.kReverse);
+			extraRollTime.reset();
+			extraRollTime.start();
 		}
+
+		if(extraRollTime.hasElapsed(3) || ballSensor.get()){
+			extraRollTime.stop();
+			stateMachine.setState(intakeState.ARMSTOWED);
+			hasBall = true;
+		}
+
+
 
 
 	}
@@ -163,7 +188,10 @@ public class Intake extends SubsystemBase {
      */
     public void intakeBall(){
         // If arms are stowed currently we want to change to intake state
-        stateMachine.setState(intakeState.INTAKING);
+		if(!hasBall){
+			stateMachine.setState(intakeState.INTAKING);
+		}
+        
         
 
     }

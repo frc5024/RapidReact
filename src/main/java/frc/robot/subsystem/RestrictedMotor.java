@@ -77,7 +77,7 @@ public class RestrictedMotor{
         }
 
 
-        logger.log("Attempted to free motor without ownership", Level.kWarning);  
+        logger.log("%s attempted to free motor without ownership", user, Level.kWarning);  
 
         return false;
     }
@@ -100,7 +100,7 @@ public class RestrictedMotor{
             return true;
         }
         
-        logger.log("Attempted to obtain motor illegally", Level.kWarning);  
+        logger.log("%s attempted to obtain motor illegally", user, Level.kWarning);  
 
         return false;
     }
