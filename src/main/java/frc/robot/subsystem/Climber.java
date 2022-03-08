@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
+import ca.retrylife.ewmath.MathUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
@@ -24,7 +25,7 @@ import io.github.frc5024.libkontrol.statemachines.StateMetadata;
  */
 public class Climber extends SubsystemBase {
 
-	PowerDistribution pdp = new PowerDistribution(10, ModuleType.kCTRE);
+	
 
 	// Creating Instance
 	private static Climber mInstance = null;
@@ -95,7 +96,7 @@ public class Climber extends SubsystemBase {
 	public void periodic() {
 		stateMachine.update();
 		SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
-		SmartDashboard.putNumber("PDP Current", pdp.getCurrent(3));
+	
 		SmartDashboard.putBoolean("Top Sensor", topSensor.get());
 		SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
 	}
@@ -155,6 +156,10 @@ public class Climber extends SubsystemBase {
 			pullMotor.setNeutralMode(NeutralMode.Coast);
 			pullMotor.set(0);
 		}
+	}
+
+	public void moveServo(){
+		pin.set(MathUtils.clamp(OI.getInstance().getSpeed() + .5, 0, 1));
 	}
 
 }

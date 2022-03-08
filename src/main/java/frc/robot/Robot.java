@@ -137,6 +137,6 @@ public class Robot extends RobotProgram {
 			// enable compressor when in test mode
 			Intake.getInstance().enableCompressor();
 		}
-		
+		Climber.getInstance().moveServo();
 	}
 }
