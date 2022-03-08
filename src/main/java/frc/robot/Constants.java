@@ -81,6 +81,9 @@ public final class Constants {
 
 		public static final int compressorID = 0;
 
+		public static final int retractSensorID = 1;
+		public static final int holdSensorID = 0;
+
 
 	}
 

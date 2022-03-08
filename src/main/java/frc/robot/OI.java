@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.XboxController;
 import io.github.frc5024.lib5k.utils.InputUtils;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystem.Intake;
 
 public class OI {
     private static OI mInstance = null;
@@ -62,6 +63,13 @@ public class OI {
     public boolean shouldIntake(){
         return driverController.getXButton();
     }
+
+	public void switchBallState(){
+		if(driverController.getLeftBumperPressed()){
+			Intake.getInstance().switchBallState();
+		}
+		
+	}
 
 
 }

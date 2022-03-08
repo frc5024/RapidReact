@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.OI;
 import frc.robot.commands.SubsystemCommands.IntakeCommand;
 import frc.robot.commands.SubsystemCommands.ShootCommand;
+import frc.robot.subsystem.Intake;
 
 public class OperatorCommand extends CommandBase {
     
@@ -41,7 +42,7 @@ public class OperatorCommand extends CommandBase {
             shootCommand.cancel();
         }
 
-        if(oi.shouldIntake()){
+        if(oi.shouldIntake() && Intake.getInstance().canIntake()){
             intakeCommand.schedule();
         }else{
             intakeCommand.cancel();
