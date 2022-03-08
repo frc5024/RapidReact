@@ -106,6 +106,8 @@ public class Climber extends SubsystemBase {
 		if (metadata.isFirstRun()) {
 			pullMotor.stopMotor();
 			pin.stop();
+			pin.set(.5);
+			
 		}
 
 		// If operator deploys switch to deploying

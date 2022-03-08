@@ -117,12 +117,7 @@ public class Shooter extends SubsystemBase {
 		stateMachine.update();
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY",  getShooterRPM());
 		SmartDashboard.putNumber("SHOOTER ROTATION", flywheelEncoder.getPosition());
-		// if(OI.getInstance().shouldFeed()){
-		// 	feedMotor.obtain(owner.SHOOTER);
-		// 	feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
-		// }else{
-		// 	feedMotor.set(0, owner.SHOOTER);
-		// }
+		
 	}
 
 	/**
@@ -182,11 +177,18 @@ public class Shooter extends SubsystemBase {
 
 		// set the motor until we are at the appropriate speed
 		//flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
-		flywheelMotor.set(.5); // was .95
+		flywheelMotor.set(.95); // was .95
 		// Switch to feeding
 		// if (atTarget(targetRPM) || time.hasElapsed(3)) {
 		// 	stateMachine.setState(shooterState.FEED);
 		// }
+
+		if(OI.getInstance().shouldFeed()){
+			feedMotor.obtain(owner.SHOOTER);
+			feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
+		}else{
+			feedMotor.free(owner.SHOOTER);
+		}
 
 	}
 
