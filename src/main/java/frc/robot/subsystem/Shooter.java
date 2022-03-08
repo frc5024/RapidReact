@@ -111,12 +111,12 @@ public class Shooter extends SubsystemBase {
 		// Update statemachine
 		stateMachine.update();
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY", flywheelEncoder.getVelocity());
-		if(OI.getInstance().shouldFeed()){
-			feedMotor.obtain(owner.SHOOTER);
-			feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
-		}else{
-			feedMotor.set(0, owner.SHOOTER);
-		}
+		// if(OI.getInstance().shouldFeed()){
+		// 	feedMotor.obtain(owner.SHOOTER);
+		// 	feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
+		// }else{
+		// 	feedMotor.set(0, owner.SHOOTER);
+		// }
 	}
 
 	/**
