@@ -49,6 +49,8 @@ public class Shooter extends SubsystemBase {
 
 	private Timer time = new Timer();
 
+	private Timer rpmClock;
+
 	private enum shooterState {
 		IDLE,
 		FEED,
@@ -87,6 +89,7 @@ public class Shooter extends SubsystemBase {
 		// // Setup flywheel encoder
 		this.flywheelEncoder = flywheelMotor.getCommonEncoder(Constants.Shooter.encoderTPR);
 		this.flywheelEncoder.setPhaseInverted(true);
+		this.flywheelEncoder.reset();
 
 		// // Get the shared motor instance
 		this.feedMotor = RestrictedMotor.getInstance();
@@ -104,13 +107,16 @@ public class Shooter extends SubsystemBase {
 		stateMachine.addState(shooterState.SPINNINGUP, this::handleSpinningUp);
 		stateMachine.addState(shooterState.FEED, this::handleFeeding);
 
+		rpmClock = new Timer();
+
 	}
 
 	@Override
 	public void periodic() {
 		// Update statemachine
 		stateMachine.update();
-		SmartDashboard.putNumber("FLYWHEEL VELOCITY", flywheelEncoder.getVelocity());
+		SmartDashboard.putNumber("FLYWHEEL VELOCITY",  getShooterRPM());
+		SmartDashboard.putNumber("SHOOTER ROTATION", flywheelEncoder.getPosition());
 		// if(OI.getInstance().shouldFeed()){
 		// 	feedMotor.obtain(owner.SHOOTER);
 		// 	feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
@@ -176,11 +182,11 @@ public class Shooter extends SubsystemBase {
 
 		// set the motor until we are at the appropriate speed
 		//flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
-		flywheelMotor.set(.95);
+		flywheelMotor.set(.5); // was .95
 		// Switch to feeding
-		if (atTarget(targetRPM) || time.hasElapsed(3)) {
-			stateMachine.setState(shooterState.FEED);
-		}
+		// if (atTarget(targetRPM) || time.hasElapsed(3)) {
+		// 	stateMachine.setState(shooterState.FEED);
+		// }
 
 	}
 
@@ -254,7 +260,7 @@ public class Shooter extends SubsystemBase {
 	 */
 	private double getShooterRPM() {
 
-		return flywheelEncoder.getVelocity() * 600;
+		return (flywheelEncoder.getVelocity() * 1000 / .001666) * .714;
 	}
 
 	/**
@@ -270,7 +276,7 @@ public class Shooter extends SubsystemBase {
 		if ((currentRPM > target - Constants.Shooter.shooterEpsilon)
 				&& (currentRPM < target + Constants.Shooter.shooterEpsilon)) {
 
-			logger.log("Flywheel at target RPM of: %d", Level.kRobot, String.valueOf(targetRPM));
+			logger.log("Flywheel at target RPM of: %s", Level.kRobot, targetRPM);
 
 			return true;
 		}
