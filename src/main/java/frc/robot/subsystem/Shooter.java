@@ -49,6 +49,8 @@ public class Shooter extends SubsystemBase {
 
 	private Timer time = new Timer();
 
+	private Timer rpmClock;
+
 	private enum shooterState {
 		IDLE,
 		FEED,
@@ -103,6 +105,8 @@ public class Shooter extends SubsystemBase {
 		stateMachine.addState(shooterState.TARGETING, this::handleTargeting);
 		stateMachine.addState(shooterState.SPINNINGUP, this::handleSpinningUp);
 		stateMachine.addState(shooterState.FEED, this::handleFeeding);
+
+		rpmClock = new Timer();
 
 	}
 
@@ -254,7 +258,7 @@ public class Shooter extends SubsystemBase {
 	 */
 	private double getShooterRPM() {
 
-		return flywheelEncoder.getVelocity() * 600;
+		return flywheelEncoder.getVelocity() * 600000;
 	}
 
 	/**
