@@ -108,7 +108,7 @@ public class Shooter extends SubsystemBase {
 		stateMachine.addState(shooterState.FEED, this::handleFeeding);
 
 		rpmClock = new Timer();
-
+		SmartDashboard.putBoolean("at Point", false);
 	}
 
 	@Override
@@ -117,7 +117,8 @@ public class Shooter extends SubsystemBase {
 		stateMachine.update();
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY",  getShooterRPM());
 		SmartDashboard.putNumber("SHOOTER ROTATION", flywheelEncoder.getPosition());
-		
+		SmartDashboard.putNumber("Shooter ERROR", shooterController.getPositionError());
+		SmartDashboard.putString("Shooter State", stateMachine.getCurrentState().toString());
 	}
 
 	/**
@@ -130,6 +131,7 @@ public class Shooter extends SubsystemBase {
 			if (feedMotor.getCurrentOwner() == owner.SHOOTER) {
 				feedMotor.free(owner.SHOOTER);
 			}
+			SmartDashboard.putBoolean("at Point", false);
 		}
 
 	}
@@ -147,7 +149,6 @@ public class Shooter extends SubsystemBase {
 
 		// Sets the motor until we are at target speed
 		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
-
 		// At target switch state to feed
 		
 		if (atTarget(Constants.Shooter.ejectSetSpeed) ) {
@@ -173,15 +174,19 @@ public class Shooter extends SubsystemBase {
 			time.reset();
 			time.start();
 			
+			shooterController.setTolerance(50, 5);
+			shooterController.setSetpoint(targetRPM);
 		}
 
 		// set the motor until we are at the appropriate speed
-		//flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
-		flywheelMotor.set(.95); // was .95
+		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
+		//System.out.println(String.format("RPM equal %.2f", getShooterRPM()));
+		//flywheelMotor.set(.65); // was .95
 		// Switch to feeding
-		// if (atTarget(targetRPM) || time.hasElapsed(3)) {
-		// 	stateMachine.setState(shooterState.FEED);
-		// }
+		if (shooterController.atSetpoint()) {
+			stateMachine.setState(shooterState.FEED);
+			SmartDashboard.putBoolean("at Point", true);
+		}
 
 		if(OI.getInstance().shouldFeed()){
 			feedMotor.obtain(owner.SHOOTER);
@@ -196,7 +201,7 @@ public class Shooter extends SubsystemBase {
 	 * Method for feeding balls into the shooter
 	 */
 	private void handleFeeding(StateMetadata<shooterState> metaData) {
-		feedMotor.free(owner.INTAKE);
+		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
 		// If we are the owner, start spinning the ball
 		if (feedMotor.getCurrentOwner() == owner.SHOOTER) {
 			
@@ -208,6 +213,8 @@ public class Shooter extends SubsystemBase {
 			feedMotor.obtain(owner.SHOOTER);
 
 		}
+
+		
 
 	}
 

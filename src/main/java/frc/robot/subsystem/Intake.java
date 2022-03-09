@@ -229,9 +229,13 @@ public class Intake extends SubsystemBase {
      */
     public boolean hasBallStored() {
         // return the ball sensor's reading
-        return ballSensor.get();
+        return hasBall;
 
     }
+
+	public boolean ballSensorReading(){
+		return ballSensor.get();
+	}
 
 	public boolean canIntake(){
 		return !retractSensor.get() && !(stateMachine.getCurrentState() == intakeState.SPINDOWN) && !hasBall;
