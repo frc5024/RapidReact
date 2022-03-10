@@ -41,8 +41,6 @@ public class Intake extends SubsystemBase {
     private LineBreak retractSensor;
 
     private LineBreak ballSensor;
-
-	private boolean motorSpeedSet = false;
 	
 	private boolean hasBall;
 
@@ -125,11 +123,7 @@ public class Intake extends SubsystemBase {
 
 		SmartDashboard.putBoolean("Ball Detected", hasBall);
 		SmartDashboard.putString("Intake State", stateMachine.getCurrentState().toString());
-		OI.getInstance().switchBallState();
-
-		if(retractSensor.get()){
-			hasBall = true;
-		}
+		
     }
     
     private void handleArmStowed(StateMetadata<intakeState> meta){
@@ -146,19 +140,15 @@ public class Intake extends SubsystemBase {
         // Extend arms on first run
         if (meta.isFirstRun()) {
             intakeSolenoid.set(Value.kForward);
-			motorSpeedSet = false;
+			
         }
        
 		
         // Set the motor if we own it, otherwise try to claim it
-		
 		if (intakeMotor.getCurrentOwner() != owner.INTAKE) {
-				RobotLogger.getInstance().log("Do not own motor");
 				intakeMotor.obtain(owner.INTAKE);
 		} else {
 				intakeMotor.set(Constants.Intake.intakeSpeed, owner.INTAKE);
-				RobotLogger.getInstance().log("Own motor");
-				motorSpeedSet = true;
 		}
 		
 
@@ -178,19 +168,19 @@ public class Intake extends SubsystemBase {
 			extraRollTime.start();
 		}
 
-		if(extraRollTime.hasElapsed(2) || ballSensor.get()){
+		if(ballSensor.get()){
 			extraRollTime.stop();
 			stateMachine.setState(intakeState.ARMSTOWED);
 			hasBall = true;
+		} else if(extraRollTime.hasElapsed(2)){
+			extraRollTime.stop();
+			stateMachine.setState(intakeState.ARMSTOWED);
 		}
 
 		if (intakeMotor.getCurrentOwner() != owner.INTAKE) {
-			RobotLogger.getInstance().log("Do not own motor");
 			intakeMotor.obtain(owner.INTAKE);
 		} else {
 			intakeMotor.set(.2, owner.INTAKE);
-			RobotLogger.getInstance().log("Own motor");
-			motorSpeedSet = true;
 	}
 
 
@@ -202,12 +192,7 @@ public class Intake extends SubsystemBase {
      */
     public void intakeBall(){
         // If arms are stowed currently we want to change to intake state
-		if(!hasBall){
-			stateMachine.setState(intakeState.INTAKING);
-		}
-        
-        
-
+		stateMachine.setState(intakeState.INTAKING);
     }
 
     /** 
@@ -253,6 +238,9 @@ public class Intake extends SubsystemBase {
 		return !retractSensor.get() && !(stateMachine.getCurrentState() == intakeState.SPINDOWN) && !hasBall;
 	}
 
+	public void setHasBall(boolean hasBall){
+		this.hasBall = hasBall;
+	}
 
     /**
      * Method that disables the compressor
@@ -273,16 +261,6 @@ public class Intake extends SubsystemBase {
      */
     public void forceArmStowed() {
         stateMachine.setState(intakeState.ARMSTOWED);
-    }
-
-	
-
-
-    /**
-     * Method to force change state to INTAKING
-     */
-    public void forceIntaking() {
-        stateMachine.setState(intakeState.INTAKING);
     }
 
 	public void switchBallState(){

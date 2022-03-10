@@ -49,7 +49,7 @@ public class Shooter extends SubsystemBase {
 
 	private Timer time = new Timer();
 
-	private Timer rpmClock;
+	private Timer extraSpinTimer;
 
 	private enum shooterState {
 		IDLE,
@@ -84,7 +84,7 @@ public class Shooter extends SubsystemBase {
 		// // Initialize flywheel motor
 		this.flywheelMotor = CTREMotorFactory.createTalonFX(Constants.Shooter.flyWheelID,
 				Constants.Shooter.flywheelConfig);
-			flywheelMotor.setInverted(true);
+		flywheelMotor.setInverted(true);
 
 		// // Setup flywheel encoder
 		this.flywheelEncoder = flywheelMotor.getCommonEncoder(Constants.Shooter.encoderTPR);
@@ -107,7 +107,7 @@ public class Shooter extends SubsystemBase {
 		stateMachine.addState(shooterState.SPINNINGUP, this::handleSpinningUp);
 		stateMachine.addState(shooterState.FEED, this::handleFeeding);
 
-		rpmClock = new Timer();
+		extraSpinTimer = new Timer();
 		SmartDashboard.putBoolean("at Point", false);
 	}
 
@@ -115,10 +115,7 @@ public class Shooter extends SubsystemBase {
 	public void periodic() {
 		// Update statemachine
 		stateMachine.update();
-		SmartDashboard.putNumber("FLYWHEEL VELOCITY",  getShooterRPM());
-		SmartDashboard.putNumber("SHOOTER ROTATION", flywheelEncoder.getPosition());
-		SmartDashboard.putNumber("Shooter ERROR", shooterController.getPositionError());
-		SmartDashboard.putString("Shooter State", stateMachine.getCurrentState().toString());
+		SmartDashboard.putNumber("FLYWHEEL VELOCITY", getShooterRPM());
 	}
 
 	/**
@@ -131,7 +128,6 @@ public class Shooter extends SubsystemBase {
 			if (feedMotor.getCurrentOwner() == owner.SHOOTER) {
 				feedMotor.free(owner.SHOOTER);
 			}
-			SmartDashboard.putBoolean("at Point", false);
 		}
 
 	}
@@ -143,15 +139,13 @@ public class Shooter extends SubsystemBase {
 		if (metaData.isFirstRun()) {
 			// Clears controller
 			shooterController.reset();
-			time.reset();
-			time.start();
 		}
 
 		// Sets the motor until we are at target speed
 		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
 		// At target switch state to feed
-		
-		if (atTarget(Constants.Shooter.ejectSetSpeed) ) {
+
+		if (atTarget(Constants.Shooter.ejectSetSpeed)) {
 			stateMachine.setState(shooterState.FEED);
 		}
 	}
@@ -171,27 +165,24 @@ public class Shooter extends SubsystemBase {
 		if (metaData.isFirstRun()) {
 			// Clears controller
 			shooterController.reset();
-			time.reset();
-			time.start();
-			
+
 			shooterController.setTolerance(50, 5);
 			shooterController.setSetpoint(targetRPM);
 		}
 
 		// set the motor until we are at the appropriate speed
 		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
-		//System.out.println(String.format("RPM equal %.2f", getShooterRPM()));
-		//flywheelMotor.set(.65); // was .95
+
 		// Switch to feeding
 		if (shooterController.atSetpoint()) {
 			stateMachine.setState(shooterState.FEED);
 			SmartDashboard.putBoolean("at Point", true);
 		}
 
-		if(OI.getInstance().shouldFeed()){
+		if (OI.getInstance().shouldFeed()) {
 			feedMotor.obtain(owner.SHOOTER);
 			feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
-		}else{
+		} else {
 			feedMotor.free(owner.SHOOTER);
 		}
 
@@ -201,10 +192,14 @@ public class Shooter extends SubsystemBase {
 	 * Method for feeding balls into the shooter
 	 */
 	private void handleFeeding(StateMetadata<shooterState> metaData) {
+		if (metaData.isFirstRun()) {
+			extraSpinTimer.reset();
+		}
+
 		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
 		// If we are the owner, start spinning the ball
 		if (feedMotor.getCurrentOwner() == owner.SHOOTER) {
-			
+
 			feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
 
 		} else {
@@ -214,7 +209,16 @@ public class Shooter extends SubsystemBase {
 
 		}
 
-		
+		if (!Intake.getInstance().ballSensorReading()) {
+			extraSpinTimer.start();
+		}
+
+		if (extraSpinTimer.hasElapsed(1)) {
+			extraSpinTimer.stop();
+			Intake.getInstance().setHasBall(false);
+			stateMachine.setState(shooterState.IDLE);
+
+		}
 
 	}
 
@@ -254,7 +258,8 @@ public class Shooter extends SubsystemBase {
 	 * @return if the system is finished shooting
 	 */
 	public boolean isDoneShooting() {
-		if (stateMachine.getCurrentState() == shooterState.FEED && !Intake.getInstance().hasBallStored()) {
+		if ((stateMachine.getCurrentState() == shooterState.FEED || stateMachine.getCurrentState() == shooterState.IDLE)
+				&& !Intake.getInstance().hasBallStored()) {
 			return true;
 		}
 
