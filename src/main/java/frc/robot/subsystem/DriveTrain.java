@@ -58,6 +58,7 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 		rightMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.rightMaster,
 				Constants.DriveTrain.rightSideConfig);
 		rightSlave = rightMaster.makeSlave(Constants.DriveTrain.rightSlave);
+		
 
 		rightMaster.setInverted(true);
 		rightSlave.setInverted(true);
@@ -164,4 +165,11 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 		leftMaster.configOpenloopRamp(rampTimeSeconds);
 	}
 
+	/**
+	 * 
+	 */
+	public void setSpeed(double leftSpeed, double rightSpeed){
+		rightMaster.set(rightSpeed);
+		leftMaster.set(leftSpeed);
+	}
 }

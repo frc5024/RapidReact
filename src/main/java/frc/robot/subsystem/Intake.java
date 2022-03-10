@@ -116,11 +116,12 @@ public class Intake extends SubsystemBase {
     public void periodic(){
         // Update statemachine
         stateMachine.update();
-
-
+		
+		OI.getInstance().switchBallState();
 		SmartDashboard.putBoolean("Top Line Break", ballSensor.get());
 		SmartDashboard.putBoolean("Bottom Line Break", retractSensor.get());
 
+		SmartDashboard.putBoolean("PRESSURE LOW", compressor.getPressureSwitchValue());
 		SmartDashboard.putBoolean("Ball Detected", hasBall);
 		SmartDashboard.putString("Intake State", stateMachine.getCurrentState().toString());
 		

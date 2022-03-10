@@ -78,7 +78,6 @@ public class Climber extends SubsystemBase {
 		pullMotor.configSupplyCurrentLimit(
 				new SupplyCurrentLimitConfiguration(true, Constants.Climb.climbConfig.peakAmps,
 						Constants.Climb.climbConfig.holdAmps, 1));
-		// TalonHelper.configCurrentLimit(pullMotor, 35, 32, 15, 0);
 
 		// climber release
 		pin = new SmartServo(0);
@@ -86,8 +85,7 @@ public class Climber extends SubsystemBase {
 
 		addChild("Release", pin);
 
-		bottomSensor = new HallEffect(2);
-		topSensor = new HallEffect(5);
+		bottomSensor = new HallEffect(7);
 
 		climbDeployTimer = new Timer();
 	}
@@ -135,16 +133,10 @@ public class Climber extends SubsystemBase {
 
 	private void handleRetracting(StateMetadata<climberState> metadata) {
 		// If the bottom sensor tells us we are off the ground stop the motor
-		// if (bottomSensor.get()) {
-		// pullMotor.set(0);
-		// stateMachine.setState(climberState.FinishClimb);
-		// return;
-		// }
 
-		// Fuck the sensors for the time being
 
 		// If done retracting stop the motor
-		if (OI.getInstance().shouldRetractClimb()) {
+		if (OI.getInstance().shouldRetractClimb() && !bottomSensor.get()) {
 			// positive number for climb
 			pullMotor.set(.9);
 		} else {

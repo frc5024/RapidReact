@@ -5,6 +5,7 @@ import frc.robot.OI;
 import frc.robot.commands.SubsystemCommands.IntakeCommand;
 import frc.robot.commands.SubsystemCommands.ShootCommand;
 import frc.robot.subsystem.Intake;
+import frc.robot.subsystem.Shooter;
 
 public class OperatorCommand extends CommandBase {
     
@@ -36,7 +37,7 @@ public class OperatorCommand extends CommandBase {
      */
     @Override
     public void execute() {
-        if(oi.shouldShoot()){
+        if(oi.shouldShoot() && !Shooter.getInstance().isDoneShooting()){
             shootCommand.schedule();
         }else{
             shootCommand.cancel();

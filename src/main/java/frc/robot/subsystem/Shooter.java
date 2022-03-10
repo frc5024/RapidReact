@@ -2,7 +2,6 @@ package frc.robot.subsystem;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,9 +11,6 @@ import frc.robot.subsystem.RestrictedMotor.owner;
 import io.github.frc5024.lib5k.hardware.common.sensors.interfaces.CommonEncoder;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonFX;
-import io.github.frc5024.lib5k.hardware.generic.sensors.LineBreak;
-import io.github.frc5024.lib5k.hardware.revrobotics.motors.ExtendedSparkMax;
-import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevMotorFactory;
 import io.github.frc5024.lib5k.logging.RobotLogger;
 import io.github.frc5024.lib5k.logging.RobotLogger.Level;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
@@ -43,18 +39,15 @@ public class Shooter extends SubsystemBase {
 	private CommonEncoder flywheelEncoder;
 
 	// Value for the target rpm
-	private double targetRPM = Constants.Shooter.shootingTargetRPM;
+	private double targetRPM;
 
 	private PIDController shooterController;
-
-	private Timer time = new Timer();
 
 	private Timer extraSpinTimer;
 
 	private enum shooterState {
 		IDLE,
 		FEED,
-		EJECTING,
 		SPINNINGUP,
 		TARGETING
 	}
@@ -102,10 +95,11 @@ public class Shooter extends SubsystemBase {
 		stateMachine = new StateMachine<>("Shooter");
 
 		stateMachine.setDefaultState(shooterState.IDLE, this::handleIdle);
-		stateMachine.addState(shooterState.EJECTING, this::handleEjecting);
 		stateMachine.addState(shooterState.TARGETING, this::handleTargeting);
 		stateMachine.addState(shooterState.SPINNINGUP, this::handleSpinningUp);
 		stateMachine.addState(shooterState.FEED, this::handleFeeding);
+
+		targetRPM = Constants.Shooter.lineShotTargetRPM;
 
 		extraSpinTimer = new Timer();
 		SmartDashboard.putBoolean("at Point", false);
@@ -115,7 +109,10 @@ public class Shooter extends SubsystemBase {
 	public void periodic() {
 		// Update statemachine
 		stateMachine.update();
+		OI.getInstance().setShooterSetpoint();
+		SmartDashboard.putNumber("Target Speed", targetRPM);
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY", getShooterRPM());
+		SmartDashboard.putString("SHOOTER STATE", stateMachine.getCurrentState().toString());
 	}
 
 	/**
@@ -130,24 +127,6 @@ public class Shooter extends SubsystemBase {
 			}
 		}
 
-	}
-
-	/**
-	 * Method ran while ejecting
-	 */
-	private void handleEjecting(StateMetadata<shooterState> metaData) {
-		if (metaData.isFirstRun()) {
-			// Clears controller
-			shooterController.reset();
-		}
-
-		// Sets the motor until we are at target speed
-		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
-		// At target switch state to feed
-
-		if (atTarget(Constants.Shooter.ejectSetSpeed)) {
-			stateMachine.setState(shooterState.FEED);
-		}
 	}
 
 	/**
@@ -172,18 +151,11 @@ public class Shooter extends SubsystemBase {
 
 		// set the motor until we are at the appropriate speed
 		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
-
+		
 		// Switch to feeding
 		if (shooterController.atSetpoint()) {
 			stateMachine.setState(shooterState.FEED);
 			SmartDashboard.putBoolean("at Point", true);
-		}
-
-		if (OI.getInstance().shouldFeed()) {
-			feedMotor.obtain(owner.SHOOTER);
-			feedMotor.set(Constants.Shooter.beltFeedSpeed, owner.SHOOTER);
-		} else {
-			feedMotor.free(owner.SHOOTER);
 		}
 
 	}
@@ -213,20 +185,13 @@ public class Shooter extends SubsystemBase {
 			extraSpinTimer.start();
 		}
 
-		if (extraSpinTimer.hasElapsed(1)) {
+		if (extraSpinTimer.hasElapsed(3)) {
 			extraSpinTimer.stop();
 			Intake.getInstance().setHasBall(false);
 			stateMachine.setState(shooterState.IDLE);
 
 		}
 
-	}
-
-	/**
-	 * Method that sets the state to eject the ball from the shooter
-	 */
-	public void eject() {
-		stateMachine.setState(shooterState.EJECTING);
 	}
 
 	/**
@@ -277,26 +242,8 @@ public class Shooter extends SubsystemBase {
 		return (flywheelEncoder.getVelocity() * 1000 / .001666) * .714;
 	}
 
-	/**
-	 * Check if our shooter speed is with our targets epsilon
-	 * 
-	 * @return if we are within the epsilon of our target
-	 */
-	private boolean atTarget(double target) {
-
-		double currentRPM = getShooterRPM();
-
-		// Check if our RPM is within epsilon
-		if ((currentRPM > target - Constants.Shooter.shooterEpsilon)
-				&& (currentRPM < target + Constants.Shooter.shooterEpsilon)) {
-
-			logger.log("Flywheel at target RPM of: %s", Level.kRobot, targetRPM);
-
-			return true;
-		}
-
-		return false;
-
+	public void setTargetRPM(double newRPM) {
+		targetRPM = newRPM;
 	}
 
 }
