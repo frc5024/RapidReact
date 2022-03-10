@@ -126,6 +126,10 @@ public class Intake extends SubsystemBase {
 		SmartDashboard.putBoolean("Ball Detected", hasBall);
 		SmartDashboard.putString("Intake State", stateMachine.getCurrentState().toString());
 		OI.getInstance().switchBallState();
+
+		if(retractSensor.get()){
+			hasBall = true;
+		}
     }
     
     private void handleArmStowed(StateMetadata<intakeState> meta){
@@ -174,12 +178,20 @@ public class Intake extends SubsystemBase {
 			extraRollTime.start();
 		}
 
-		if(extraRollTime.hasElapsed(1) || ballSensor.get()){
+		if(extraRollTime.hasElapsed(2) || ballSensor.get()){
 			extraRollTime.stop();
 			stateMachine.setState(intakeState.ARMSTOWED);
 			hasBall = true;
 		}
 
+		if (intakeMotor.getCurrentOwner() != owner.INTAKE) {
+			RobotLogger.getInstance().log("Do not own motor");
+			intakeMotor.obtain(owner.INTAKE);
+		} else {
+			intakeMotor.set(.2, owner.INTAKE);
+			RobotLogger.getInstance().log("Own motor");
+			motorSpeedSet = true;
+	}
 
 
 

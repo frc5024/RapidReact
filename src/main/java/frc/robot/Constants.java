@@ -136,7 +136,7 @@ public final class Constants {
 
 
 		// Target RPM TODO placeholder value
-		public static final double shootingTargetRPM = 3100;
+		public static final double shootingTargetRPM = 2800;
 
 		
 
