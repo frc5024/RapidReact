@@ -103,6 +103,7 @@ public class Shooter extends SubsystemBase {
 
 		extraSpinTimer = new Timer();
 		SmartDashboard.putBoolean("at Point", false);
+		
 	}
 
 	@Override

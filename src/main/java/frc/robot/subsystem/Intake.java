@@ -105,7 +105,7 @@ public class Intake extends SubsystemBase {
         stateMachine.addState(intakeState.INTAKING, this::handleIntaking);
 		stateMachine.addState(intakeState.SPINDOWN, this::handleSpinDown);
 
-		hasBall = false;
+		hasBall = true;
 
 		extraRollTime = new Timer();
 

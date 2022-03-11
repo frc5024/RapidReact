@@ -18,7 +18,7 @@ public class ShootMove implements AutonomousSequence{
 
     @Override
     public String getName() {
-        return "Test Drive one meter";
+        return "Shoot Return";
     }
 
     @Override
