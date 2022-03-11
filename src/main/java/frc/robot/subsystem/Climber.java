@@ -5,8 +5,11 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 import ca.retrylife.ewmath.MathUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,10 +18,12 @@ import frc.robot.OI;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
 import io.github.frc5024.lib5k.hardware.ctre.util.TalonHelper;
+import io.github.frc5024.lib5k.hardware.generic.pneumatics.LazySolenoid;
 import io.github.frc5024.lib5k.hardware.generic.sensors.HallEffect;
 import io.github.frc5024.lib5k.hardware.generic.servos.SmartServo;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
 import io.github.frc5024.libkontrol.statemachines.StateMetadata;
+
 
 /*
  * Subsystem for controlling the climber
@@ -37,7 +42,7 @@ public class Climber extends SubsystemBase {
 
 	// Creating Motors and Sensors
 	private ExtendedTalonSRX pullMotor;
-	private SmartServo pin;
+	private DoubleSolenoid pin;
 
 	private HallEffect bottomSensor;
 	private HallEffect topSensor;
@@ -81,13 +86,9 @@ public class Climber extends SubsystemBase {
 		// TalonHelper.configCurrentLimit(pullMotor, 35, 32, 15, 0);
 
 		// climber release
-		pin = new SmartServo(0);
-		pin.stop();
+		pin = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
 
-		addChild("Release", pin);
-
-		bottomSensor = new HallEffect(2);
-		topSensor = new HallEffect(5);
+		bottomSensor = new HallEffect(7);
 
 		climbDeployTimer = new Timer();
 	}
@@ -97,7 +98,6 @@ public class Climber extends SubsystemBase {
 		stateMachine.update();
 		SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
 	
-		SmartDashboard.putBoolean("Top Sensor", topSensor.get());
 		SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
 	}
 
@@ -105,8 +105,6 @@ public class Climber extends SubsystemBase {
 		// Stop Motor and Pin if climber is not in use
 		if (metadata.isFirstRun()) {
 			pullMotor.stopMotor();
-			pin.stop();
-			pin.set(.5);
 			
 		}
 
@@ -120,14 +118,16 @@ public class Climber extends SubsystemBase {
 	private void handleDeploying(StateMetadata<climberState> metadata) {
 		if (metadata.isFirstRun()) {
 			// Release pin to send climber up
-			pin.rip();
+			pin.set(Value.kReverse);;
+			climbDeployTimer.reset();
+			climbDeployTimer.start();
 		}
 
 		// Switch to retracting state once sensor tells us we are in the right spot
 		// Stop the pin at the same time
-		if (topSensor.get() || climbDeployTimer.get() > 3) {
+		if (climbDeployTimer.get() > 3) {
 			climbDeployTimer.stop();
-			pin.stop();
+			
 			stateMachine.setState(climberState.Retracting);
 		}
 
@@ -144,11 +144,16 @@ public class Climber extends SubsystemBase {
 		// Fuck the sensors for the time being
 
 		// If done retracting stop the motor
-		if (OI.getInstance().shouldRetractClimb()) {
+		if (OI.getInstance().shouldRetractClimb() && !bottomSensor.get()) {
 			// positive number for climb
 			pullMotor.set(.9);
 		} else {
 			pullMotor.stopMotor();
+		}
+
+		if(bottomSensor.get()){
+			pullMotor.stopMotor();
+			stateMachine.setState(climberState.FinishClimb);
 		}
 	}
 
@@ -157,11 +162,9 @@ public class Climber extends SubsystemBase {
 		if (metadata.isFirstRun()) {
 			pullMotor.setNeutralMode(NeutralMode.Coast);
 			pullMotor.set(0);
+			pullMotor.stopMotor();
 		}
 	}
 
-	public void moveServo(){
-		pin.set(MathUtils.clamp(OI.getInstance().getSpeed() + .5, 0, 1));
-	}
 
 }
