@@ -54,6 +54,8 @@ public class Shooter extends SubsystemBase {
 
 	private StateMachine<shooterState> stateMachine;
 
+	private boolean isDoneShooting = false;
+
 	/**
 	 * Gets the instance for the shooter
 	 * 
@@ -122,6 +124,7 @@ public class Shooter extends SubsystemBase {
 	private void handleIdle(StateMetadata<shooterState> metaData) {
 		if (metaData.isFirstRun()) {
 			flywheelMotor.set(0);
+			isDoneShooting = false;
 
 			if (feedMotor.getCurrentOwner() == owner.SHOOTER) {
 				feedMotor.free(owner.SHOOTER);
@@ -189,7 +192,7 @@ public class Shooter extends SubsystemBase {
 		if (extraSpinTimer.hasElapsed(3)) {
 			extraSpinTimer.stop();
 			stateMachine.setState(shooterState.IDLE);
-
+			isDoneShooting = true;
 		}
 
 	}
@@ -200,6 +203,8 @@ public class Shooter extends SubsystemBase {
 	public void shootBall() {
 		stateMachine.setState(shooterState.TARGETING);
 	}
+
+	
 
 	/**
 	 * Returns the system to idle
@@ -223,11 +228,7 @@ public class Shooter extends SubsystemBase {
 	 * @return if the system is finished shooting
 	 */
 	public boolean isDoneShooting() {
-		if (stateMachine.getCurrentState() == shooterState.FEED) {
-			return true;
-		}
-
-		return false;
+		return isDoneShooting;
 
 	}
 

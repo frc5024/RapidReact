@@ -11,7 +11,7 @@ public class RollBack extends CommandBase{
 
 	@Override
 	public void execute() {
-		DriveTrain.getInstance().setSpeed(-5, -5);
+		DriveTrain.getInstance().setSpeed(-.5, -.5);
 	}
 
 	@Override
