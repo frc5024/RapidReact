@@ -166,5 +166,8 @@ public class Climber extends SubsystemBase {
 		}
 	}
 
+	public void setIdle(){
+		stateMachine.setState(climberState.Idle);
+	}
 
 }
