@@ -135,8 +135,16 @@ public final class Constants {
 		public static final double beltFeedSpeed = .8;
 
 
-		// Target RPM TODO placeholder value
-		public static final double shootingTargetRPM = 2800;
+		// Target RPMs
+
+		// Eject/Low Goal
+		public static final double lowGoalTargetRPM = 1200;
+
+		// Close Shoot
+		public static final double closeTargetRPM = 2800;
+
+		// Line Shot 
+		public static final double lineShotTargetRPM = 3100;
 
 		
 

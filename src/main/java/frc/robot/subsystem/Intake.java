@@ -119,8 +119,8 @@ public class Intake extends SubsystemBase {
     public void periodic(){
         // Update statemachine
         stateMachine.update();
-
-
+		
+		
 		SmartDashboard.putBoolean("Top Line Break", ballSensor.get());
 		SmartDashboard.putBoolean("Bottom Line Break", retractSensor.get());
 

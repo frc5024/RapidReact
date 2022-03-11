@@ -1,9 +1,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import io.github.frc5024.lib5k.logging.RobotLogger;
 import io.github.frc5024.lib5k.utils.InputUtils;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystem.Intake;
+import frc.robot.subsystem.Shooter;
 
 public class OI {
     private static OI mInstance = null;
@@ -35,7 +37,6 @@ public class OI {
         double speed = 0;
         speed += driverController.getRightTriggerAxis();
         speed -= driverController.getLeftTriggerAxis();
-		SmartDashboard.putNumber("Speed", speed);
         return speed;
     }
     
@@ -48,8 +49,7 @@ public class OI {
 
 
     public boolean shouldShoot(){
-        return driverController.getAButton();
-		// preventing null pointers
+        return driverController.getYButton();
     }
 
     public boolean shouldClimbDeploy(){
@@ -61,17 +61,36 @@ public class OI {
     }
 
     public boolean shouldIntake(){
-        return driverController.getXButton();
+        return driverController.getAButton();
     }
 
-	public boolean shouldFeed(){
-		return driverController.getYButton();
-	}
 	
 	public void toggleManualOveride(){
 		if(driverController.getLeftBumperPressed()){
 			Intake.getInstance().toggleManualOveride();
 		}
+		
+	}
+
+	public void setShooterSetpoint(){
+		switch (driverController.getPOV()) {
+			case 270:
+				Shooter.getInstance().setTargetRPM(Constants.Shooter.lowGoalTargetRPM);
+				RobotLogger.getInstance().log("Setting target RPM to: %.2f", Constants.Shooter.lowGoalTargetRPM);
+				break;
+			case 0:
+				Shooter.getInstance().setTargetRPM(Constants.Shooter.closeTargetRPM);
+				RobotLogger.getInstance().log("Setting target RPM to: %.2f", Constants.Shooter.closeTargetRPM);
+				break;
+			case 90:
+				Shooter.getInstance().setTargetRPM(Constants.Shooter.lineShotTargetRPM);
+				RobotLogger.getInstance().log("Setting target RPM to: %.2f", Constants.Shooter.lineShotTargetRPM);
+				break;
+		
+			default:
+				break;
+		}
+
 		
 	}
 
