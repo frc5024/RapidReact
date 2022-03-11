@@ -68,9 +68,9 @@ public class OI {
 		return driverController.getYButton();
 	}
 	
-	public void switchBallState(){
+	public void toggleManualOveride(){
 		if(driverController.getLeftBumperPressed()){
-			Intake.getInstance().switchBallState();
+			Intake.getInstance().toggleManualOveride();
 		}
 		
 	}

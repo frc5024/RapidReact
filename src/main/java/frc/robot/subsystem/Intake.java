@@ -42,7 +42,9 @@ public class Intake extends SubsystemBase {
 
     private LineBreak ballSensor;
 	
-	private boolean hasBall;
+	private boolean manualOveride;
+
+	private boolean spindownFinished;
 
 	private Timer extraRollTime;
 
@@ -105,7 +107,7 @@ public class Intake extends SubsystemBase {
         stateMachine.addState(intakeState.INTAKING, this::handleIntaking);
 		stateMachine.addState(intakeState.SPINDOWN, this::handleSpinDown);
 
-		hasBall = false;
+		manualOveride = false;
 
 		extraRollTime = new Timer();
 
@@ -121,7 +123,7 @@ public class Intake extends SubsystemBase {
 		SmartDashboard.putBoolean("Top Line Break", ballSensor.get());
 		SmartDashboard.putBoolean("Bottom Line Break", retractSensor.get());
 
-		SmartDashboard.putBoolean("Ball Detected", hasBall);
+		SmartDashboard.putBoolean("Overide Enable", manualOveride);
 		SmartDashboard.putString("Intake State", stateMachine.getCurrentState().toString());
 		
     }
@@ -129,7 +131,8 @@ public class Intake extends SubsystemBase {
     private void handleArmStowed(StateMetadata<intakeState> meta){
         // Stow arms on first run
         if (meta.isFirstRun()) {
-            retractArms();
+			intakeSolenoid.set(Value.kReverse);
+			intakeMotor.free(owner.INTAKE);
         }
         
     }
@@ -171,7 +174,7 @@ public class Intake extends SubsystemBase {
 		if(ballSensor.get()){
 			extraRollTime.stop();
 			stateMachine.setState(intakeState.ARMSTOWED);
-			hasBall = true;
+
 		} else if(extraRollTime.hasElapsed(2)){
 			extraRollTime.stop();
 			stateMachine.setState(intakeState.ARMSTOWED);
@@ -203,31 +206,12 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * Method to retract arms and free motor
-     */
-    private void retractArms() {
-        intakeSolenoid.set(Value.kReverse);
-        intakeMotor.free(owner.INTAKE);
-        
-    }
-
-    /**
      * Method that checks if a ball is detected
      * and returns a boolean for if the arms should retract
      */
     public boolean shouldRetract() {
         // return sensor reading
         return retractSensor.get();
-    }
-
-    /**
-     * Method that returns if a ball 
-     * is detected by the line break sensor
-     */
-    public boolean hasBallStored() {
-        // return the ball sensor's reading
-        return hasBall;
-
     }
 
 	public boolean ballSensorReading(){
@@ -238,8 +222,8 @@ public class Intake extends SubsystemBase {
 		return !retractSensor.get() && !(stateMachine.getCurrentState() == intakeState.SPINDOWN) && !hasBall;
 	}
 
-	public void setHasBall(boolean hasBall){
-		this.hasBall = hasBall;
+	public boolean intakeFinished(){
+		return 
 	}
 
     /**
@@ -263,8 +247,8 @@ public class Intake extends SubsystemBase {
         stateMachine.setState(intakeState.ARMSTOWED);
     }
 
-	public void switchBallState(){
-		hasBall = !hasBall;
+	public void toggleManualOveride(){
+		manualOveride = !manualOveride;
 	}
 	
 

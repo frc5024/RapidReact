@@ -5,8 +5,6 @@ import frc.robot.subsystem.Intake;
 
 public class IntakeCommand extends CommandBase {
     
-    private boolean sensorTrip = false;
-    
     @Override
     public void initialize() {
         Intake.getInstance().intakeBall();
