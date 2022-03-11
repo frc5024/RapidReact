@@ -93,10 +93,10 @@ public class Climber extends SubsystemBase {
 	@Override
 	public void periodic() {
 		stateMachine.update();
-		SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
+		// SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
 	
-		SmartDashboard.putBoolean("Top Sensor", topSensor.get());
-		SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
+		// SmartDashboard.putBoolean("Top Sensor", topSensor.get());
+		// SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
 	}
 
 	private void handleIdle(StateMetadata<climberState> metadata) {
