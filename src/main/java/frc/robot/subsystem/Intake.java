@@ -108,6 +108,7 @@ public class Intake extends SubsystemBase {
 		stateMachine.addState(intakeState.SPINDOWN, this::handleSpinDown);
 
 		manualOveride = false;
+		spindownFinished = false;
 
 		extraRollTime = new Timer();
 
@@ -133,6 +134,7 @@ public class Intake extends SubsystemBase {
         if (meta.isFirstRun()) {
 			intakeSolenoid.set(Value.kReverse);
 			intakeMotor.free(owner.INTAKE);
+			spindownFinished = false;
         }
         
     }
@@ -171,20 +173,20 @@ public class Intake extends SubsystemBase {
 			extraRollTime.start();
 		}
 
-		if(ballSensor.get()){
-			extraRollTime.stop();
-			stateMachine.setState(intakeState.ARMSTOWED);
-
-		} else if(extraRollTime.hasElapsed(2)){
-			extraRollTime.stop();
-			stateMachine.setState(intakeState.ARMSTOWED);
-		}
-
 		if (intakeMotor.getCurrentOwner() != owner.INTAKE) {
 			intakeMotor.obtain(owner.INTAKE);
 		} else {
-			intakeMotor.set(.2, owner.INTAKE);
-	}
+			intakeMotor.set(.25, owner.INTAKE);
+		}
+
+		if(ballSensor.get() || extraRollTime.hasElapsed(2)){
+			extraRollTime.stop();
+			stateMachine.setState(intakeState.ARMSTOWED);
+			spindownFinished = true;
+			
+		}
+
+		
 
 
 
@@ -218,12 +220,8 @@ public class Intake extends SubsystemBase {
 		return ballSensor.get();
 	}
 
-	public boolean canIntake(){
-		return !retractSensor.get() && !(stateMachine.getCurrentState() == intakeState.SPINDOWN) && !hasBall;
-	}
-
 	public boolean intakeFinished(){
-		return 
+		return spindownFinished;
 	}
 
     /**
@@ -249,6 +247,14 @@ public class Intake extends SubsystemBase {
 
 	public void toggleManualOveride(){
 		manualOveride = !manualOveride;
+	}
+
+	public boolean inSpinDown(){
+		return stateMachine.getCurrentState() == intakeState.SPINDOWN;
+	}
+
+	public void spinDown(){
+		stateMachine.setState(intakeState.SPINDOWN);
 	}
 	
 

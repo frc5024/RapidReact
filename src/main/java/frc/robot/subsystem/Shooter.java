@@ -215,7 +215,6 @@ public class Shooter extends SubsystemBase {
 
 		if (extraSpinTimer.hasElapsed(1)) {
 			extraSpinTimer.stop();
-			Intake.getInstance().setHasBall(false);
 			stateMachine.setState(shooterState.IDLE);
 
 		}
@@ -258,8 +257,7 @@ public class Shooter extends SubsystemBase {
 	 * @return if the system is finished shooting
 	 */
 	public boolean isDoneShooting() {
-		if ((stateMachine.getCurrentState() == shooterState.FEED || stateMachine.getCurrentState() == shooterState.IDLE)
-				&& !Intake.getInstance().hasBallStored()) {
+		if (stateMachine.getCurrentState() == shooterState.FEED) {
 			return true;
 		}
 
