@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import io.github.frc5024.lib5k.logging.RobotLogger;
 import io.github.frc5024.lib5k.utils.InputUtils;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 
@@ -12,6 +13,7 @@ public class OI {
     
     private XboxController driverController;
     private XboxController operatorController;
+
     /**
 	 * Gets the instance for the oi
 	 * 
@@ -92,6 +94,12 @@ public class OI {
 		}
 
 		
+	}
+
+	public void switchMotors(){
+		if(driverController.getXButtonPressed()){
+			DriveTrain.getInstance().invertMotors();
+		}
 	}
 
 

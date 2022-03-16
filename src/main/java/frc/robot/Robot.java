@@ -94,21 +94,13 @@ public class Robot extends RobotProgram {
 		addAutonomous(new TestTurnPath());
 		addAutonomous(new ShootMove());
 
-		compressorTimer = new Timer();
-		compressorTimer.reset();
-
-		intake.enableCompressor();
-
-		compressorTimer.start();
 		
 	}
 
 
 	@Override
 	public void periodic(boolean init) {
-		if(compressorTimer.hasElapsed(7)){
-			intake.disableCompressor();
-		}
+		
 
 	}
 

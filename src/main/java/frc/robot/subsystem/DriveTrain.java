@@ -68,7 +68,7 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 				Constants.DriveTrain.leftSideConfig);
 		leftSlave = leftMaster.makeSlave(Constants.DriveTrain.leftSlave);
 
-		leftSlave.configNeutralDeadband(.0001);
+		leftSlave.configNeutralDeadband(.005);
 
 		rightMaster.setSensorPhase(false);
 		leftMaster.setSensorPhase(false);
@@ -76,7 +76,7 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 		leftSideEncoder = leftMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 		rightSideEncoder = rightMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 
-		setRampRate(.12);
+		setRampRate(.04);
 
 		gyro = new NavX();
 		gyro.calibrate();
@@ -122,6 +122,10 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 		motorInversionMultiplier = motorsInverted ? -1 : 1;
 
+	}
+
+	public void invertMotors(){
+		motorInversionMultiplier *= -1;
 	}
 
 	@Override
