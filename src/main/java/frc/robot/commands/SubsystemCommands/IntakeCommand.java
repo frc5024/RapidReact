@@ -5,8 +5,6 @@ import frc.robot.subsystem.Intake;
 
 public class IntakeCommand extends CommandBase {
     
-    private boolean sensorTrip = false;
-    
     @Override
     public void initialize() {
         Intake.getInstance().intakeBall();
@@ -14,14 +12,19 @@ public class IntakeCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Intake.getInstance().shouldRetract();
+        return Intake.getInstance().intakeFinished();
     }
 
     @Override
     public void end(boolean interrupted) {
-        Intake.getInstance().idle();
-
+		if(interrupted){
+			Intake.getInstance().idle();
+		}else{
+        	Intake.getInstance().spinDown();
+		}
     }
+
+	
 
     
 

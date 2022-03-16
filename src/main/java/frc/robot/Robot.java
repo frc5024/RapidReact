@@ -93,7 +93,6 @@ public class Robot extends RobotProgram {
 		addAutonomous(new TestPath());
 		addAutonomous(new TestTurnPath());
 		addAutonomous(new ShootMove());
-
 		
 	}
 

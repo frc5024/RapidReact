@@ -43,11 +43,13 @@ public class OperatorCommand extends CommandBase {
             shootCommand.cancel();
         }
 
-        if(oi.shouldIntake() && Intake.getInstance().canIntake()){
+        if(OI.getInstance().shouldIntake() && !intakeCommand.isScheduled()){
             intakeCommand.schedule();
-        }else{
-            intakeCommand.cancel();
-        }
+			
+        }else if(!oi.shouldIntake() && intakeCommand.isScheduled()){
+			intakeCommand.cancel();
+			
+		}
 
 
         
