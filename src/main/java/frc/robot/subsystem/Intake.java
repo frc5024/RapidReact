@@ -54,6 +54,7 @@ public class Intake extends SubsystemBase {
 
     private StateMachine<intakeState> stateMachine;
 
+	private int intakeCount = 0;
 
     /**
 	 * Gets the instance for the intake
@@ -124,6 +125,7 @@ public class Intake extends SubsystemBase {
 		SmartDashboard.putBoolean("PRESSURE LOW", compressor.getPressureSwitchValue());
 		SmartDashboard.putBoolean("Ball Detected", hasBall);
 		SmartDashboard.putString("Intake State", stateMachine.getCurrentState().toString());
+		SmartDashboard.putNumber("Intake Count", intakeCount);
 		
     }
     
@@ -141,6 +143,7 @@ public class Intake extends SubsystemBase {
         // Extend arms on first run
         if (meta.isFirstRun()) {
             intakeSolenoid.set(Value.kForward);
+			intakeCount += 1;
 			
         }
        
