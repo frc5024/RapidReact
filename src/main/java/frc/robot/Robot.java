@@ -9,11 +9,13 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.auto.ShootMove;
 import frc.robot.auto.TestPath;
 import frc.robot.auto.TestTurnPath;
 import frc.robot.commands.DriveCommand;
@@ -54,7 +56,7 @@ public class Robot extends RobotProgram {
 	// Commands
 	private DriveCommand driveCommand;
 	
-
+	private Timer compressorTimer;
 
 	public Robot() {
 		super(false, true, mainShuffleboardTab);
@@ -90,13 +92,23 @@ public class Robot extends RobotProgram {
 		// Creating Auto Commands
 		addAutonomous(new TestPath());
 		addAutonomous(new TestTurnPath());
+		addAutonomous(new ShootMove());
+
+		compressorTimer = new Timer();
+		compressorTimer.reset();
+
+		intake.enableCompressor();
+
+		compressorTimer.start();
 		
 	}
 
 
 	@Override
 	public void periodic(boolean init) {
-		// TODO Auto-generated method stub
+		if(compressorTimer.hasElapsed(7)){
+			intake.disableCompressor();
+		}
 
 	}
 

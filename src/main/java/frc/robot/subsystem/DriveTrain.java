@@ -59,6 +59,7 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 				Constants.DriveTrain.rightSideConfig);
 		rightSlave = rightMaster.makeSlave(Constants.DriveTrain.rightSlave);
 		
+		rightSlave.configNeutralDeadband(.0001);
 
 		rightMaster.setInverted(true);
 		rightSlave.setInverted(true);
@@ -66,6 +67,8 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 		leftMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.leftMaster,
 				Constants.DriveTrain.leftSideConfig);
 		leftSlave = leftMaster.makeSlave(Constants.DriveTrain.leftSlave);
+
+		leftSlave.configNeutralDeadband(.0001);
 
 		rightMaster.setSensorPhase(false);
 		leftMaster.setSensorPhase(false);
