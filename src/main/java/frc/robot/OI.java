@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import io.github.frc5024.lib5k.logging.RobotLogger;
 import io.github.frc5024.lib5k.utils.InputUtils;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,6 +14,8 @@ public class OI {
     
     private XboxController driverController;
     private XboxController operatorController;
+
+	private boolean manualControl = false;
 
     /**
 	 * Gets the instance for the oi
@@ -102,5 +105,34 @@ public class OI {
 		}
 	}
 
+	public void toggleOperatorOverride(){
+		if(operatorController.getXButtonPressed()){
+			manualControl = !manualControl;
+		}
+	}
+
+	public boolean getManualOverride(){
+		return manualControl;
+	}
+
+	public double getOperatorSpeed(){
+		double speed = 0;
+        speed += operatorController.getRightTriggerAxis();
+        speed -= operatorController.getLeftTriggerAxis();
+        return speed;
+	}
+
+	public boolean shouldInvertDriver(){
+		return driverController.getXButtonPressed();
+	}
+
+	public boolean manualSetSolenoidForward(){
+		return operatorController.getRightBumperPressed();
+	}
+
+	public boolean manualSetSolenoidReverse(){
+		return operatorController.getLeftBumperPressed();
+	}
 
 }
+

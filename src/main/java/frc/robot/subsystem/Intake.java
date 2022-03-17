@@ -261,5 +261,8 @@ public class Intake extends SubsystemBase {
 	}
 	
 
+	public void setSolenoid(Value value){
+		intakeSolenoid.set(value);
+	}
 	
 }

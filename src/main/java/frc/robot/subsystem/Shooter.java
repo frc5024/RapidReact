@@ -161,6 +161,7 @@ public class Shooter extends SubsystemBase {
 			stateMachine.setState(shooterState.FEED);
 			SmartDashboard.putBoolean("at Point", true);
 		}
+		
 
 	}
 
@@ -185,15 +186,15 @@ public class Shooter extends SubsystemBase {
 
 		}
 
-		if (!Intake.getInstance().ballSensorReading()) {
-			extraSpinTimer.start();
-		}
+		// if (!Intake.getInstance().ballSensorReading()) {
+		// 	extraSpinTimer.start();
+		// }
 
-		if (extraSpinTimer.hasElapsed(3)) {
-			extraSpinTimer.stop();
-			stateMachine.setState(shooterState.IDLE);
-			isDoneShooting = true;
-		}
+		// if (extraSpinTimer.hasElapsed(3)) {
+		// 	extraSpinTimer.stop();
+		// 	stateMachine.setState(shooterState.IDLE);
+		// 	isDoneShooting = true;
+		// }
 
 	}
 

@@ -34,6 +34,7 @@ public class RestrictedMotor{
         NONE,
         SHOOTER,
         INTAKE,
+		OVERRIDE,
     }
 
     // Who is the current owner
@@ -120,7 +121,7 @@ public class RestrictedMotor{
      * @param user the subsystem attempting to set the speed
      */
     public void set(double value, owner user){
-        if(user == currentOwner){
+        if(user == currentOwner || user == owner.OVERRIDE){
             sharedMotor.set(value);
 
             return;

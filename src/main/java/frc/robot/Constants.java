@@ -28,7 +28,7 @@ public final class Constants {
 		public static final int rightMaster = 1;
 		public static final int rightSlave = 2;
 
-		public static final boolean shouldInvertRight = true;
+		public static final boolean shouldInvertRight = false;
 
 		public static final boolean setBreaks = false;
 
@@ -125,6 +125,11 @@ public final class Constants {
 		public static final double kP = 0.0023;
 		public static final double kI = .001;
 		public static final double kD = 0;
+
+		// // PID values Current are from last year
+		// public static final double kP = 0.0023;
+		// public static final double kI = .001;
+		// public static final double kD = 0;
 
 		public static final int encoderTPR = 2048;
 

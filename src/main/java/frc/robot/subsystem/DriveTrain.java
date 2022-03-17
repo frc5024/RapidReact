@@ -1,6 +1,9 @@
 package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -59,7 +62,15 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 				Constants.DriveTrain.rightSideConfig);
 		rightSlave = rightMaster.makeSlave(Constants.DriveTrain.rightSlave);
 		
+		
+		rightMaster.configNeutralDeadband(.0001);
 		rightSlave.configNeutralDeadband(.0001);
+
+		rightMaster.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 34, 10));
+		rightMaster.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 34, 10));
+
+		rightSlave.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 34, 10));
+		rightSlave.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 34, 10));
 
 		rightMaster.setInverted(true);
 		rightSlave.setInverted(true);
@@ -68,7 +79,14 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 				Constants.DriveTrain.leftSideConfig);
 		leftSlave = leftMaster.makeSlave(Constants.DriveTrain.leftSlave);
 
-		leftSlave.configNeutralDeadband(.005);
+		leftMaster.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 34, 10));
+		leftMaster.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 34, 10));
+		
+		leftSlave.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 34, 10));
+		leftSlave.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 34, 10));
+
+		leftMaster.configNeutralDeadband(.0001);
+		leftSlave.configNeutralDeadband(.0001);
 
 		rightMaster.setSensorPhase(false);
 		leftMaster.setSensorPhase(false);
@@ -76,10 +94,14 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 		leftSideEncoder = leftMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 		rightSideEncoder = rightMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 
-		setRampRate(.04);
+		setRampRate(0);
+
+
 
 		gyro = new NavX();
 		gyro.calibrate();
+
+		enableBrakes(false);
 		
 	}
 
@@ -140,6 +162,8 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 	}
 
+	
+
 	@Override
 	protected void enableBrakes(boolean enabled) {
 		if (enabled) {
@@ -164,6 +188,10 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 		SmartDashboard.putNumber("Left Meters", getLeftMeters());
 		SmartDashboard.putNumber("Right Meters", getRightMeters());
 		Shuffleboard.getTab("Main Tab");
+		if(OI.getInstance().shouldInvertDriver()){
+			invertMotors();
+		}
+
 	}
 
 	@Override
@@ -176,7 +204,9 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 	 * 
 	 */
 	public void setSpeed(double leftSpeed, double rightSpeed){
-		rightMaster.set(rightSpeed);
-		leftMaster.set(leftSpeed);
+		rightMaster.set(rightSpeed * motorInversionMultiplier);
+		leftMaster.set(leftSpeed * motorInversionMultiplier);
 	}
+
+
 }
