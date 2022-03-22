@@ -243,8 +243,9 @@ public class Shooter extends SubsystemBase {
 		return (flywheelEncoder.getVelocity() * 1000 / .001666) * .714;
 	}
 
-	public void setTargetRPM(double newRPM) {
+	public void setTarget(double newRPM, double newP, double newI, double newD) {
 		targetRPM = newRPM;
+		shooterController.setPID(newP, newI, newD);
 	}
 
 }

@@ -80,15 +80,15 @@ public class OI {
 	public void setShooterSetpoint(){
 		switch (driverController.getPOV()) {
 			case 270:
-				Shooter.getInstance().setTargetRPM(Constants.Shooter.lowGoalTargetRPM);
+				Shooter.getInstance().setTarget(Constants.Shooter.lowGoalTargetRPM, Constants.Shooter.low_kP, Constants.Shooter.low_kI, Constants.Shooter.low_kD);
 				RobotLogger.getInstance().log("Setting target RPM to: %.2f", Constants.Shooter.lowGoalTargetRPM);
 				break;
 			case 0:
-				Shooter.getInstance().setTargetRPM(Constants.Shooter.closeTargetRPM);
+				Shooter.getInstance().setTarget(Constants.Shooter.closeTargetRPM, Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
 				RobotLogger.getInstance().log("Setting target RPM to: %.2f", Constants.Shooter.closeTargetRPM);
 				break;
 			case 90:
-				Shooter.getInstance().setTargetRPM(Constants.Shooter.lineShotTargetRPM);
+				Shooter.getInstance().setTarget(Constants.Shooter.lineShotTargetRPM, Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
 				RobotLogger.getInstance().log("Setting target RPM to: %.2f", Constants.Shooter.lineShotTargetRPM);
 				break;
 		
@@ -108,10 +108,12 @@ public class OI {
 	public void toggleOperatorOverride(){
 		if(operatorController.getXButtonPressed()){
 			manualControl = !manualControl;
+			
 		}
 	}
 
 	public boolean getManualOverride(){
+		SmartDashboard.putBoolean("Manual Overide", manualControl);
 		return manualControl;
 	}
 
@@ -119,19 +121,15 @@ public class OI {
 		double speed = 0;
         speed += operatorController.getRightTriggerAxis();
         speed -= operatorController.getLeftTriggerAxis();
-        return speed;
+        return speed / 2;
 	}
 
 	public boolean shouldInvertDriver(){
 		return driverController.getXButtonPressed();
 	}
 
-	public boolean manualSetSolenoidForward(){
-		return operatorController.getRightBumperPressed();
-	}
-
-	public boolean manualSetSolenoidReverse(){
-		return operatorController.getLeftBumperPressed();
+	public boolean manualSetSolenoid(){
+		return operatorController.getRightBumper();
 	}
 
 }

@@ -9,6 +9,7 @@ import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.RestrictedMotor;
 import frc.robot.subsystem.Shooter;
 import frc.robot.subsystem.RestrictedMotor.owner;
+import io.github.frc5024.lib5k.logging.RobotLogger;
 
 public class OperatorCommand extends CommandBase {
     
@@ -58,13 +59,16 @@ public class OperatorCommand extends CommandBase {
 			
 		}
 
+		OI.getInstance().toggleOperatorOverride();
+
 		if(OI.getInstance().getManualOverride()){
 			if(manualFirstrun){
 				manualFirstrun = false;
+				RobotLogger.getInstance().log("Entering manual overide");
 			}
-			if(oi.manualSetSolenoidForward()){
+			if(oi.manualSetSolenoid()){
 				Intake.getInstance().setSolenoid(Value.kForward);
-			}else if(oi.manualSetSolenoidReverse()){
+			}else{
 				Intake.getInstance().setSolenoid(Value.kReverse);
 			}
 
@@ -73,9 +77,11 @@ public class OperatorCommand extends CommandBase {
 		}else{
 			if(!manualFirstrun){
 				manualFirstrun = true;
+				RobotLogger.getInstance().log("Exiting manual overide");
 				RestrictedMotor.getInstance().set(0, owner.OVERRIDE);
 				Intake.getInstance().setSolenoid(Value.kReverse);
 			}
+			
 		}
         
     }
