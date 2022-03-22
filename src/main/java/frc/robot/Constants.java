@@ -122,14 +122,14 @@ public final class Constants {
 		public static final CTREConfig flywheelConfig = new CTREConfig(false, true, false, true, 36, 12, 34, 24, true);
 		
 		// PID values Current are from last year
-		public static final double kP = 0.0023;
+		public static final double kP = 0.0028;
 		public static final double kI = .001;
-		public static final double kD = 0;
+		public static final double kD = .0007;
 
-		// // PID values Current are from last year
-		// public static final double kP = 0.0023;
-		// public static final double kI = .001;
-		// public static final double kD = 0;
+		// PID values for low shoot
+		public static final double low_kP = 0.0023;
+		public static final double low_kI = .001;
+		public static final double low_kD = 0;
 
 		public static final int encoderTPR = 2048;
 

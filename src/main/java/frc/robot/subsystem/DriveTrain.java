@@ -3,24 +3,19 @@ package frc.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Constants;
 import frc.robot.OI;
 import io.github.frc5024.common_drive.gearing.Gear;
 import io.github.frc5024.lib5k.bases.drivetrain.implementations.DualPIDTankDriveTrain;
 import io.github.frc5024.lib5k.control_loops.ExtendedPIDController;
-import io.github.frc5024.lib5k.control_loops.base.Controller;
 import io.github.frc5024.lib5k.hardware.common.sensors.interfaces.CommonEncoder;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonFX;
-import io.github.frc5024.lib5k.hardware.generic.gyroscopes.ADGyro;
 import io.github.frc5024.lib5k.hardware.kauai.gyroscopes.NavX;
-import io.github.frc5024.libkontrol.statemachines.StateMachine;
 
 /**
  * Subsystem for controlling the drivetrain
@@ -39,6 +34,9 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 	private int encoderInversionMultiplier = 1;
 	private int motorInversionMultiplier = 1;
+	
+	double leftSetVoltage = 0;
+	double rightSetVoltage = 0;
 
 	private NavX gyro;
 
@@ -94,7 +92,8 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 		leftSideEncoder = leftMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 		rightSideEncoder = rightMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 
-		setRampRate(0);
+		setRampRate(0.12);
+
 
 
 
@@ -124,10 +123,13 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 	public double getWidthMeters() {
 
 		return Constants.DriveTrain.driveTrainWidth;
+		
 	}
 
 	@Override
 	protected void handleVoltage(double leftVolts, double rightVolts) {
+		leftSetVoltage = leftVolts;
+		rightSetVoltage = rightVolts;
 
 		rightMaster.setVoltage(rightVolts * motorInversionMultiplier);
 		leftMaster.setVoltage(leftVolts * motorInversionMultiplier);
@@ -185,9 +187,12 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 
 	@Override
 	protected void runIteration() {
-		SmartDashboard.putNumber("Left Meters", getLeftMeters());
-		SmartDashboard.putNumber("Right Meters", getRightMeters());
-		Shuffleboard.getTab("Main Tab");
+		SmartDashboard.putNumber("Left Voltage Set", leftSetVoltage);
+		SmartDashboard.putNumber("Left Voltage Actual", leftMaster.getMotorOutputPercent());
+		SmartDashboard.putNumber("Right Voltage Set", rightSetVoltage);
+		SmartDashboard.putNumber("Right Voltage Actual", rightMaster.getMotorOutputPercent());
+
+		
 		if(OI.getInstance().shouldInvertDriver()){
 			invertMotors();
 		}
@@ -204,6 +209,9 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 	 * 
 	 */
 	public void setSpeed(double leftSpeed, double rightSpeed){
+		leftSetVoltage = leftSpeed;
+		rightSetVoltage = rightSpeed;
+
 		rightMaster.set(rightSpeed * motorInversionMultiplier);
 		leftMaster.set(leftSpeed * motorInversionMultiplier);
 	}

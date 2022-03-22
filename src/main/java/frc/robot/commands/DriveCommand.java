@@ -24,6 +24,10 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void execute() {
+
+
+
+		
         DriveTrain.getInstance().handleDriverInputs(oi.getSpeed(), oi.getRotation());
 		
 		// double leftSpeed = InputUtils.scale(oi.getSpeed(), ScalingMode.CUBIC) + InputUtils.scale(oi.getRotation(), ScalingMode.CUBIC);
