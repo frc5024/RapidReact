@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import io.github.frc5024.lib5k.logging.RobotLogger;
 import io.github.frc5024.lib5k.utils.InputUtils;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -118,14 +119,25 @@ public class OI {
 	}
 
 	public double getOperatorSpeed(){
-		double speed = 0;
-        speed += operatorController.getRightTriggerAxis();
-        speed -= operatorController.getLeftTriggerAxis();
-        return speed / 2;
+		
+		return operatorController.getRightY();
+		
 	}
 
 	public boolean shouldInvertDriver(){
 		return driverController.getXButtonPressed();
+	}
+
+	public void rumbleOperator(boolean rumble){
+		if(rumble){
+			operatorController.setRumble(RumbleType.kLeftRumble, 1);
+			operatorController.setRumble(RumbleType.kRightRumble, 1);
+		}else{
+			operatorController.setRumble(RumbleType.kLeftRumble, 0);
+			operatorController.setRumble(RumbleType.kRightRumble, 0);
+		}
+
+
 	}
 
 	public boolean manualSetSolenoid(){

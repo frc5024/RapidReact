@@ -65,6 +65,7 @@ public class OperatorCommand extends CommandBase {
 			if(manualFirstrun){
 				manualFirstrun = false;
 				RobotLogger.getInstance().log("Entering manual overide");
+				OI.getInstance().rumbleOperator(true);
 			}
 			if(oi.manualSetSolenoid()){
 				Intake.getInstance().setSolenoid(Value.kForward);
@@ -80,7 +81,9 @@ public class OperatorCommand extends CommandBase {
 				RobotLogger.getInstance().log("Exiting manual overide");
 				RestrictedMotor.getInstance().set(0, owner.OVERRIDE);
 				Intake.getInstance().setSolenoid(Value.kReverse);
+				OI.getInstance().rumbleOperator(false);
 			}
+
 			
 		}
         
