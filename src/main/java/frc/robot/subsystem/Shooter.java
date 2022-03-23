@@ -1,7 +1,11 @@
 package frc.robot.subsystem;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,9 +45,11 @@ public class Shooter extends SubsystemBase {
 	// Value for the target rpm
 	private double targetRPM;
 
-	private PIDController shooterController;
+	private BangBangController shooterController;
 
 	private Timer extraSpinTimer;
+
+	private SimpleMotorFeedforward feedforward;
 
 	private enum shooterState {
 		IDLE,
@@ -79,6 +85,8 @@ public class Shooter extends SubsystemBase {
 		// // Initialize flywheel motor
 		this.flywheelMotor = CTREMotorFactory.createTalonFX(Constants.Shooter.flyWheelID,
 				Constants.Shooter.flywheelConfig);
+		
+		flywheelMotor.setNeutralMode(NeutralMode.Coast);
 		flywheelMotor.setInverted(true);
 
 		// // Setup flywheel encoder
@@ -89,9 +97,11 @@ public class Shooter extends SubsystemBase {
 		// // Get the shared motor instance
 		this.feedMotor = RestrictedMotor.getInstance();
 
-		// // PID Setup
-		shooterController = new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
-		shooterController.reset();
+		// Controller Setup
+		shooterController = new BangBangController(50);
+
+		//feedforward = new SimpleMotorFeedforward(ks, kv)
+		
 
 		// Setup Statemachine default state is idle
 		stateMachine = new StateMachine<>("Shooter");
@@ -147,14 +157,12 @@ public class Shooter extends SubsystemBase {
 	private void handleSpinningUp(StateMetadata<shooterState> metaData) {
 		if (metaData.isFirstRun()) {
 			// Clears controller
-			shooterController.reset();
-
-			shooterController.setTolerance(50, 5);
+			
 			shooterController.setSetpoint(targetRPM);
 		}
 
 		// set the motor until we are at the appropriate speed
-		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
+		flywheelMotor.set(shooterController.calculate(getShooterRPM(), targetRPM));
 		
 		// Switch to feeding
 		if (shooterController.atSetpoint()) {
@@ -175,7 +183,7 @@ public class Shooter extends SubsystemBase {
 			extraSpinTimer.start();
 		}
 
-		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
+		flywheelMotor.set(shooterController.calculate(getShooterRPM(), targetRPM));
 		// If we are the owner, start spinning the ball
 		if (feedMotor.getCurrentOwner() == owner.SHOOTER) {
 
@@ -247,7 +255,7 @@ public class Shooter extends SubsystemBase {
 
 	public void setTarget(double newRPM, double newP, double newI, double newD) {
 		targetRPM = newRPM;
-		shooterController.setPID(newP, newI, newD);
+		//shooterController.setPID(newP, newI, newD);
 	}
 
 }
