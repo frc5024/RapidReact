@@ -37,7 +37,7 @@ public class ShootMove implements AutonomousSequence{
 
 		completeCommand.addCommands(new AutoShoot());
 
-        completeCommand.addCommands(new RollBack().withTimeout(2));
+        completeCommand.addCommands(new RollBack().withTimeout(1));
 
         
 

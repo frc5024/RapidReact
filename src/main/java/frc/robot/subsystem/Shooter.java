@@ -170,7 +170,9 @@ public class Shooter extends SubsystemBase {
 	 */
 	private void handleFeeding(StateMetadata<shooterState> metaData) {
 		if (metaData.isFirstRun()) {
+		
 			extraSpinTimer.reset();
+			extraSpinTimer.start();
 		}
 
 		flywheelMotor.set(MathUtil.clamp(shooterController.calculate(getShooterRPM(), targetRPM), -1, 1));
@@ -187,14 +189,14 @@ public class Shooter extends SubsystemBase {
 		}
 
 		// if (!Intake.getInstance().ballSensorReading()) {
-		// 	extraSpinTimer.start();
+		//extraSpinTimer.start();
 		// }
 
-		// if (extraSpinTimer.hasElapsed(3)) {
-		// 	extraSpinTimer.stop();
-		// 	stateMachine.setState(shooterState.IDLE);
-		// 	isDoneShooting = true;
-		// }
+		if (extraSpinTimer.hasElapsed(3)) {
+			extraSpinTimer.stop();
+			stateMachine.setState(shooterState.IDLE);
+			isDoneShooting = true;
+		}
 
 	}
 
