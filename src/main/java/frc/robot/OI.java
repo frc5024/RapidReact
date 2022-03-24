@@ -114,7 +114,6 @@ public class OI {
 	}
 
 	public boolean getManualOverride(){
-		SmartDashboard.putBoolean("Manual Overide", manualControl);
 		return manualControl;
 	}
 
@@ -142,6 +141,10 @@ public class OI {
 
 	public boolean manualSetSolenoid(){
 		return operatorController.getRightBumper();
+	}
+
+	public boolean togglePreheat(){
+		return operatorController.getAButtonPressed();
 	}
 
 }

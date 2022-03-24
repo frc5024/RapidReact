@@ -6,6 +6,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,11 +53,14 @@ public class Shooter extends SubsystemBase {
 
 	private SimpleMotorFeedforward feedforward;
 
+	private boolean inPreheat;
+
 	private enum shooterState {
 		IDLE,
 		FEED,
 		SPINNINGUP,
-		TARGETING
+		TARGETING,
+		PREHEAT,
 	}
 
 	private StateMachine<shooterState> stateMachine;
@@ -110,11 +115,13 @@ public class Shooter extends SubsystemBase {
 		stateMachine.addState(shooterState.TARGETING, this::handleTargeting);
 		stateMachine.addState(shooterState.SPINNINGUP, this::handleSpinningUp);
 		stateMachine.addState(shooterState.FEED, this::handleFeeding);
+		stateMachine.addState(shooterState.PREHEAT, this::handlePreheat);
 
 		targetRPM = Constants.Shooter.lineShotTargetRPM;
 
 		extraSpinTimer = new Timer();
 		SmartDashboard.putBoolean("at Point", false);
+		inPreheat = false;
 		
 	}
 
@@ -126,6 +133,7 @@ public class Shooter extends SubsystemBase {
 		SmartDashboard.putNumber("Target Speed", targetRPM);
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY", getShooterRPM());
 		SmartDashboard.putString("SHOOTER STATE", stateMachine.getCurrentState().toString());
+		SmartDashboard.putBoolean("In Preheat", inPreheat);
 	}
 
 	/**
@@ -135,6 +143,7 @@ public class Shooter extends SubsystemBase {
 		if (metaData.isFirstRun()) {
 			flywheelMotor.set(0);
 			isDoneShooting = false;
+			inPreheat = false;
 
 			if (feedMotor.getCurrentOwner() == owner.SHOOTER) {
 				feedMotor.free(owner.SHOOTER);
@@ -143,12 +152,23 @@ public class Shooter extends SubsystemBase {
 
 	}
 
+
+	private void handlePreheat(StateMetadata<shooterState> metadata){
+		if(metadata.isFirstRun()){
+			inPreheat = true;
+		}
+
+		flywheelMotor.setVoltage(2);
+		
+	}
+
 	/**
 	 * Method for handling targeting, this will be blank until we start using a
 	 * limelight
 	 */
 	private void handleTargeting(StateMetadata<shooterState> metaData) {
 		stateMachine.setState(shooterState.SPINNINGUP);
+		inPreheat = false;
 	}
 
 	/**
@@ -158,6 +178,7 @@ public class Shooter extends SubsystemBase {
 		if (metaData.isFirstRun()) {
 			// Clears controller
 			
+			inPreheat = false;
 			shooterController.setSetpoint(targetRPM);
 		}
 
@@ -177,7 +198,7 @@ public class Shooter extends SubsystemBase {
 	 * Method for feeding balls into the shooter
 	 */
 	private void handleFeeding(StateMetadata<shooterState> metaData) {
-		if (metaData.isFirstRun()) {
+		if (metaData.isFirstRun() && DriverStation.isAutonomous()) {
 		
 			extraSpinTimer.reset();
 			extraSpinTimer.start();
@@ -202,6 +223,7 @@ public class Shooter extends SubsystemBase {
 
 		if (extraSpinTimer.hasElapsed(3)) {
 			extraSpinTimer.stop();
+			extraSpinTimer.reset();
 			stateMachine.setState(shooterState.IDLE);
 			isDoneShooting = true;
 		}
@@ -256,6 +278,14 @@ public class Shooter extends SubsystemBase {
 	public void setTarget(double newRPM, double newP, double newI, double newD) {
 		targetRPM = newRPM;
 		//shooterController.setPID(newP, newI, newD);
+	}
+
+	public void togglePreheat(){
+		if(stateMachine.getCurrentState() == shooterState.PREHEAT){
+			stateMachine.setState(shooterState.IDLE);
+		}else{
+			stateMachine.setState(shooterState.PREHEAT);
+		}
 	}
 
 }

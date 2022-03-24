@@ -86,6 +86,10 @@ public class OperatorCommand extends CommandBase {
 
 			
 		}
+
+		if(OI.getInstance().togglePreheat()){
+			Shooter.getInstance().togglePreheat();
+		}
         
     }
 
