@@ -10,7 +10,7 @@ import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevConfig;
 public final class Constants {
 
 	// Should log to USB
-	public static final boolean shouldLogToUSB = false;
+	public static final boolean shouldLogToUSB = true;
 	
 	// Controller Constants
 	public static final class Controllers{
@@ -20,7 +20,7 @@ public final class Constants {
 		
 	}
 
-	// TODO Correct these values
+
 	// Drive Train Constants
 	public static final class DriveTrain{
 
@@ -143,13 +143,13 @@ public final class Constants {
 		// Target RPMs
 
 		// Eject/Low Goal
-		public static final double lowGoalTargetRPM = 1200;
+		public static final double lowGoalTargetRPM = 1600;
 
 		// Close Shoot
-		public static final double closeTargetRPM = 2800;
+		public static final double closeTargetRPM = 2900;
 
 		// Line Shot 
-		public static final double lineShotTargetRPM = 3100;
+		public static final double lineShotTargetRPM = 3300;
 
 		
 

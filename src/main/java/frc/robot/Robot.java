@@ -9,6 +9,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -68,7 +69,8 @@ public class Robot extends RobotProgram {
 			logger.enableUSBLogging(new USBLogger());
 		}
 
-		
+		logger.log("Lib5k Program Start");
+		logger.log("Match number %d", DriverStation.getMatchNumber());
 
 
 		// Initalize subsystem variables
