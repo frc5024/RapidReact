@@ -28,19 +28,19 @@ public class DriveCommand extends CommandBase {
 
 
 		
-        DriveTrain.getInstance().handleDriverInputs(oi.getSpeed(), oi.getRotation());
+        //DriveTrain.getInstance().handleDriverInputs(oi.getSpeed(), oi.getRotation());
 		
-		// double leftSpeed = InputUtils.scale(oi.getSpeed(), ScalingMode.CUBIC) + InputUtils.scale(oi.getRotation(), ScalingMode.CUBIC);
-		// double rightSpeed = InputUtils.scale(oi.getSpeed(), ScalingMode.CUBIC) - InputUtils.scale(oi.getRotation(), ScalingMode.CUBIC);
+		double leftSpeed = InputUtils.scale(oi.getSpeed(), ScalingMode.CUBIC) + InputUtils.scale(oi.getRotation(), ScalingMode.CUBIC);
+		double rightSpeed = InputUtils.scale(oi.getSpeed(), ScalingMode.CUBIC) - InputUtils.scale(oi.getRotation(), ScalingMode.CUBIC);
 
-		// double max = Math.max(leftSpeed, rightSpeed);
+		double max = Math.max(leftSpeed, rightSpeed);
 
-		// if(max > 1){
-		// 	leftSpeed /= max;
-		// 	rightSpeed /= max;
-		// }
+		if(max > 1){
+			leftSpeed /= max;
+			rightSpeed /= max;
+		}
 
-		// DriveTrain.getInstance().setSpeed(leftSpeed, rightSpeed);
+		DriveTrain.getInstance().setSpeed(leftSpeed, rightSpeed);
 
     }
 
