@@ -129,7 +129,6 @@ public class Shooter extends SubsystemBase {
 	public void periodic() {
 		// Update statemachine
 		stateMachine.update();
-		OI.getInstance().setShooterSetpoint();
 		SmartDashboard.putNumber("Target Speed", targetRPM);
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY", getShooterRPM());
 		SmartDashboard.putString("SHOOTER STATE", stateMachine.getCurrentState().toString());

@@ -53,17 +53,12 @@ public class OI {
        
     }
 
-
-    public boolean shouldShoot(){
-        return driverController.getYButton();
-    }
-
     public boolean shouldClimbDeploy(){
-        return operatorController.getStartButton() && operatorController.getBackButton();
+        return driverController.getStartButton() && driverController.getBackButton();
     }
 
     public boolean shouldRetractClimb(){
-        return operatorController.getPOV() == 180;
+        return driverController.getPOV() == 180;
     }
 
     public boolean shouldIntake(){
@@ -78,27 +73,20 @@ public class OI {
 		
 	}
 
-	public void setShooterSetpoint(){
-		switch (driverController.getPOV()) {
-			case 270:
-				Shooter.getInstance().setTarget(Constants.Shooter.lowGoalTargetRPM, Constants.Shooter.low_kP, Constants.Shooter.low_kI, Constants.Shooter.low_kD);
-				RobotLogger.getInstance().log("Setting target RPM to: %.2f", Constants.Shooter.lowGoalTargetRPM);
-				break;
-			case 0:
-				Shooter.getInstance().setTarget(Constants.Shooter.closeTargetRPM, Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
-				RobotLogger.getInstance().log("Setting target RPM to: %.2f", Constants.Shooter.closeTargetRPM);
-				break;
-			case 90:
-				Shooter.getInstance().setTarget(Constants.Shooter.lineShotTargetRPM, Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
-				RobotLogger.getInstance().log("Setting target RPM to: %.2f", Constants.Shooter.lineShotTargetRPM);
-				break;
-		
-			default:
-				break;
-		}
 
-		
+	public boolean shouldShootLowerHub(){
+		return operatorController.getPOV() == 270;
 	}
+
+	public boolean shouldShootClose(){
+		return operatorController.getPOV() == 0;
+	}
+
+	public boolean shouldShootFar(){
+		return operatorController.getPOV() == 90;
+	}
+
+
 
 	public void switchMotors(){
 		if(driverController.getXButtonPressed()){

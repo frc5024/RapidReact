@@ -33,7 +33,7 @@ public class TestPath implements AutonomousSequence{
             }
         }));
 
-		completeCommand.addCommands(new ShootCommand());
+		
 
         completeCommand.addCommands(driveTrain.createPathingCommand(new Path(getStartingPose().getTranslation(), new Translation2d(-1, 0)), .1));
 

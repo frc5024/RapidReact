@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.OI;
 import frc.robot.commands.SubsystemCommands.IntakeCommand;
 import frc.robot.commands.SubsystemCommands.ShootCommand;
@@ -16,7 +17,10 @@ public class OperatorCommand extends CommandBase {
     private OI oi = OI.getInstance();
 
     // Define commands here
-    private ShootCommand shootCommand;
+    private ShootCommand lowHubShootCommand;
+	private ShootCommand highHubCloseShootCommand;
+	private ShootCommand highHubFarShootCommand;
+
     
     private IntakeCommand intakeCommand;
 
@@ -27,7 +31,11 @@ public class OperatorCommand extends CommandBase {
      * Initialize Commands here
      */
     public OperatorCommand(){
-        shootCommand = new ShootCommand();
+        lowHubShootCommand = new ShootCommand(Constants.Shooter.lowGoalTargetRPM);
+		highHubCloseShootCommand = new ShootCommand(Constants.Shooter.closeTargetRPM);
+		highHubFarShootCommand = new ShootCommand(Constants.Shooter.lineShotTargetRPM);
+
+
         intakeCommand = new IntakeCommand();
     }
 
@@ -45,11 +53,25 @@ public class OperatorCommand extends CommandBase {
      */
     @Override
     public void execute() {
-        if(oi.shouldShoot() && !Shooter.getInstance().isDoneShooting()){
-            shootCommand.schedule();
+        if(oi.shouldShootLowerHub() && !Shooter.getInstance().isDoneShooting()){
+            lowHubShootCommand.schedule();
         }else{
-            shootCommand.cancel();
+            lowHubShootCommand.cancel();
         }
+
+		if(oi.shouldShootClose() && !Shooter.getInstance().isDoneShooting()){
+			highHubCloseShootCommand.schedule();
+		}else{
+			highHubCloseShootCommand.cancel();
+		}
+
+		if(oi.shouldShootFar() && !Shooter.getInstance().isDoneShooting()){
+			highHubFarShootCommand.schedule();
+		}else{
+			highHubFarShootCommand.cancel();
+		}
+
+
 
         if(OI.getInstance().shouldIntake() && !intakeCommand.isScheduled()){
             intakeCommand.schedule();
@@ -58,6 +80,8 @@ public class OperatorCommand extends CommandBase {
 			intakeCommand.cancel();
 			
 		}
+
+
 
 		OI.getInstance().toggleOperatorOverride();
 
@@ -99,7 +123,11 @@ public class OperatorCommand extends CommandBase {
      */
     @Override
     public void end(boolean interrupted) {
-        shootCommand.cancel();
+		
+
+		lowHubShootCommand.cancel();
+        highHubCloseShootCommand.cancel();
+		highHubFarShootCommand.cancel();
     }
 
 }
