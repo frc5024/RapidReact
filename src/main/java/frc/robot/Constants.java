@@ -1,16 +1,11 @@
 package frc.robot;
 
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.math.system.plant.DCMotor;
-import io.github.frc5024.lib5k.control_loops.models.DCBrushedMotor;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREConfig;
-import io.github.frc5024.lib5k.hardware.revrobotics.motors.RevConfig;
 
 public final class Constants {
 
 	// Should log to USB
-	public static final boolean shouldLogToUSB = true;
+	public static final boolean shouldLogToUSB = false;
 	
 	// Controller Constants
 	public static final class Controllers{

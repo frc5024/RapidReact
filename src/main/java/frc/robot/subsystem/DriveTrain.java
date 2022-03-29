@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,12 +41,12 @@ public class DriveTrain extends SubsystemBase {
 	private int encoderInversionMultiplier = 1;
 	private int motorInversionMultiplier = 1;
 	
-	double leftSetVoltage = 0;
-	double rightSetVoltage = 0;
+	private double initialHeading = 0;
 
 	private NavX gyro;
 
-	private PowerDistribution pdp = new PowerDistribution();
+	private boolean firstRun = true;
+	
 
 	/**
 	 * Gets the instance for the drivetrain
@@ -58,6 +59,7 @@ public class DriveTrain extends SubsystemBase {
 		}
 
 		return mInstance;
+		
 	}
 
 
@@ -107,13 +109,17 @@ public class DriveTrain extends SubsystemBase {
 		leftSideEncoder = leftMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 		rightSideEncoder = rightMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 
-		setRampRate(0.12);
+		//setRampRate(0.12);
 
 
 
 
 		gyro = new NavX();
+		gyro.reset();	
 		gyro.calibrate();
+
+		
+
 
 		enableBrakes(false);
 		
@@ -124,13 +130,17 @@ public class DriveTrain extends SubsystemBase {
 		if(OI.getInstance().shouldInvertDriver()){
 			invertMotors();
 		}
-
-
+		if(firstRun){
+			initialHeading = gyro.getAngle();
+			firstRun = false;
+		}
 		leftMeters = getLeftMeters();
 		rightMeters = getRightMeters();
 
 		SmartDashboard.putNumber("Left Master Volts", leftMaster.getMotorOutputVoltage());
-		SmartDashboard.putNumber("Left Master Amp", pdp.getCurrent(0));
+		SmartDashboard.putNumber("Left Master Amp", leftMaster.getStatorCurrent());
+		SmartDashboard.putNumber("gyro heading", getHeading());
+		SmartDashboard.putNumber("inital heading", initialHeading);
 
 		
 	}
@@ -138,6 +148,11 @@ public class DriveTrain extends SubsystemBase {
 	public void stop(){
 		rightMaster.stopMotor();
 		leftMaster.stopMotor();
+	}
+
+	public double getHeading(){
+		//initialHeading = gyro.getAngle();
+		return gyro.getAngle() - initialHeading;
 	}
 
 	
@@ -195,11 +210,7 @@ public class DriveTrain extends SubsystemBase {
 
 	}
 
-	
-	public Rotation2d getCurrentHeading() {
-		
-		return gyro.getRotation();
-	}
+
 
 
 	
@@ -209,9 +220,6 @@ public class DriveTrain extends SubsystemBase {
 	}
 
 	public void setSpeed(double leftSpeed, double rightSpeed){
-		leftSetVoltage = leftSpeed;
-		rightSetVoltage = rightSpeed;
-
 		rightMaster.set(rightSpeed * motorInversionMultiplier);
 		leftMaster.set(leftSpeed * motorInversionMultiplier);
 	}

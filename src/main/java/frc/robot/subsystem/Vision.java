@@ -16,7 +16,7 @@ public class Vision {
 	}
 
 	private Vision(){
-		//limeLight = new LimeLight2()
+		limeLight = new LimeLight2("10.50.24.11");
 	}
 
 	
