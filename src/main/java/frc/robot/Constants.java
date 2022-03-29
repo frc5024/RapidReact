@@ -149,7 +149,7 @@ public final class Constants {
 		public static final double closeTargetRPM = 2900;
 
 		// Line Shot 
-		public static final double lineShotTargetRPM = 3300;
+		public static final double lineShotTargetRPM = 2200;
 
 		
 

@@ -12,7 +12,7 @@ public class AutoShoot extends CommandBase{
 
 	@Override
 	public void initialize() {
-		Shooter.getInstance().setTarget(Constants.Shooter.closeTargetRPM, Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
+		Shooter.getInstance().setTarget(Constants.Shooter.closeTargetRPM);
 		Shooter.getInstance().shootBall();
 	}
 

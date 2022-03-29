@@ -6,15 +6,15 @@ import frc.robot.subsystem.Shooter;
 
 public class ShootCommand extends CommandBase {
     
-	private double setRPM = Constants.Shooter.lineShotTargetRPM;
+	
 
-	public ShootCommand(double setPoint){
-		this.setRPM = setPoint;
+	public ShootCommand(){
+		
 	}
 
     @Override
     public void initialize() {
-		Shooter.getInstance().setTarget(setRPM, 0, 0, 0);
+		
 
         Shooter.getInstance().shootBall();
     }

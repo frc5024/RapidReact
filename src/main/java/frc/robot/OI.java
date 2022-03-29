@@ -74,16 +74,30 @@ public class OI {
 	}
 
 
-	public boolean shouldShootLowerHub(){
-		return operatorController.getPOV() == 270;
+	public void setShootSetpoint(){
+		switch (operatorController.getPOV()) {
+			case 270:
+				Shooter.getInstance().setTarget(Constants.Shooter.lowGoalTargetRPM);
+				RobotLogger.getInstance().log("Setting Shooter Speed to: %.2f", Constants.Shooter.lowGoalTargetRPM);
+				break;
+
+			case 0:
+				Shooter.getInstance().setTarget(Constants.Shooter.closeTargetRPM);
+				RobotLogger.getInstance().log("Setting Shooter Speed to: %.2f", Constants.Shooter.closeTargetRPM);
+				break;
+
+			case 90:
+				Shooter.getInstance().setTarget(Constants.Shooter.lineShotTargetRPM);
+				RobotLogger.getInstance().log("Setting Shooter Speed to: %.2f", Constants.Shooter.lineShotTargetRPM);
+				break;
+		
+			default:
+				break;
+		}
 	}
 
-	public boolean shouldShootClose(){
-		return operatorController.getPOV() == 0;
-	}
-
-	public boolean shouldShootFar(){
-		return operatorController.getPOV() == 90;
+	public boolean shouldShoot(){
+		return operatorController.getYButton();
 	}
 
 

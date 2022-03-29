@@ -17,9 +17,7 @@ public class OperatorCommand extends CommandBase {
     private OI oi = OI.getInstance();
 
     // Define commands here
-    private ShootCommand lowHubShootCommand;
-	private ShootCommand highHubCloseShootCommand;
-	private ShootCommand highHubFarShootCommand;
+    private ShootCommand shootCommand;
 
     
     private IntakeCommand intakeCommand;
@@ -31,9 +29,7 @@ public class OperatorCommand extends CommandBase {
      * Initialize Commands here
      */
     public OperatorCommand(){
-        lowHubShootCommand = new ShootCommand(Constants.Shooter.lowGoalTargetRPM);
-		highHubCloseShootCommand = new ShootCommand(Constants.Shooter.closeTargetRPM);
-		highHubFarShootCommand = new ShootCommand(Constants.Shooter.lineShotTargetRPM);
+        shootCommand = new ShootCommand();
 
 
         intakeCommand = new IntakeCommand();
@@ -53,23 +49,14 @@ public class OperatorCommand extends CommandBase {
      */
     @Override
     public void execute() {
-        if(oi.shouldShootLowerHub() && !Shooter.getInstance().isDoneShooting()){
-            lowHubShootCommand.schedule();
+		oi.setShootSetpoint();
+
+        if(oi.shouldShoot() && !Shooter.getInstance().isDoneShooting()){
+            shootCommand.schedule();
         }else{
-            lowHubShootCommand.cancel();
+            shootCommand.cancel();
         }
 
-		if(oi.shouldShootClose() && !Shooter.getInstance().isDoneShooting()){
-			highHubCloseShootCommand.schedule();
-		}else{
-			highHubCloseShootCommand.cancel();
-		}
-
-		if(oi.shouldShootFar() && !Shooter.getInstance().isDoneShooting()){
-			highHubFarShootCommand.schedule();
-		}else{
-			highHubFarShootCommand.cancel();
-		}
 
 
 
@@ -125,9 +112,7 @@ public class OperatorCommand extends CommandBase {
     public void end(boolean interrupted) {
 		
 
-		lowHubShootCommand.cancel();
-        highHubCloseShootCommand.cancel();
-		highHubFarShootCommand.cancel();
+		shootCommand.cancel();
     }
 
 }

@@ -128,6 +128,9 @@ public class Shooter extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// Update statemachine
+
+		
+
 		stateMachine.update();
 		SmartDashboard.putNumber("Target Speed", targetRPM);
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY", getShooterRPM());
@@ -274,9 +277,9 @@ public class Shooter extends SubsystemBase {
 		return (flywheelEncoder.getVelocity() * 1000 / .001666) * .714;
 	}
 
-	public void setTarget(double newRPM, double newP, double newI, double newD) {
+	public void setTarget(double newRPM) {
 		targetRPM = newRPM;
-		//shooterController.setPID(newP, newI, newD);
+		
 	}
 
 	public void togglePreheat(){
@@ -286,5 +289,6 @@ public class Shooter extends SubsystemBase {
 			stateMachine.setState(shooterState.PREHEAT);
 		}
 	}
+
 
 }
