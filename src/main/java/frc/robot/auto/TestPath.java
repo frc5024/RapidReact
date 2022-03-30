@@ -25,18 +25,6 @@ public class TestPath implements AutonomousSequence{
         
         SequentialCommandGroup completeCommand = new SequentialCommandGroup();
 
-        completeCommand.addCommands(new InstantCommand(new Runnable() {
-            @Override
-            public void run() {
-                driveTrain.resetPose(getStartingPose());
-                
-            }
-        }));
-
-		
-
-        completeCommand.addCommands(driveTrain.createPathingCommand(new Path(getStartingPose().getTranslation(), new Translation2d(-1, 0)), .1));
-
         
 
 

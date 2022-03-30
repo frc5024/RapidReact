@@ -23,6 +23,7 @@ import frc.robot.auto.TestPath;
 import frc.robot.auto.TestTurnPath;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.OperatorCommand;
+import frc.robot.commands.autocommands.AutoRotate;
 import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
@@ -120,6 +121,10 @@ public class Robot extends RobotProgram {
 		if(init){
 			operatorCommand.schedule();
 			Intake.getInstance().disableCompressor();
+		}
+
+		if(OI.getInstance().manualSetSolenoid()){
+			new AutoRotate(15).schedule();
 		}
 		
 

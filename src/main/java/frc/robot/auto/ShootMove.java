@@ -19,7 +19,7 @@ public class ShootMove implements AutonomousSequence{
 
     @Override
     public String getName() {
-        return "Shoot Return";
+        return "Shoot and Back up";
     }
 
     @Override
@@ -27,13 +27,6 @@ public class ShootMove implements AutonomousSequence{
         
         SequentialCommandGroup completeCommand = new SequentialCommandGroup();
 
-        completeCommand.addCommands(new InstantCommand(new Runnable() {
-            @Override
-            public void run() {
-                driveTrain.resetPose(getStartingPose());
-                
-            }
-        }));
 
 		completeCommand.addCommands(new AutoShoot());
 
