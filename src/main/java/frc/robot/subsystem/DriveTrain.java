@@ -56,11 +56,12 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 	private DriveTrain() {
 		super(new ExtendedPIDController(.0088, .01, .0106), .478);
 
+		// Initialize right side motors
 		rightMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.rightMaster,
 				Constants.DriveTrain.rightSideConfig);
 		rightSlave = rightMaster.makeSlave(Constants.DriveTrain.rightSlave);
 		
-		
+		// Set configurations for right side motors
 		rightMaster.configNeutralDeadband(.0001);
 		rightSlave.configNeutralDeadband(.0001);
 
@@ -73,10 +74,12 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 		rightMaster.setInverted(true);
 		rightSlave.setInverted(true);
 
+		// Initialize left side motors
 		leftMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.leftMaster,
 				Constants.DriveTrain.leftSideConfig);
 		leftSlave = leftMaster.makeSlave(Constants.DriveTrain.leftSlave);
 
+		// Set configurations for right side motors.
 		leftMaster.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 34, 10));
 		leftMaster.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 34, 10));
 		
@@ -89,6 +92,7 @@ public class DriveTrain extends DualPIDTankDriveTrain {
 		rightMaster.setSensorPhase(false);
 		leftMaster.setSensorPhase(false);
 
+		// Initialize encoders
 		leftSideEncoder = leftMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 		rightSideEncoder = rightMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 

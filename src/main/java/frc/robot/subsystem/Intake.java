@@ -96,9 +96,10 @@ public class Intake extends SubsystemBase {
         // Initialize Restricted Motor
         this.intakeMotor = RestrictedMotor.getInstance();
 
-		
+		// Initialize the retract line break sensor
         retractSensor = new LineBreak(Constants.Intake.retractSensorID);
 
+        // Initialize the ball line break sensor
         ballSensor = new LineBreak(Constants.Intake.holdSensorID);
 
         stateMachine = new StateMachine<>("Intake");
@@ -111,6 +112,7 @@ public class Intake extends SubsystemBase {
 		manualOveride = false;
 		spindownFinished = false;
 
+        // Initialize extra roll timer
 		extraRollTime = new Timer();
 
     }
@@ -121,7 +123,7 @@ public class Intake extends SubsystemBase {
         // Update statemachine
         stateMachine.update();
 		
-		
+		// Output the status of different subsystem sensors and states via smart dashboard.
 		SmartDashboard.putBoolean("Top Line Break", ballSensor.get());
 		SmartDashboard.putBoolean("Bottom Line Break", retractSensor.get());
 
@@ -170,8 +172,10 @@ public class Intake extends SubsystemBase {
     }
 
 	private void handleSpinDown(StateMetadata<intakeState> meta){
+        // Start spin down process on first run
 		if(meta.isFirstRun()){
-			intakeSolenoid.set(Value.kReverse);
+            intakeSolenoid.set(Value.kReverse);
+            // Reset and start extra roll timer.
 			extraRollTime.reset();
 			extraRollTime.start();
 		}
@@ -248,19 +252,32 @@ public class Intake extends SubsystemBase {
         stateMachine.setState(intakeState.ARMSTOWED);
     }
 
+    /**
+     * Method that toggles the value of manual overide
+     */
 	public void toggleManualOveride(){
 		manualOveride = !manualOveride;
 	}
 
+    /**
+     * Method that returns wether or not
+     * the current state is SPINDOWN
+     */
 	public boolean inSpinDown(){
 		return stateMachine.getCurrentState() == intakeState.SPINDOWN;
 	}
 
+    /**
+     * Method that sets the current state to SPINDOWN
+     */
 	public void spinDown(){
 		stateMachine.setState(intakeState.SPINDOWN);
 	}
 	
-
+    /**
+     * Method that sets the intake solenoid's 
+     * to a disired value
+     */
 	public void setSolenoid(Value value){
 		intakeSolenoid.set(value);
 	}
