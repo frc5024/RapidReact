@@ -121,8 +121,8 @@ public class DriveTrain extends SubsystemBase {
 		
 
 
-		enableBrakes(false);
-		
+		enableBrakes(true);
+		setRampRate(.05);
 	}
 
 	@Override
