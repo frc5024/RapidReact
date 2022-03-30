@@ -90,6 +90,11 @@ public class OI {
 				Shooter.getInstance().setTarget(Constants.Shooter.lineShotTargetRPM);
 				RobotLogger.getInstance().log("Setting Shooter Speed to: %.2f", Constants.Shooter.lineShotTargetRPM);
 				break;
+
+			case 180:
+				Shooter.getInstance().setTarget(Constants.Shooter.longAssShot);
+				RobotLogger.getInstance().log("Setting Shooter Speed to: %.2f", Constants.Shooter.longAssShot);
+				break;
 		
 			default:
 				break;

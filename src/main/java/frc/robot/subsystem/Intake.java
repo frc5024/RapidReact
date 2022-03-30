@@ -182,7 +182,7 @@ public class Intake extends SubsystemBase {
 			intakeMotor.set(.2, owner.INTAKE);
 		}
 
-		if(ballSensor.get() || extraRollTime.hasElapsed(2)){
+		if((ballSensor.get() && !retractSensor.get()) || extraRollTime.hasElapsed(2)){
 			extraRollTime.stop();
 			stateMachine.setState(intakeState.ARMSTOWED);
 			spindownFinished = true;

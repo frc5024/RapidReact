@@ -47,7 +47,7 @@ public class Shooter extends SubsystemBase {
 	// Value for the target rpm
 	private double targetRPM;
 
-	private BangBangController shooterController;
+	private PIDController shooterController;
 
 	private Timer extraSpinTimer;
 
@@ -103,7 +103,7 @@ public class Shooter extends SubsystemBase {
 		this.feedMotor = RestrictedMotor.getInstance();
 
 		// Controller Setup
-		shooterController = new BangBangController(50);
+		shooterController = new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
 
 		//feedforward = new SimpleMotorFeedforward(ks, kv)
 		
@@ -182,6 +182,7 @@ public class Shooter extends SubsystemBase {
 			
 			inPreheat = false;
 			shooterController.setSetpoint(targetRPM);
+			shooterController.setTolerance(50, 10);
 		}
 
 		// set the motor until we are at the appropriate speed
