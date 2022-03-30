@@ -93,6 +93,7 @@ public class Climber extends SubsystemBase {
 	
 		SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
 		SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
+		SmartDashboard.putBoolean("Sensor", bottomSensor.get());
 	}
 
 	private void handleIdle(StateMetadata<climberState> metadata) {
@@ -104,22 +105,21 @@ public class Climber extends SubsystemBase {
 
 		// If operator deploys switch to deploying
 		if (OI.getInstance().shouldClimbDeploy()) {
-			stateMachine.setState(climberState.Retracting);
-			//climbDeployTimer.start();
+			stateMachine.setState(climberState.Deploying);
 		}
 	}
 
 	private void handleDeploying(StateMetadata<climberState> metadata) {
 		if (metadata.isFirstRun()) {
 			// Release pin to send climber up
-			pin.set(Value.kReverse);;
+			pin.set(Value.kReverse);
 			climbDeployTimer.reset();
 			climbDeployTimer.start();
 		}
 
 		// Switch to retracting state once sensor tells us we are in the right spot
 		// Stop the pin at the same time
-		if (climbDeployTimer.get() > 3) {
+		if (climbDeployTimer.hasElapsed(1)) {
 			climbDeployTimer.stop();
 			
 			stateMachine.setState(climberState.Retracting);
