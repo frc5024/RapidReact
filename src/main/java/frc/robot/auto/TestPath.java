@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.SubsystemCommands.ShootCommand;
 import frc.robot.subsystem.DriveTrain;
 import io.github.frc5024.lib5k.autonomous.AutonomousSequence;
 import io.github.frc5024.purepursuit.pathgen.Path;
@@ -23,16 +24,6 @@ public class TestPath implements AutonomousSequence{
     public CommandBase getCommand() {
         
         SequentialCommandGroup completeCommand = new SequentialCommandGroup();
-
-        completeCommand.addCommands(new InstantCommand(new Runnable() {
-            @Override
-            public void run() {
-                driveTrain.resetPose(getStartingPose());
-                
-            }
-        }));
-
-        completeCommand.addCommands(driveTrain.createPathingCommand(new Path(getStartingPose().getTranslation(), new Translation2d(1, 0)), .1));
 
         
 

@@ -15,7 +15,7 @@ public final class Constants {
 		
 	}
 
-	// TODO Correct these values
+
 	// Drive Train Constants
 	public static final class DriveTrain{
 
@@ -23,7 +23,7 @@ public final class Constants {
 		public static final int rightMaster = 1;
 		public static final int rightSlave = 2;
 
-		public static final boolean shouldInvertRight = true;
+		public static final boolean shouldInvertRight = false;
 
 		public static final boolean setBreaks = false;
 
@@ -56,19 +56,101 @@ public final class Constants {
 
 	}
 
+
 	// Intake Constants
 	public static final class Intake{
+
+		// TODO MOTOR ID AND CONFIG NEEDS TO BE CHANGED
+		// Motor used for spinning intake and feeding balls
+		public static final int spinnerID = 7;
+
+		// Motor used for spinning intake and feeding balls config
+		public static final CTREConfig spinnerConfig = new CTREConfig(false);
+
+		// Speed for intaking the balls
+		public static final double intakeSpeed = 0.36;
+
+		// Solenoid forward and reverse channel ids
+		public static final int solenoidForward = 1;
+		public static final int solenoidReverse = 0;
+
+		public static final int compressorID = 0;
+
+		public static final int retractSensorID = 1;
+		public static final int holdSensorID = 0;
+
 
 	}
 
 	// Climb Constants
 	public static final class Climb{
 
+		// Create Climber Config and configured
+		public static final CTREConfig climbConfig = new CTREConfig(false, true, false, true, 36, 32, 10, 0, true);
+
+		// Create Smart Servo ID
+		public static final int smartServoChannel = 9;
+
+		// Climber ID
+		public static final int climberID = 9;
+
+		// Hall effects for determining position
+		public static final int topHallEffectID = 6;
+		public static final int bottomHallEffectID = 2;
+		
 	}
 
 	// Shooter Constants
 	public static final class Shooter{
+		// Linebreak
+		public static final int lineBreakChannelId = 2;
 
+		// Shooter Values
+
+		// Shooter Epsilon
+		public static final double shooterEpsilon = 100;
+
+		// Flywheel motor id
+		public static final int flyWheelID = 12;
+
+		// Fly wheel config
+		public static final CTREConfig flywheelConfig = new CTREConfig(false, true, false, true, 36, 12, 34, 24, true);
+		
+		// PID values Current are from last year
+		public static final double kP = 0.0028;
+		public static final double kI = .001;
+		public static final double kD = .0007;
+
+		// PID values for low shoot
+		public static final double low_kP = 0.0023;
+		public static final double low_kI = .001;
+		public static final double low_kD = 0;
+
+		public static final int encoderTPR = 2048;
+
+		// The speed for ejecting
+		public static final double ejectSetSpeed = 150;
+
+		// Speed for setting feed motor
+		public static final double beltFeedSpeed = .8;
+
+
+		// Target RPMs
+
+		// Eject/Low Goal
+		public static final double lowGoalTargetRPM = 1600;
+
+		// Close Shoot
+		public static final double closeTargetRPM = 2400;
+
+		// Line Shot 
+		public static final double lineShotTargetRPM = 2700;
+
+		public static final double longAssShot = 3500;
+
+		
+
+		
 	}
 
 	

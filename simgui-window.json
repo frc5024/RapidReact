@@ -6,8 +6,8 @@
       "style": "1",
       "userScale": "2",
       "width": "1280",
-      "xpos": "-1",
-      "ypos": "-1"
+      "xpos": "38",
+      "ypos": "102"
     }
   },
   "Window": {
@@ -29,11 +29,11 @@
     "###FMS": {
       "Collapsed": "0",
       "Pos": "5,540",
-      "Size": "235,169"
+      "Size": "283,146"
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "241,617",
+      "Pos": "262,386",
       "Size": "796,73"
     },
     "###NetworkTables": {
@@ -43,7 +43,7 @@
     },
     "###Other Devices": {
       "Collapsed": "0",
-      "Pos": "1007,16",
+      "Pos": "1005,-7",
       "Size": "250,695"
     },
     "###Plot <0>": {
@@ -64,7 +64,7 @@
     "###Timing": {
       "Collapsed": "0",
       "Pos": "5,150",
-      "Size": "192,173"
+      "Size": "192,196"
     },
     "Debug##Default": {
       "Collapsed": "0",
