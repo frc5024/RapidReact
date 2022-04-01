@@ -68,6 +68,7 @@ public class DriveTrain extends SubsystemBase {
 	private DriveTrain() {
 		
 		
+		// Initialize right side motors
 		rightMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.rightMaster,
 				Constants.DriveTrain.rightSideConfig);
 		rightSlave = rightMaster.makeSlave(Constants.DriveTrain.rightSlave);
@@ -75,6 +76,7 @@ public class DriveTrain extends SubsystemBase {
 		rightMaster.configFactoryDefault();
 		rightSlave.configFactoryDefault();
 
+		// Set configurations for right side motors
 		rightMaster.configNeutralDeadband(.0001);
 		rightSlave.configNeutralDeadband(.0001);
 
@@ -87,6 +89,7 @@ public class DriveTrain extends SubsystemBase {
 		rightMaster.setInverted(true);
 		rightSlave.setInverted(true);
 
+		// Initialize left side motors
 		leftMaster = CTREMotorFactory.createTalonFX(Constants.DriveTrain.leftMaster,
 				Constants.DriveTrain.leftSideConfig);
 		leftSlave = leftMaster.makeSlave(Constants.DriveTrain.leftSlave);
@@ -94,6 +97,7 @@ public class DriveTrain extends SubsystemBase {
 		leftMaster.configFactoryDefault();
 		leftSlave.configFactoryDefault();
 
+		// Set configurations for right side motors.
 		leftMaster.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 34, 10));
 		leftMaster.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 34, 10));
 		
@@ -106,6 +110,7 @@ public class DriveTrain extends SubsystemBase {
 		rightMaster.setSensorPhase(false);
 		leftMaster.setSensorPhase(false);
 
+		// Initialize encoders
 		leftSideEncoder = leftMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 		rightSideEncoder = rightMaster.getCommonEncoder(Constants.DriveTrain.encoderTPR);
 
