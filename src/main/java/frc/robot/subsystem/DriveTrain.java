@@ -137,10 +137,7 @@ public class DriveTrain extends SubsystemBase {
 		leftMeters = getLeftMeters();
 		rightMeters = getRightMeters();
 
-		SmartDashboard.putNumber("Left Master Volts", leftMaster.getMotorOutputVoltage());
-		SmartDashboard.putNumber("Left Master Amp", leftMaster.getStatorCurrent());
-		SmartDashboard.putNumber("gyro heading", getHeading());
-		SmartDashboard.putNumber("inital heading", initialHeading);
+		
 
 		
 	}

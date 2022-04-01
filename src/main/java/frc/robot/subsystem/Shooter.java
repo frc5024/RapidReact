@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
@@ -55,7 +56,9 @@ public class Shooter extends SubsystemBase {
 
 	private boolean inPreheat;
 
-	private enum shooterState {
+	private boolean overide = false;
+
+	public enum shooterState {
 		IDLE,
 		FEED,
 		SPINNINGUP,
@@ -136,6 +139,7 @@ public class Shooter extends SubsystemBase {
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY", getShooterRPM());
 		SmartDashboard.putString("SHOOTER STATE", stateMachine.getCurrentState().toString());
 		SmartDashboard.putBoolean("In Preheat", inPreheat);
+		SmartDashboard.putBoolean("In overide", overide);
 	}
 
 	/**
@@ -220,11 +224,11 @@ public class Shooter extends SubsystemBase {
 
 		}
 
-		// if (!Intake.getInstance().ballSensorReading()) {
-		//extraSpinTimer.start();
-		// }
+		if (!Intake.getInstance().ballSensorReading() && !overide) {
+			extraSpinTimer.start();
+		}
 
-		if (extraSpinTimer.hasElapsed(3)) {
+		if (extraSpinTimer.hasElapsed(1)) {
 			extraSpinTimer.stop();
 			extraSpinTimer.reset();
 			stateMachine.setState(shooterState.IDLE);
@@ -292,4 +296,11 @@ public class Shooter extends SubsystemBase {
 	}
 
 
+	public void toggleOverride(){
+		overide = !overide;
+	}
+
+	public shooterState getState(){
+		return stateMachine.getCurrentState();
+	}
 }

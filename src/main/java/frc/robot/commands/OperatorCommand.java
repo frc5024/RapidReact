@@ -51,11 +51,14 @@ public class OperatorCommand extends CommandBase {
     public void execute() {
 		oi.setShootSetpoint();
 
-        if(oi.shouldShoot() && !Shooter.getInstance().isDoneShooting()){
+        if(oi.shouldShoot()){
             shootCommand.schedule();
+			
+        }else if(!oi.shouldShoot() && Shooter.getInstance().getState() == Shooter.shooterState.FEED){
+           
         }else{
-            shootCommand.cancel();
-        }
+			shootCommand.cancel();
+		}
 
 
 

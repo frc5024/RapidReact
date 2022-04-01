@@ -123,9 +123,6 @@ public class Robot extends RobotProgram {
 			Intake.getInstance().disableCompressor();
 		}
 
-		if(OI.getInstance().manualSetSolenoid()){
-			new AutoRotate(15).schedule();
-		}
 		
 
 	}

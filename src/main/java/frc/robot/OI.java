@@ -106,6 +106,12 @@ public class OI {
 	}
 
 
+	// public void shouldOveride(){
+	// 	if(operatorController.getBButtonPressed()){
+	// 		Shooter.getInstance().toggleOverride();
+	// 	}
+	// }
+
 
 	public void switchMotors(){
 		if(driverController.getXButtonPressed()){

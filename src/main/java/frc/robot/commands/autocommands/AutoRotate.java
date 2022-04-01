@@ -18,7 +18,7 @@ public class AutoRotate extends CommandBase {
 
 		turnController = new PIDController(.1, 0, 0);
 		this.goal = goal;
-		SmartDashboard.putString("Command State", "Starting");
+		
 
 	}
 
