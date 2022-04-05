@@ -138,7 +138,7 @@ public final class Constants {
 		// Target RPMs
 
 		// Eject/Low Goal
-		public static final double lowGoalTargetRPM = 1600;
+		public static final double lowGoalTargetRPM = 1400;
 
 		// Close Shoot
 		public static final double closeTargetRPM = 2400;
