@@ -2,7 +2,6 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -23,9 +22,7 @@ import io.github.frc5024.libkontrol.statemachines.StateMetadata;
  * Subsystem for controlling the climber
  */
 public class Climber extends SubsystemBase {
-
 	
-
 	// Creating Instance
 	private static Climber mInstance = null;
 
@@ -39,14 +36,15 @@ public class Climber extends SubsystemBase {
 	private DoubleSolenoid pin;
 
 	private HallEffect bottomSensor;
-	private HallEffect topSensor;
 
 	// System states
 	private enum climberState {
 		Idle, // climber not in use
 		Deploying, // arms are deployed for climb
 		Retracting, // arms are retracting and pulling the robot up
-		FinishClimb // robot has climbed and is off the ground
+		Extend, // arms are being deployed again for high climb
+		FinishClimb, // robot has climbed and is off the ground
+
 	}
 
 	/*
@@ -71,6 +69,7 @@ public class Climber extends SubsystemBase {
 		stateMachine.setDefaultState(climberState.Idle, this::handleIdle);
 		stateMachine.addState(climberState.Deploying, this::handleDeploying);
 		stateMachine.addState(climberState.Retracting, this::handleRetracting);
+		stateMachine.addState(climberState.Extend, this::handleExtend);
 		stateMachine.addState(climberState.FinishClimb, this::handleFinishClimb);
 
 		pullMotor = CTREMotorFactory.createTalonSRX(Constants.Climb.climberID, Constants.Climb.climbConfig);
@@ -144,8 +143,37 @@ public class Climber extends SubsystemBase {
 		if(bottomSensor.get()){
 			pullMotor.stopMotor();
 			stateMachine.setState(climberState.FinishClimb);
+			//stateMachine.setState(climberState.Extend);
 		}
 	}
+
+	private void handleExtend(StateMetadata<climberState> metadata) {
+		boolean hasExtended = false;
+
+		if (OI.getInstance().shouldExtendClimb()) {
+			// negative number for climb
+			pullMotor.set(-.9);
+			if(!bottomSensor.get()){
+				hasExtended = true;
+			}
+		} else {
+			pullMotor.stopMotor();
+		}
+
+		// If done retracting stop the motor
+		if (OI.getInstance().shouldRetractClimb() && !bottomSensor.get()) {
+			// negative number for climb
+			pullMotor.set(-.9);
+		} else {
+			pullMotor.stopMotor();
+		}
+
+		if(bottomSensor.get() && hasExtended){
+			pullMotor.stopMotor();
+			stateMachine.setState(climberState.FinishClimb);
+		}
+	}
+
 
 	private void handleFinishClimb(StateMetadata<climberState> metadata) {
 		// Stop motor and win points

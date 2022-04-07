@@ -58,9 +58,12 @@ public class OI {
     }
 
     public boolean shouldRetractClimb(){
-        return driverController.getPOV() == 180;
-    }
-
+        return driverController.getBButton();
+	}
+	
+	public boolean shouldExtendClimb(){
+		return driverController.getYButton();
+	}
     public boolean shouldIntake(){
         return driverController.getAButton();
     }
