@@ -42,9 +42,6 @@ public class Climber extends SubsystemBase {
 		Idle, // climber not in use
 		Deploying, // arms are deployed for climb
 		Retracting, // arms are retracting and pulling the robot up
-		Extend, // arms are being deployed again for high climb
-		FinishClimb, // robot has climbed and is off the ground
-
 	}
 
 	/*
@@ -69,8 +66,7 @@ public class Climber extends SubsystemBase {
 		stateMachine.setDefaultState(climberState.Idle, this::handleIdle);
 		stateMachine.addState(climberState.Deploying, this::handleDeploying);
 		stateMachine.addState(climberState.Retracting, this::handleRetracting);
-		stateMachine.addState(climberState.Extend, this::handleExtend);
-		stateMachine.addState(climberState.FinishClimb, this::handleFinishClimb);
+		
 
 		pullMotor = CTREMotorFactory.createTalonSRX(Constants.Climb.climberID, Constants.Climb.climbConfig);
 		pullMotor.configSupplyCurrentLimit(
@@ -127,62 +123,18 @@ public class Climber extends SubsystemBase {
 	}
 
 	private void handleRetracting(StateMetadata<climberState> metadata) {
-		// If the bottom sensor tells us we are off the ground stop the motor
-		if(metadata.isFirstRun()){
-			pin.set(Value.kReverse);
-		}
-
-		// If done retracting stop the motor
-		if (OI.getInstance().shouldRetractClimb() && !bottomSensor.get()) {
-			// positive number for climb
-			pullMotor.set(.9);
-		} else {
-			pullMotor.stopMotor();
-		}
-
-		if(bottomSensor.get()){
-			pullMotor.stopMotor();
-			stateMachine.setState(climberState.FinishClimb);
-			//stateMachine.setState(climberState.Extend);
-		}
-	}
-
-	private void handleExtend(StateMetadata<climberState> metadata) {
-		boolean hasExtended = false;
-
+		// Decides if what direction to set the climb and sets speed accordingly
 		if (OI.getInstance().shouldExtendClimb()) {
 			// negative number for climb
 			pullMotor.set(-.9);
-			if(!bottomSensor.get()){
-				hasExtended = true;
-			}
-		} else {
-			pullMotor.stopMotor();
-		}
-
-		// If done retracting stop the motor
-		if (OI.getInstance().shouldRetractClimb() && !bottomSensor.get()) {
-			// negative number for climb
-			pullMotor.set(-.9);
-		} else {
-			pullMotor.stopMotor();
-		}
-
-		if(bottomSensor.get() && hasExtended){
-			pullMotor.stopMotor();
-			stateMachine.setState(climberState.FinishClimb);
-		}
-	}
-
-
-	private void handleFinishClimb(StateMetadata<climberState> metadata) {
-		// Stop motor and win points
-		if (metadata.isFirstRun()) {
-			pullMotor.setNeutralMode(NeutralMode.Coast);
-			pullMotor.set(0);
+		} else if(OI.getInstance().shouldRetractClimb() && !bottomSensor.get()){
+			pullMotor.set(.9);
+		}else{
+			// Stops motor if nothing is set
 			pullMotor.stopMotor();
 		}
 	}
+
 
 	public void setIdle(){
 		stateMachine.setState(climberState.Idle);
