@@ -44,7 +44,7 @@ public class AutoRotate extends CommandBase {
 
 
 		driveTrain.setSpeed(rotationSpeed * .5, -rotationSpeed * .5);
-		driveTrain.enableBrakes(true);
+	//	driveTrain.enableBrakes(true);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class AutoRotate extends CommandBase {
 	@Override
 	public void end(boolean interrupted) {
 		driveTrain.stop();
-		driveTrain.enableBrakes(false);
+	//	driveTrain.enableBrakes(false);
 	}
 	
 }

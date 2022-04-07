@@ -13,6 +13,7 @@ import frc.robot.commands.SubsystemCommands.ShootCommand;
 import frc.robot.commands.autocommands.AutoRotate;
 import frc.robot.commands.autocommands.AutoShoot;
 import frc.robot.commands.autocommands.RollBack;
+import frc.robot.commands.autocommands.RollForward;
 import frc.robot.subsystem.DriveTrain;
 import io.github.frc5024.lib5k.autonomous.AutonomousSequence;
 import io.github.frc5024.purepursuit.pathgen.Path;
@@ -38,17 +39,18 @@ public class DoubleBall implements AutonomousSequence{
 
 		completeCommand.addCommands(new AutoShoot());
 
-        completeCommand.addCommands(new AutoRotate(180));
+        completeCommand.addCommands(new AutoRotate(95));
 
         completeCommand.addCommands(new IntakeCommand());
 
         // forwards 1 meter
+        completeCommand.addCommands(new RollForward(0.5).withTimeout(1));
 
-        completeCommand.addCommands(new RollBack().withTimeout(1));
+       // completeCommand.addCommands(new RollBack().withTimeout(1));
 
-        completeCommand.addCommands(new AutoRotate(180));
+        //completeCommand.addCommands(new AutoRotate(83));
 
-        completeCommand.addCommands(new AutoShoot());
+        //completeCommand.addCommands(new AutoShoot());
 
         return completeCommand;
     }

@@ -29,8 +29,6 @@ public class RollForward extends CommandBase{
 
 
     /**
-     * 
-     * @param distance distance in meters you'd like to roll back
      */
     public RollForward(double distance){
 
