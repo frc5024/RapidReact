@@ -44,7 +44,7 @@ public class DoubleBall implements AutonomousSequence{
         completeCommand.addCommands(new IntakeCommand());
 
         // forwards 1 meter
-        completeCommand.addCommands(new RollForward(0.5).withTimeout(1));
+        completeCommand.addCommands(new RollForward().withTimeout(1));
 
        // completeCommand.addCommands(new RollBack().withTimeout(1));
 
