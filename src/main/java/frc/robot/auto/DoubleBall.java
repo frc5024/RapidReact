@@ -12,6 +12,7 @@ import frc.robot.commands.SubsystemCommands.IntakeCommand;
 import frc.robot.commands.SubsystemCommands.ShootCommand;
 import frc.robot.commands.autocommands.AutoRotate;
 import frc.robot.commands.autocommands.AutoShoot;
+import frc.robot.commands.autocommands.ControlledForward;
 import frc.robot.commands.autocommands.RollBack;
 import frc.robot.commands.autocommands.RollForward;
 import frc.robot.subsystem.DriveTrain;
@@ -45,6 +46,9 @@ public class DoubleBall implements AutonomousSequence{
 
         // forwards 1 meter
         completeCommand.addCommands(new RollForward().withTimeout(1));
+
+        // Uses this to drive a specific distance
+        //completeCommand.addCommands(new ControlledForward(.95));
 
        // completeCommand.addCommands(new RollBack().withTimeout(1));
 
