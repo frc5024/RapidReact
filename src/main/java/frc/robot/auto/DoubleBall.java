@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.SubsystemCommands.IntakeCommand;
 import frc.robot.commands.SubsystemCommands.ShootCommand;
@@ -45,7 +46,9 @@ public class DoubleBall implements AutonomousSequence{
         completeCommand.addCommands(new IntakeCommand());
 
         // forwards 1 meter
-        completeCommand.addCommands(new RollForward().withTimeout(1));
+        completeCommand.addCommands(new ParallelDeadlineGroup(new RollForward().withTimeout(1), new IntakeCommand()));
+
+        
 
         // Uses this to drive a specific distance
         //completeCommand.addCommands(new ControlledForward(.95));
