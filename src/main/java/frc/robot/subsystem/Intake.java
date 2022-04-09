@@ -52,6 +52,7 @@ public class Intake extends SubsystemBase {
         ARMSTOWED,
         INTAKING,
 		SPINDOWN,
+        OUTPUT,
     }
 
     private StateMachine<intakeState> stateMachine;
@@ -107,6 +108,7 @@ public class Intake extends SubsystemBase {
         // Setup statemachine
         stateMachine.setDefaultState(intakeState.ARMSTOWED, this::handleArmStowed);
         stateMachine.addState(intakeState.INTAKING, this::handleIntaking);
+        stateMachine.addState(intakeState.OUTPUT, this::handleOutput);
 		stateMachine.addState(intakeState.SPINDOWN, this::handleSpinDown);
 
 		manualOveride = false;
@@ -171,6 +173,22 @@ public class Intake extends SubsystemBase {
 
     }
 
+    private void handleOutput(StateMetadata<intakeState> meta){
+        //Extend arms on first run
+        if (meta.isFirstRun()){
+            intakeSolenoid.set(Value.kForward);
+            intakeCount += 1;
+        }
+
+        //Set the motor if we own it, otherwise try to claim it
+        if (intakeMotor.getCurrentOwner() != owner.INTAKE) {
+            intakeMotor.obtain(owner.INTAKE);
+        } else {
+                intakeMotor.set(Constants.Intake.outputSpeed, owner.INTAKE);
+        }
+
+    }
+
 	private void handleSpinDown(StateMetadata<intakeState> meta){
         // Start spin down process on first run
 		if(meta.isFirstRun()){
@@ -205,6 +223,11 @@ public class Intake extends SubsystemBase {
     public void intakeBall(){
         // If arms are stowed currently we want to change to intake state
 		stateMachine.setState(intakeState.INTAKING);
+    }
+
+    public void outputBall(){
+        //If arms are stowed we want to change to output state
+        stateMachine.setState(intakeState.OUTPUT);
     }
 
     /** 

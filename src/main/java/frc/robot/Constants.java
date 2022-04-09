@@ -70,6 +70,9 @@ public final class Constants {
 		// Speed for intaking the balls
 		public static final double intakeSpeed = 0.36;
 
+		// Speed for outtaking balls
+		public static final double outputSpeed = -0.10;
+
 		// Solenoid forward and reverse channel ids
 		public static final int solenoidForward = 1;
 		public static final int solenoidReverse = 0;
@@ -138,13 +141,13 @@ public final class Constants {
 		// Target RPMs
 
 		// Eject/Low Goal
-		public static final double lowGoalTargetRPM = 1400;
+		public static final double lowGoalTargetRPM = 1500;
 
 		// Close Shoot
-		public static final double closeTargetRPM = 2400;
+		public static final double closeTargetRPM = 2700;
 
 		// Line Shot 
-		public static final double lineShotTargetRPM = 2700;
+		public static final double lineShotTargetRPM = 3000;
 
 		public static final double longAssShot = 3500;
 
