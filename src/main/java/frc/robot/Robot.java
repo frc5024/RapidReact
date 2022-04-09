@@ -19,12 +19,14 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auto.DoubleBall;
+import frc.robot.auto.FeedRollBack;
 import frc.robot.auto.ShootMove;
 import frc.robot.auto.TestPath;
 import frc.robot.auto.TestTurnPath;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.OperatorCommand;
 import frc.robot.commands.autocommands.AutoRotate;
+import frc.robot.commands.autocommands.Feed;
 import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
@@ -100,6 +102,7 @@ public class Robot extends RobotProgram {
 		addAutonomous(new TestTurnPath());
 		addAutonomous(new ShootMove());
 		addAutonomous(new DoubleBall());
+		addAutonomous(new FeedRollBack());
 		
 	}
 
