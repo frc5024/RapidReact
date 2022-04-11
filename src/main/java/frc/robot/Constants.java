@@ -110,9 +110,13 @@ public final class Constants {
 
 		// Motor pull speed
 		public static final double downPullSpeed = .9;
-		public static final double upPullSpeed = -.9;
+		public static final double upPullSpeed = .4;
 
+		// The max speed we can travel downwards before our controlloops kick in units: m/s
+		public static final double maximumAllowableFallSpeed = 1;
 
+		// Voltage required to fight gravity
+		public static final double kG = 6;
 		
 		
 	}

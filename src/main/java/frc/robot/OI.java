@@ -136,6 +136,15 @@ public class OI {
 		return operatorController.getYButton();
 	}
 
+	/**
+	 * Should the climber enter hold mode
+	 * 
+	 * @return has the left bumper been pressed
+	 */
+	public boolean shouldEnterHoldMode(){
+		return driverController.getLeftBumperPressed();
+	}
+
 
 	/**
 	 * Toggles whether the operator has control over the intake

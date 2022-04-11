@@ -248,6 +248,13 @@ public class DriveTrain extends SubsystemBase {
 		leftMaster.set(leftSpeed * motorInversionMultiplier);
 	}
 
-
+	/**
+	 * Gets the speed down in m/s
+	 * 
+	 * @return the speed going down according to the NavX
+	 */
+	public double getDownwardSpeed(){
+		return gyro.getVelocityZ();
+	}
 
 }

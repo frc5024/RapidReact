@@ -41,7 +41,6 @@ public class Climber extends SubsystemBase {
 	// System states
 	private enum climberState {
 		Idle, // climber not in use
-		Deploying, // arms are deployed for climb
 		Retracting, // arms are retracting and pulling the robot up
 	}
 
@@ -66,7 +65,6 @@ public class Climber extends SubsystemBase {
 		stateMachine = new StateMachine<>("Climber Subsystem");
 
 		stateMachine.setDefaultState(climberState.Idle, this::handleIdle);
-		stateMachine.addState(climberState.Deploying, this::handleDeploying);
 		stateMachine.addState(climberState.Retracting, this::handleRetracting);
 		
 		// Initialize the motor
@@ -90,8 +88,9 @@ public class Climber extends SubsystemBase {
 	public void periodic() {
 		stateMachine.update();
 	
-		SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
-		SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
+		// SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
+		// SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
+		SmartDashboard.putNumber("Z Speed", DriveTrain.getInstance().getDownwardSpeed());
 	}
 
 	private void handleIdle(StateMetadata<climberState> metadata) {
@@ -103,37 +102,22 @@ public class Climber extends SubsystemBase {
 
 		// If operator deploys switch to deploying
 		if (OI.getInstance().shouldClimbDeploy()) {
-			stateMachine.setState(climberState.Deploying);
-		}
-	}
-
-	private void handleDeploying(StateMetadata<climberState> metadata) {
-		if (metadata.isFirstRun()) {
-			// Release pin to send climber up
-			deploySolenoid.set(Value.kReverse);
-			climbDeployTimer.reset();
-			climbDeployTimer.start();
-		}
-
-		// Switch to retracting state once sensor tells us we are in the right spot
-		// Stop the pin at the same time
-		if (climbDeployTimer.hasElapsed(1)) {
-			climbDeployTimer.stop();
-			
 			stateMachine.setState(climberState.Retracting);
 		}
-
 	}
 
 	private void handleRetracting(StateMetadata<climberState> metadata) {
+		
+		
 		// Decides if what direction to set the climb and sets speed accordingly
 		if (OI.getInstance().shouldExtendClimb()) {
 			// negative number for climb
 			pullMotor.set(Constants.Climb.upPullSpeed);
 		} else if(OI.getInstance().shouldRetractClimb() && !bottomSensor.get()){
 			pullMotor.set(Constants.Climb.downPullSpeed);
+		} else if(DriveTrain.getInstance().getDownwardSpeed() > Constants.Climb.maximumAllowableFallSpeed){
+			pullMotor.setVoltage(Constants.Climb.kG);
 		}else{
-			// Stops motor if nothing is set
 			pullMotor.stopMotor();
 		}
 	}
