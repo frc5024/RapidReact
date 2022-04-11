@@ -2,18 +2,12 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.OI;
 import frc.robot.subsystem.RestrictedMotor.owner;
 import io.github.frc5024.lib5k.hardware.common.sensors.interfaces.CommonEncoder;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
@@ -26,48 +20,52 @@ import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 /**
  * Subsystem for controlling the Shooter
  * 
- * 
+ * The shooter uses a PID loop to get to and hold the correct speed
  * 
  * 
  */
 public class Shooter extends SubsystemBase {
-
+	// Set this class up as a singleton
 	private static Shooter mInstance = null;
 
+	// Robot logger instance
 	private RobotLogger logger;
 
-	// Motors
+	// Main flywheel motor
 	private ExtendedTalonFX flywheelMotor;
 
-	// Shared motor
+	// Shared feed/intake motor
 	private RestrictedMotor feedMotor;
 
 	// Sensors
 	private CommonEncoder flywheelEncoder;
 
-	// Value for the target rpm
+	// Value for the current target rpm
 	private double targetRPM;
 
+	// The name to display in network tables
+	private String targetRPMName;
+
+	// The PID controller used for controlling the motor
 	private PIDController shooterController;
 
+	// Extra time to spin the shooter after the ball has cleared
+	// TODO use a combonation of intake encoder readings and Line break to tell if ball is all the way out
 	private Timer extraSpinTimer;
 
-	private SimpleMotorFeedforward feedforward;
-
-	private boolean inPreheat;
-
-	private boolean overide = false;
-
+	// Shooter states
 	public enum shooterState {
-		IDLE,
-		FEED,
-		SPINNINGUP,
-		TARGETING,
-		PREHEAT,
+		IDLE, // Default state, at rest
+		FEED, // At Speed start feeding balls
+		SPINNINGUP, // Spinning up to speed
+		TARGETING, // Targeting with limelight not yet in use
+		PREHEAT, // Preheating the flywheel to a set speed
 	}
 
+	// Configure the statemachine
 	private StateMachine<shooterState> stateMachine;
 
+	// Are we done shooting, used for ending the command
 	private boolean isDoneShooting = false;
 
 	/**
@@ -90,66 +88,72 @@ public class Shooter extends SubsystemBase {
 		// Initialize the logger
 		logger = RobotLogger.getInstance();
 
-		// // Initialize flywheel motor
+		// Initialize flywheel motor
 		this.flywheelMotor = CTREMotorFactory.createTalonFX(Constants.Shooter.flyWheelID,
 				Constants.Shooter.flywheelConfig);
 		
+		// Sets the motor to coast mode so we don't fight
 		flywheelMotor.setNeutralMode(NeutralMode.Coast);
+
+		// Invert the motor so positive speeds move us in the right direction
 		flywheelMotor.setInverted(true);
 
-		// // Setup flywheel encoder
+		// Setup flywheel encoder
 		this.flywheelEncoder = flywheelMotor.getCommonEncoder(Constants.Shooter.encoderTPR);
 		this.flywheelEncoder.setPhaseInverted(true);
 		this.flywheelEncoder.reset();
 
-		// // Get the shared motor instance
+		// Get the shared motor instance
 		this.feedMotor = RestrictedMotor.getInstance();
 
 		// Controller Setup
 		shooterController = new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
 
-		//feedforward = new SimpleMotorFeedforward(ks, kv)
+		// Sets tolerances of PID loop
+		shooterController.setTolerance(Constants.Shooter.shooterPositionTolerance, Constants.Shooter.shooterVelocityTolerance);
 		
 
 		// Setup Statemachine default state is idle
 		stateMachine = new StateMachine<>("Shooter");
 
+		// Adds all the states to the statemachine
 		stateMachine.setDefaultState(shooterState.IDLE, this::handleIdle);
 		stateMachine.addState(shooterState.TARGETING, this::handleTargeting);
 		stateMachine.addState(shooterState.SPINNINGUP, this::handleSpinningUp);
 		stateMachine.addState(shooterState.FEED, this::handleFeeding);
 		stateMachine.addState(shooterState.PREHEAT, this::handlePreheat);
 
-		targetRPM = Constants.Shooter.lineShotTargetRPM;
+		// Sets the current set point and the name to display
+		targetRPM = Constants.Shooter.RPMS.lineShotTargetRPM;
+		targetRPMName = Constants.Shooter.RPMS.lineShotName;
 
+		// Initializes the extra spin timer
 		extraSpinTimer = new Timer();
-		SmartDashboard.putBoolean("at Point", false);
-		inPreheat = false;
+
+		
 		
 	}
 
 	@Override
 	public void periodic() {
 		// Update statemachine
-
-		
-
 		stateMachine.update();
-		SmartDashboard.putNumber("Target Speed", targetRPM);
+
+
+		SmartDashboard.putString("Target Speed", targetRPMName);
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY", getShooterRPM());
 		SmartDashboard.putString("SHOOTER STATE", stateMachine.getCurrentState().toString());
-		SmartDashboard.putBoolean("In Preheat", inPreheat);
-		SmartDashboard.putBoolean("In overide", overide);
+		SmartDashboard.putBoolean("In Preheat", stateMachine.getCurrentState() == shooterState.PREHEAT);
 	}
 
 	/**
 	 * Method ran while Idle
 	 */
 	private void handleIdle(StateMetadata<shooterState> metaData) {
+		// Reset everything and free the feed motor
 		if (metaData.isFirstRun()) {
 			flywheelMotor.set(0);
 			isDoneShooting = false;
-			inPreheat = false;
 
 			if (feedMotor.getCurrentOwner() == owner.SHOOTER) {
 				feedMotor.free(owner.SHOOTER);
@@ -160,11 +164,8 @@ public class Shooter extends SubsystemBase {
 
 
 	private void handlePreheat(StateMetadata<shooterState> metadata){
-		if(metadata.isFirstRun()){
-			inPreheat = true;
-		}
-
-		flywheelMotor.setVoltage(2);
+		// Set the flywheel to its preheat voltage
+		flywheelMotor.setVoltage(Constants.Shooter.preheatVoltage);
 		
 	}
 
@@ -174,7 +175,6 @@ public class Shooter extends SubsystemBase {
 	 */
 	private void handleTargeting(StateMetadata<shooterState> metaData) {
 		stateMachine.setState(shooterState.SPINNINGUP);
-		inPreheat = false;
 	}
 
 	/**
@@ -182,20 +182,18 @@ public class Shooter extends SubsystemBase {
 	 */
 	private void handleSpinningUp(StateMetadata<shooterState> metaData) {
 		if (metaData.isFirstRun()) {
-			// Clears controller
-			
-			inPreheat = false;
+			// Clears controller and sets the tolerances
+			shooterController.reset();
 			shooterController.setSetpoint(targetRPM);
-			shooterController.setTolerance(50, 10);
 		}
 
 		// set the motor until we are at the appropriate speed
 		flywheelMotor.set(shooterController.calculate(getShooterRPM(), targetRPM));
 		
-		// Switch to feeding
+		// Switch to feeding when at setpoint
 		if (shooterController.atSetpoint()) {
 			stateMachine.setState(shooterState.FEED);
-			SmartDashboard.putBoolean("at Point", true);
+			logger.log("At setpoint switching to feed");
 		}
 		
 
@@ -205,13 +203,17 @@ public class Shooter extends SubsystemBase {
 	 * Method for feeding balls into the shooter
 	 */
 	private void handleFeeding(StateMetadata<shooterState> metaData) {
+		// If we are are in auto, start a timer so we only shoot so long
+		// TODO make it work on encoders and linebreak
 		if (metaData.isFirstRun() && DriverStation.isAutonomous()) {
 		
 			extraSpinTimer.reset();
 			extraSpinTimer.start();
 		}
 
+		// Continue to give the motor speeds
 		flywheelMotor.set(shooterController.calculate(getShooterRPM(), targetRPM));
+
 		// If we are the owner, start spinning the ball
 		if (feedMotor.getCurrentOwner() == owner.SHOOTER) {
 
@@ -224,11 +226,16 @@ public class Shooter extends SubsystemBase {
 
 		}
 
-		if (!Intake.getInstance().ballSensorReading() && !overide) {
+		// If we don't see the ball start the timer
+		if (!Intake.getInstance().ballSensorReading()) {
 			extraSpinTimer.start();
+			logger.log("No ball detected starting timer");
 		}
 
+		// Once the timer has elapsed return to idle
+		// this is poorly code but it will be changed so I will do that when make changes
 		if (extraSpinTimer.hasElapsed(1)) {
+			logger.log("Shot made winding down");
 			extraSpinTimer.stop();
 			extraSpinTimer.reset();
 			stateMachine.setState(shooterState.IDLE);
@@ -241,6 +248,7 @@ public class Shooter extends SubsystemBase {
 	 * Method to shoot the ball
 	 */
 	public void shootBall() {
+		logger.log("Shoot command issued");
 		stateMachine.setState(shooterState.TARGETING);
 	}
 
@@ -250,6 +258,7 @@ public class Shooter extends SubsystemBase {
 	 * Returns the system to idle
 	 */
 	public void stop() {
+		logger.log("Stopping Shooter subsystem");
 
 		// Stop and free the feed motor
 		feedMotor.stopMotor(owner.SHOOTER);
@@ -260,6 +269,7 @@ public class Shooter extends SubsystemBase {
 
 		// Switch to idle
 		stateMachine.setState(shooterState.IDLE);
+		
 	}
 
 	/**
@@ -278,28 +288,40 @@ public class Shooter extends SubsystemBase {
 	 * @return flywheel motor rpm
 	 */
 	private double getShooterRPM() {
-
-		return (flywheelEncoder.getVelocity() * 1000 / .001666) * .714;
+		// Gets the velocity of the encoder corrects it so it is in RPM that factors in the gear ratio of the flywheel
+		return (flywheelEncoder.getVelocity() * Constants.Shooter.velocityCorrectionFactor) * Constants.Shooter.shooterRatio;
 	}
 
-	public void setTarget(double newRPM) {
+	/**
+	 * Sets the new RPM of the shooter
+	 * 
+	 * @param newRPM new rpm set point
+	 * @param name the name associated with the shot
+	 */
+	public void setTarget(double newRPM, String name) {
 		targetRPM = newRPM;
+		targetRPMName = name;
+		logger.log("Setting Shooter Speed to: %.2f", newRPM);
 		
 	}
 
+	/**
+	 * Toggles between preheat and idle if we aren't in either state it is a No-op
+	 */
 	public void togglePreheat(){
 		if(stateMachine.getCurrentState() == shooterState.PREHEAT){
 			stateMachine.setState(shooterState.IDLE);
-		}else{
+			logger.log("Toggling to IDLE");
+		}else if(stateMachine.getCurrentState() == shooterState.IDLE){
 			stateMachine.setState(shooterState.PREHEAT);
+			logger.log("Toggling to Preheat");
 		}
 	}
 
-
-	public void toggleOverride(){
-		overide = !overide;
-	}
-
+	/**
+	 * 
+	 * @return the current state of the shooter
+	 */
 	public shooterState getState(){
 		return stateMachine.getCurrentState();
 	}

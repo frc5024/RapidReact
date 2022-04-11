@@ -60,7 +60,6 @@ public final class Constants {
 	// Intake Constants
 	public static final class Intake{
 
-		// TODO MOTOR ID AND CONFIG NEEDS TO BE CHANGED
 		// Motor used for spinning intake and feeding balls
 		public static final int spinnerID = 7;
 
@@ -72,6 +71,8 @@ public final class Constants {
 
 		// Speed for outtaking balls
 		public static final double outputSpeed = -0.10;
+		// Speed to run the motors when spinning down
+		public static final double spinDownSpeed = 0.2;
 
 		// Solenoid forward and reverse channel ids
 		public static final int solenoidForward = 1;
@@ -98,20 +99,36 @@ public final class Constants {
 		public static final int climberID = 9;
 
 		// Hall effects for determining position
-		public static final int topHallEffectID = 6;
-		public static final int bottomHallEffectID = 2;
+		public static final int bottomHallEffectID = 7;
+
+
+		// Pneumatic forward channel
+		public static final int pneumaticForward = 2;
+
+		// Pneumatic reverse channel
+		public static final int pneumaticReverse = 3;
+
+		// Motor pull speed
+		public static final double downPullSpeed = .9;
+		public static final double upPullSpeed = -.9;
+
+
+		
 		
 	}
 
 	// Shooter Constants
 	public static final class Shooter{
-		// Linebreak
+
+		// Line break
 		public static final int lineBreakChannelId = 2;
 
 		// Shooter Values
 
 		// Shooter Epsilon
-		public static final double shooterEpsilon = 100;
+		public static final double shooterPositionTolerance = 50;
+
+		public static final double shooterVelocityTolerance = 10;
 
 		// Flywheel motor id
 		public static final int flyWheelID = 12;
@@ -124,40 +141,51 @@ public final class Constants {
 		public static final double kI = .001;
 		public static final double kD = .0007;
 
-		// PID values for low shoot
+		// PID values for low shoot, these values aren't currently used
 		public static final double low_kP = 0.0023;
 		public static final double low_kI = .001;
 		public static final double low_kD = 0;
 
 		public static final int encoderTPR = 2048;
 
-		// The speed for ejecting
-		public static final double ejectSetSpeed = 150;
-
 		// Speed for setting feed motor
 		public static final double beltFeedSpeed = .8;
 
+		// Preheat voltage
+		public static final double preheatVoltage = 2;
 
-		// Target RPMs
+		// This value corrects the miscalculation in our library and converts to RPM
+		public static final double velocityCorrectionFactor = 1000 / .001666;
 
-		// Eject/Low Goal
-		public static final double lowGoalTargetRPM = 1500;
+		// The ratio from the motor to the flywheel
+		public static final double shooterRatio = .714;
 
-		// Close Shoot
-		public static final double closeTargetRPM = 2700;
+		public static final class RPMS{
 
-		// Line Shot 
-		public static final double lineShotTargetRPM = 3000;
+			// Shot and Names
 
-		public static final double longAssShot = 3500;
+			// Eject shot
+			public static final double lowGoalTargetRPM = 1600;
+			public static final String lowGoalName = "Low Goal";
+			
 
-		
+			// Close Shoot
+			public static final double closeTargetRPM = 2400;
+			public static final String closeGoalName = "Mid Shot";
+	
+			// Line Shot 
+			public static final double lineShotTargetRPM = 2700;
+			public static final String lineShotName = "Far Shot";
+	
+			// Long Shot
+			public static final double longShot = 3500;
+			public static final String longShotName = "Launch Pad Shoot";
+
+
+		}	
 
 		
 	}
-
-	
-
 
 
 }

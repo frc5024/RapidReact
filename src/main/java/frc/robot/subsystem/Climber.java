@@ -2,7 +2,6 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -21,11 +20,10 @@ import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 
 /*
  * Subsystem for controlling the climber
+ * TODO possibly remove the deploying state as with the new code design it isn't needed
  */
 public class Climber extends SubsystemBase {
-
 	
-
 	// Creating Instance
 	private static Climber mInstance = null;
 
@@ -36,17 +34,15 @@ public class Climber extends SubsystemBase {
 
 	// Creating Motors and Sensors
 	private ExtendedTalonSRX pullMotor;
-	private DoubleSolenoid pin;
+	private DoubleSolenoid deploySolenoid;
 
 	private HallEffect bottomSensor;
-	private HallEffect topSensor;
 
 	// System states
 	private enum climberState {
 		Idle, // climber not in use
 		Deploying, // arms are deployed for climb
 		Retracting, // arms are retracting and pulling the robot up
-		FinishClimb // robot has climbed and is off the ground
 	}
 
 	/*
@@ -66,22 +62,26 @@ public class Climber extends SubsystemBase {
 	 * Constructor for the climber
 	 */
 	private Climber() {
+		// Initializes the state machine and adds the states
 		stateMachine = new StateMachine<>("Climber Subsystem");
 
 		stateMachine.setDefaultState(climberState.Idle, this::handleIdle);
 		stateMachine.addState(climberState.Deploying, this::handleDeploying);
 		stateMachine.addState(climberState.Retracting, this::handleRetracting);
-		stateMachine.addState(climberState.FinishClimb, this::handleFinishClimb);
-
+		
+		// Initialize the motor
 		pullMotor = CTREMotorFactory.createTalonSRX(Constants.Climb.climberID, Constants.Climb.climbConfig);
+
+		// Add a current limit
 		pullMotor.configSupplyCurrentLimit(
 				new SupplyCurrentLimitConfiguration(true, Constants.Climb.climbConfig.peakAmps,
 						Constants.Climb.climbConfig.holdAmps, 1));
 
-		// climber release
-		pin = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
+		// Solenoid for the climber release
+		deploySolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.Climb.pneumaticForward, Constants.Climb.pneumaticReverse);
 
-		bottomSensor = new HallEffect(7);
+		// Create the buttom sensor
+		bottomSensor = new HallEffect(Constants.Climb.bottomHallEffectID);
 
 		climbDeployTimer = new Timer();
 	}
@@ -89,11 +89,9 @@ public class Climber extends SubsystemBase {
 	@Override
 	public void periodic() {
 		stateMachine.update();
-		// SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
 	
 		SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
 		SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
-		SmartDashboard.putBoolean("Sensor", bottomSensor.get());
 	}
 
 	private void handleIdle(StateMetadata<climberState> metadata) {
@@ -112,7 +110,7 @@ public class Climber extends SubsystemBase {
 	private void handleDeploying(StateMetadata<climberState> metadata) {
 		if (metadata.isFirstRun()) {
 			// Release pin to send climber up
-			pin.set(Value.kReverse);
+			deploySolenoid.set(Value.kReverse);
 			climbDeployTimer.reset();
 			climbDeployTimer.start();
 		}
@@ -128,34 +126,21 @@ public class Climber extends SubsystemBase {
 	}
 
 	private void handleRetracting(StateMetadata<climberState> metadata) {
-		// If the bottom sensor tells us we are off the ground stop the motor
-		if(metadata.isFirstRun()){
-			pin.set(Value.kReverse);
-		}
-
-		// If done retracting stop the motor
-		if (OI.getInstance().shouldRetractClimb() && !bottomSensor.get()) {
-			// positive number for climb
-			pullMotor.set(.9);
-		} else {
-			pullMotor.stopMotor();
-		}
-
-		if(bottomSensor.get()){
-			pullMotor.stopMotor();
-			stateMachine.setState(climberState.FinishClimb);
-		}
-	}
-
-	private void handleFinishClimb(StateMetadata<climberState> metadata) {
-		// Stop motor and win points
-		if (metadata.isFirstRun()) {
-			pullMotor.setNeutralMode(NeutralMode.Coast);
-			pullMotor.set(0);
+		// Decides if what direction to set the climb and sets speed accordingly
+		if (OI.getInstance().shouldExtendClimb()) {
+			// negative number for climb
+			pullMotor.set(Constants.Climb.upPullSpeed);
+		} else if(OI.getInstance().shouldRetractClimb() && !bottomSensor.get()){
+			pullMotor.set(Constants.Climb.downPullSpeed);
+		}else{
+			// Stops motor if nothing is set
 			pullMotor.stopMotor();
 		}
 	}
 
+	/**
+	 * Set the climber back to idle
+	 */
 	public void setIdle(){
 		stateMachine.setState(climberState.Idle);
 	}

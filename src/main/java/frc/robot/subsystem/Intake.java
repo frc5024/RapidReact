@@ -5,18 +5,13 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.OI;
 import frc.robot.subsystem.RestrictedMotor.owner;
-import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonFX;
-import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
 import io.github.frc5024.lib5k.hardware.generic.cameras.AutoCamera;
 import io.github.frc5024.lib5k.hardware.generic.sensors.LineBreak;
 import io.github.frc5024.lib5k.logging.RobotLogger;
-import io.github.frc5024.lib5k.logging.RobotLogger.Level;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
 import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 
@@ -25,29 +20,39 @@ import io.github.frc5024.libkontrol.statemachines.StateMetadata;
  * Subsystem for controlling the intake
  */
 public class Intake extends SubsystemBase {
-
+    // Set up the subsystem as a singleton
     private static Intake mInstance = null;
 
+    // Set up the logger
+    private RobotLogger logger;
+
+    // Set up the components
+
+    // Webcam that looks into the intake
 	private AutoCamera intakeCamera;
 	
-	private RobotLogger logger;
-
+    // Solenoid used for controlling intake up and down
     private DoubleSolenoid intakeSolenoid;
 
+    // Compressor for compressing obviously
     private Compressor compressor;
 
+    // Shared intake/feed motor for use in intaking
     private RestrictedMotor intakeMotor;
 
+    // Sensor for telling if we need to retract, this is further down
     private LineBreak retractSensor;
 
+    // Sensor for telling if we have the ball, this is higher up
     private LineBreak ballSensor;
-	
-	private boolean manualOveride;
 
 	private boolean spindownFinished;
 
+    // Timer used to tract the extra spindown
+    // TODO replace this with an encoder
 	private Timer extraRollTime;
 
+    // States of intaking
     private enum intakeState{
         ARMSTOWED,
         INTAKING,
@@ -55,8 +60,10 @@ public class Intake extends SubsystemBase {
         OUTPUT,
     }
 
+    // Statemachine
     private StateMachine<intakeState> stateMachine;
 
+    // Tracking the amount of times we deploy the arms
 	private int intakeCount = 0;
 
     /**
@@ -111,7 +118,7 @@ public class Intake extends SubsystemBase {
         stateMachine.addState(intakeState.OUTPUT, this::handleOutput);
 		stateMachine.addState(intakeState.SPINDOWN, this::handleSpinDown);
 
-		manualOveride = false;
+        // Have we finished spinning down
 		spindownFinished = false;
 
         // Initialize extra roll timer
@@ -128,9 +135,6 @@ public class Intake extends SubsystemBase {
 		// Output the status of different subsystem sensors and states via smart dashboard.
 		SmartDashboard.putBoolean("Top Line Break", ballSensor.get());
 		SmartDashboard.putBoolean("Bottom Line Break", retractSensor.get());
-
-		SmartDashboard.putBoolean("Overide Enable", manualOveride);
-		SmartDashboard.putString("Intake State", stateMachine.getCurrentState().toString());
 		SmartDashboard.putNumber("Intake Count", intakeCount);
 		
     }
@@ -151,6 +155,8 @@ public class Intake extends SubsystemBase {
         // Extend arms on first run
         if (meta.isFirstRun()) {
             intakeSolenoid.set(Value.kForward);
+
+            // Increments the intake count
 			intakeCount += 1;
 			
         }
@@ -193,26 +199,26 @@ public class Intake extends SubsystemBase {
         // Start spin down process on first run
 		if(meta.isFirstRun()){
             intakeSolenoid.set(Value.kReverse);
+
             // Reset and start extra roll timer.
 			extraRollTime.reset();
 			extraRollTime.start();
 		}
 
+        // Obtain the intake motor, theoretically we should always have it at this point, but better safe than sorry
 		if (intakeMotor.getCurrentOwner() != owner.INTAKE) {
 			intakeMotor.obtain(owner.INTAKE);
 		} else {
-			intakeMotor.set(.2, owner.INTAKE);
+			intakeMotor.set(Constants.Intake.spinDownSpeed, owner.INTAKE);
 		}
 
+        // If we detect the ball exlusively on the hold sensor or the time elapses switch states
 		if((ballSensor.get() && !retractSensor.get()) || extraRollTime.hasElapsed(2)){
 			extraRollTime.stop();
 			stateMachine.setState(intakeState.ARMSTOWED);
 			spindownFinished = true;
 			
 		}
-
-		
-
 
 
 	}
@@ -246,10 +252,18 @@ public class Intake extends SubsystemBase {
         return retractSensor.get();
     }
 
+    /**
+     * 
+     * @return the reading of the top line break
+     */
 	public boolean ballSensorReading(){
 		return ballSensor.get();
 	}
 
+    /**
+     * 
+     * @return is the intake finished intaking
+     */
 	public boolean intakeFinished(){
 		return spindownFinished;
 	}
@@ -278,10 +292,7 @@ public class Intake extends SubsystemBase {
     /**
      * Method that toggles the value of manual overide
      */
-	public void toggleManualOveride(){
-		manualOveride = !manualOveride;
-	}
-
+	
     /**
      * Method that returns wether or not
      * the current state is SPINDOWN
@@ -299,7 +310,7 @@ public class Intake extends SubsystemBase {
 	
     /**
      * Method that sets the intake solenoid's 
-     * to a disired value
+     * to a desired value
      */
 	public void setSolenoid(Value value){
 		intakeSolenoid.set(value);
