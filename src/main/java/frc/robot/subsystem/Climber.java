@@ -44,6 +44,8 @@ public class Climber extends SubsystemBase {
 		Retracting, // arms are retracting and pulling the robot up
 	}
 
+	private boolean shouldFeedForward = false;
+	
 	/*
 	 * Gets the instance for the climber
 	 * 
@@ -90,7 +92,8 @@ public class Climber extends SubsystemBase {
 	
 		// SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
 		// SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
-		SmartDashboard.putNumber("Z Speed", DriveTrain.getInstance().getDownwardSpeed());
+		SmartDashboard.putBoolean("Bottom Sensor", shouldFeedForward);
+		
 	}
 
 	private void handleIdle(StateMetadata<climberState> metadata) {
@@ -107,19 +110,40 @@ public class Climber extends SubsystemBase {
 	}
 
 	private void handleRetracting(StateMetadata<climberState> metadata) {
-		
-		
-		// Decides if what direction to set the climb and sets speed accordingly
-		if (OI.getInstance().shouldExtendClimb()) {
-			// negative number for climb
-			pullMotor.set(Constants.Climb.upPullSpeed);
-		} else if(OI.getInstance().shouldRetractClimb() && !bottomSensor.get()){
-			pullMotor.set(Constants.Climb.downPullSpeed);
-		} else if(DriveTrain.getInstance().getDownwardSpeed() > Constants.Climb.maximumAllowableFallSpeed){
-			pullMotor.setVoltage(Constants.Climb.kG);
-		}else{
-			pullMotor.stopMotor();
+		if(metadata.isFirstRun()){
+			deploySolenoid.set(Value.kReverse);
 		}
+
+		if(OI.getInstance().shouldEnterHoldMode()){
+			shouldFeedForward = !shouldFeedForward;
+		}
+
+		double voltsToSet = 0;
+
+		if(shouldFeedForward){
+		
+			// Decides if what direction to set the climb and sets speed accordingly
+			if (OI.getInstance().shouldExtendClimb()) {
+				voltsToSet = 11;
+			} else if(OI.getInstance().shouldRetractClimb() && !bottomSensor.get()){
+				voltsToSet = 3;
+			}else{
+				voltsToSet = 6;
+			}
+		}else{
+			// Decides if what direction to set the climb and sets speed accordingly
+			if (OI.getInstance().shouldExtendClimb()) {
+				voltsToSet = 9;
+			} else if(OI.getInstance().shouldRetractClimb() && !bottomSensor.get()){
+				voltsToSet = -3;
+			}else{
+				voltsToSet = 0;
+			}
+		}
+
+		
+
+		pullMotor.setVoltage(!bottomSensor.get() ? voltsToSet : 0);
 	}
 
 	/**
