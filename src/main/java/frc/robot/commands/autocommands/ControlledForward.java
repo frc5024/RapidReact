@@ -22,7 +22,7 @@ public class ControlledForward extends CommandBase{
     /** Tune these two variables */
 
     // The value the scale based on error this would be the M in y = mx + b
-    private double speedValue = .5;
+    private double speedValue = .2;
 
     // The constant speed to set the motor to this would be b in y = mx + b
     private double speedConstant = .2;

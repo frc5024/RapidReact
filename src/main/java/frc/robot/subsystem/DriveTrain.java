@@ -158,6 +158,10 @@ public class DriveTrain extends SubsystemBase {
 	}
 
 	
+	public void resetGyro(){
+		initialHeading = gyro.getAngle();
+	}
+
 	public double getLeftMeters() {
 		return (((Math.PI * Constants.DriveTrain.wheelDiameter) * leftSideEncoder.getPosition())
 				/ Constants.DriveTrain.leftSideGearRatio) * encoderInversionMultiplier;

@@ -15,13 +15,13 @@ import frc.robot.subsystem.DriveTrain;
 import io.github.frc5024.lib5k.autonomous.AutonomousSequence;
 import io.github.frc5024.purepursuit.pathgen.Path;
 
-public class ShootMove implements AutonomousSequence{
+public class ShootWait implements AutonomousSequence{
 
     private DriveTrain driveTrain = DriveTrain.getInstance();
 
     @Override
     public String getName() {
-        return "Shoot and Wait";
+        return "Shoot and Back up";
     }
 
     @Override
@@ -31,6 +31,8 @@ public class ShootMove implements AutonomousSequence{
 
 
 		completeCommand.addCommands(new AutoShoot(Constants.Shooter.lineShotTargetRPM));
+
+        completeCommand.addCommands(new WaitCommand(8.5));
 
         completeCommand.addCommands(new RollBack().withTimeout(1));
 

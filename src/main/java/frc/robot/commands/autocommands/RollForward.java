@@ -13,7 +13,7 @@ public class RollForward extends CommandBase{
 
 	@Override
 	public void execute() {
-		DriveTrain.getInstance().setSpeed(1, 1);
+		DriveTrain.getInstance().setSpeed(.3, .3);
 	}
 
 	@Override

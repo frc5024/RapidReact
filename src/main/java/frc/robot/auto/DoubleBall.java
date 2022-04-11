@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants;
 import frc.robot.commands.SubsystemCommands.IntakeCommand;
 import frc.robot.commands.SubsystemCommands.ShootCommand;
 import frc.robot.commands.autocommands.AutoRotate;
@@ -40,28 +42,21 @@ public class DoubleBall implements AutonomousSequence{
         SequentialCommandGroup completeCommand = new SequentialCommandGroup();
 
         // Shoot ball High Shot
-		completeCommand.addCommands(new AutoShoot());
+		completeCommand.addCommands(new AutoShoot(Constants.Shooter.lineShotTargetRPM));
 
         // Rotate 
-        completeCommand.addCommands(new AutoRotate(95));
-
-        //completeCommand.addCommands(new IntakeCommand());
-        
-        //completeCommand.addCommands(new RollForward(0.5).withTimeout(1));
+        completeCommand.addCommands(new AutoRotate(180));
 
         // Parallel Intake Command with Drive Forwards Command
-        completeCommand.addCommands(new ParallelDeadlineGroup(new RollForward().withTimeout(1), new IntakeCommand()));
+        completeCommand.addCommands(new ParallelDeadlineGroup(new IntakeCommand(), new ControlledForward(1.25)));
 
         // Uses this to drive a specific distance
 
         // Rotate
-        completeCommand.addCommands(new AutoRotate(85));
-
-        // Controlled Drive Forward
-        completeCommand.addCommands(new ControlledForward(1));
+        completeCommand.addCommands(new AutoRotate(180));
 
         // Shoot ball High Shot
-        completeCommand.addCommands(new AutoShoot());
+        completeCommand.addCommands(new AutoShoot(Constants.Shooter.lineShotTargetRPM));
 
         return completeCommand;
     }
