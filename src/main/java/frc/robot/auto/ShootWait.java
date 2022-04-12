@@ -30,7 +30,7 @@ public class ShootWait implements AutonomousSequence{
         SequentialCommandGroup completeCommand = new SequentialCommandGroup();
 
 
-		completeCommand.addCommands(new AutoShoot(Constants.Shooter.lineShotTargetRPM));
+		completeCommand.addCommands(new AutoShoot(Constants.Shooter.RPMS.lineShotTargetRPM));
 
         completeCommand.addCommands(new WaitCommand(8.5));
 

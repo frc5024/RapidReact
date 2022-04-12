@@ -42,7 +42,7 @@ public class DoubleBall implements AutonomousSequence{
         SequentialCommandGroup completeCommand = new SequentialCommandGroup();
 
         // Shoot ball High Shot
-		completeCommand.addCommands(new AutoShoot(Constants.Shooter.lineShotTargetRPM));
+		completeCommand.addCommands(new AutoShoot(Constants.Shooter.RPMS.lineShotTargetRPM));
 
         // Rotate 
         completeCommand.addCommands(new AutoRotate(180));
@@ -56,7 +56,7 @@ public class DoubleBall implements AutonomousSequence{
         completeCommand.addCommands(new AutoRotate(180));
 
         // Shoot ball High Shot
-        completeCommand.addCommands(new AutoShoot(Constants.Shooter.lineShotTargetRPM));
+        completeCommand.addCommands(new AutoShoot(Constants.Shooter.RPMS.lineShotTargetRPM));
 
         return completeCommand;
     }
