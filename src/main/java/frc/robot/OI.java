@@ -141,8 +141,8 @@ public class OI {
 	 * 
 	 * @return has the left bumper been pressed
 	 */
-	public boolean shouldEnterHoldMode(){
-		return driverController.getLeftBumperPressed();
+	public boolean shouldEnterReverse(){
+		return driverController.getLeftBumper();
 	}
 
 

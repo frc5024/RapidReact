@@ -140,6 +140,8 @@ public class Robot extends RobotProgram {
 			Intake.getInstance().enableCompressor();
 			Climber.getInstance().setIdle();
 		}
+
+		climber.setRatchet(OI.getInstance().getSpeed());
 		
 	}
 }

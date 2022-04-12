@@ -2,6 +2,8 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+
+import ca.retrylife.ewmath.MathUtils;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -14,6 +16,7 @@ import frc.robot.OI;
 import io.github.frc5024.lib5k.hardware.ctre.motors.CTREMotorFactory;
 import io.github.frc5024.lib5k.hardware.ctre.motors.ExtendedTalonSRX;
 import io.github.frc5024.lib5k.hardware.generic.sensors.HallEffect;
+import io.github.frc5024.lib5k.hardware.generic.servos.SmartServo;
 import io.github.frc5024.libkontrol.statemachines.StateMachine;
 import io.github.frc5024.libkontrol.statemachines.StateMetadata;
 
@@ -31,6 +34,9 @@ public class Climber extends SubsystemBase {
 	private StateMachine<climberState> stateMachine;
 
 	private Timer climbDeployTimer;
+
+	private SmartServo ratchetRelease;
+
 
 	// Creating Motors and Sensors
 	private ExtendedTalonSRX pullMotor;
@@ -84,6 +90,7 @@ public class Climber extends SubsystemBase {
 		bottomSensor = new HallEffect(Constants.Climb.bottomHallEffectID);
 
 		climbDeployTimer = new Timer();
+		ratchetRelease = new SmartServo(Constants.Climb.ratchetReleaseMotorID);
 	}
 
 	@Override
@@ -93,6 +100,7 @@ public class Climber extends SubsystemBase {
 		// SmartDashboard.putBoolean("Bottom Sensor", bottomSensor.get());
 		// SmartDashboard.putString("State", stateMachine.getCurrentState().toString());
 		SmartDashboard.putBoolean("Bottom Sensor", shouldFeedForward);
+		SmartDashboard.putNumber("Angle", ratchetRelease.getAngle());
 		
 	}
 
@@ -100,6 +108,7 @@ public class Climber extends SubsystemBase {
 		// Stop Motor and Pin if climber is not in use
 		if (metadata.isFirstRun()) {
 			pullMotor.stopMotor();
+			ratchetRelease.setAngle(0);
 			
 		}
 
@@ -114,36 +123,19 @@ public class Climber extends SubsystemBase {
 			deploySolenoid.set(Value.kReverse);
 		}
 
-		if(OI.getInstance().shouldEnterHoldMode()){
-			shouldFeedForward = !shouldFeedForward;
-		}
-
-		double voltsToSet = 0;
-
-		if(shouldFeedForward){
 		
-			// Decides if what direction to set the climb and sets speed accordingly
-			if (OI.getInstance().shouldExtendClimb()) {
-				voltsToSet = 11;
-			} else if(OI.getInstance().shouldRetractClimb() && !bottomSensor.get()){
-				voltsToSet = 3;
-			}else{
-				voltsToSet = 6;
-			}
+
+
+		if(OI.getInstance().shouldRetractClimb() && !bottomSensor.get()){
+			pullMotor.set(Constants.Climb.downPullSpeed);
+		}else if(OI.getInstance().shouldEnterReverse()){
+			ratchetRelease.setAngle(Constants.Climb.turnToAngle);
+			pullMotor.setVoltage(Constants.Climb.kG);
 		}else{
-			// Decides if what direction to set the climb and sets speed accordingly
-			if (OI.getInstance().shouldExtendClimb()) {
-				voltsToSet = 9;
-			} else if(OI.getInstance().shouldRetractClimb() && !bottomSensor.get()){
-				voltsToSet = -3;
-			}else{
-				voltsToSet = 0;
-			}
+			ratchetRelease.setAngle(0);
+			pullMotor.setVoltage(0);
 		}
 
-		
-
-		pullMotor.setVoltage(!bottomSensor.get() ? voltsToSet : 0);
 	}
 
 	/**
@@ -153,4 +145,10 @@ public class Climber extends SubsystemBase {
 		stateMachine.setState(climberState.Idle);
 	}
 
+
+
+	public void setRatchet(double speed){
+		
+		ratchetRelease.set(MathUtils.clamp(speed + .5, 0, 1));
+	}
 }

@@ -116,6 +116,11 @@ public final class Constants {
 		// Voltage required to fight gravity
 		public static final double kG = 6;
 		
+		public static final int ratchetReleaseMotorID = 0;
+
+		// Angle the motor needs to turn to, to change the winch status
+		public static final double turnToAngle = 45;
+
 		
 	}
 
