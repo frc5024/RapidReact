@@ -6,13 +6,15 @@ import frc.robot.subsystem.Shooter;
 
 public class AutoShoot extends CommandBase{
 	
-	public AutoShoot(){
+	private double targetRPM;
 
+	public AutoShoot(double rpm){
+		this.targetRPM = rpm;
 	}
 
 	@Override
 	public void initialize() {
-		Shooter.getInstance().setTarget(Constants.Shooter.RPMS.closeTargetRPM, Constants.Shooter.RPMS.closeGoalName);
+		Shooter.getInstance().setTarget(targetRPM, "Auto Shot");
 		Shooter.getInstance().shootBall();
 	}
 

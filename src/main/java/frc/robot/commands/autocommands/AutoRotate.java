@@ -16,7 +16,7 @@ public class AutoRotate extends CommandBase {
 	public AutoRotate(double goal){
 		addRequirements(driveTrain);
 
-		turnController = new PIDController(.1, 0, 0);
+		turnController = new PIDController(.012, 0, 0);
 		this.goal = goal;
 		
 
@@ -26,8 +26,9 @@ public class AutoRotate extends CommandBase {
 	public void initialize() {
 		driveTrain.stop();
 		turnController.reset();
+		driveTrain.resetGyro();
 
-		turnController.setTolerance(5);
+		turnController.setTolerance(4, 3);
 
 
 	}
@@ -44,7 +45,7 @@ public class AutoRotate extends CommandBase {
 
 
 		driveTrain.setSpeed(rotationSpeed * .5, -rotationSpeed * .5);
-	//	driveTrain.enableBrakes(true);
+		
 	}
 
 	@Override
@@ -61,7 +62,7 @@ public class AutoRotate extends CommandBase {
 	@Override
 	public void end(boolean interrupted) {
 		driveTrain.stop();
-	//	driveTrain.enableBrakes(false);
+		
 	}
 	
 }

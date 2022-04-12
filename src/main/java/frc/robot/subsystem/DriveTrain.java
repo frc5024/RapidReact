@@ -173,6 +173,14 @@ public class DriveTrain extends SubsystemBase {
 		return gyro.getAngle() - initialHeading;
 	}
 
+
+	/**
+	 * Rezeros the gyro
+	 */
+	public void resetGyro(){
+		initialHeading = gyro.getAngle();
+	}
+
 	/**
 	 * 
 	 * @return gets the meters that the left side of the robot has traveled
