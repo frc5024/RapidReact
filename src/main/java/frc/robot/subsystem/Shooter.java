@@ -56,8 +56,6 @@ public class Shooter extends SubsystemBase {
 
 	private boolean inPreheat;
 
-	private boolean overide = false;
-
 	public enum shooterState {
 		IDLE,
 		FEED,
@@ -132,14 +130,11 @@ public class Shooter extends SubsystemBase {
 	public void periodic() {
 		// Update statemachine
 
-		
-
 		stateMachine.update();
 		SmartDashboard.putNumber("Target Speed", targetRPM);
 		SmartDashboard.putNumber("FLYWHEEL VELOCITY", getShooterRPM());
 		SmartDashboard.putString("SHOOTER STATE", stateMachine.getCurrentState().toString());
 		SmartDashboard.putBoolean("In Preheat", inPreheat);
-		SmartDashboard.putBoolean("In overide", overide);
 	}
 
 	/**
@@ -224,7 +219,7 @@ public class Shooter extends SubsystemBase {
 
 		}
 
-		if (!Intake.getInstance().ballSensorReading() && !overide) {
+		if (!Intake.getInstance().ballSensorReading()) {
 			extraSpinTimer.start();
 		}
 
@@ -293,11 +288,6 @@ public class Shooter extends SubsystemBase {
 		}else{
 			stateMachine.setState(shooterState.PREHEAT);
 		}
-	}
-
-
-	public void toggleOverride(){
-		overide = !overide;
 	}
 
 	public shooterState getState(){
