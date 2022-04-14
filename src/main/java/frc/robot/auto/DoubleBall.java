@@ -45,12 +45,11 @@ public class DoubleBall implements AutonomousSequence{
 		completeCommand.addCommands(new AutoShoot(Constants.Shooter.closeTargetRPM));
 
         // Rotate 
-        completeCommand.addCommands(new AutoRotate(180));
+        completeCommand.addCommands(new AutoRotate(180).withTimeout(3));
 
         // Parallel Intake Command with Drive Forwards Command
         completeCommand.addCommands(new ParallelDeadlineGroup(new IntakeCommand(), new ControlledForward(1.25)));
 
-        // Uses this to drive a specific distance
 
         // Rotate
         completeCommand.addCommands(new AutoRotate(180));

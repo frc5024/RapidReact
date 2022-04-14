@@ -201,7 +201,7 @@ public class Intake extends SubsystemBase {
 		if (intakeMotor.getCurrentOwner() != owner.INTAKE) {
 			intakeMotor.obtain(owner.INTAKE);
 		} else {
-			intakeMotor.set(.2, owner.INTAKE);
+			intakeMotor.set(.1, owner.INTAKE);
 		}
 
 		if((ballSensor.get() && !retractSensor.get()) || extraRollTime.hasElapsed(2)){

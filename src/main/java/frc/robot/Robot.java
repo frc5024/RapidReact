@@ -56,14 +56,10 @@ public class Robot extends RobotProgram {
 	private Climber climber;
 	private Shooter shooter;
 	private Intake intake;
-	
-	private XboxController tempBox = new XboxController(0);
-	private ExtendedTalonSRX talon = CTREMotorFactory.createTalonSRX(1);
 
 	// Commands
 	private DriveCommand driveCommand;
 	
-	private Timer compressorTimer;
 
 	public Robot() {
 		super(false, true, mainShuffleboardTab);

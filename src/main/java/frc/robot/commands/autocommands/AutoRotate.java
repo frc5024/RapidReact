@@ -16,7 +16,7 @@ public class AutoRotate extends CommandBase {
 	public AutoRotate(double goal){
 		addRequirements(driveTrain);
 
-		turnController = new PIDController(.012, 0, 0);
+		turnController = new PIDController(.005, .006, 0);
 		this.goal = goal;
 		
 

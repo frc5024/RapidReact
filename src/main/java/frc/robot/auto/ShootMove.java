@@ -21,7 +21,7 @@ public class ShootMove implements AutonomousSequence{
 
     @Override
     public String getName() {
-        return "Shoot and Wait";
+        return "Shoot and Move";
     }
 
     @Override
