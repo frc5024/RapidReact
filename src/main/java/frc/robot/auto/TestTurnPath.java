@@ -17,7 +17,7 @@ public class TestTurnPath implements AutonomousSequence {
 
     @Override
     public String getName() {
-        return "Drive and Turn Test Path";
+        return "Turn Test";
     }
 
     @Override

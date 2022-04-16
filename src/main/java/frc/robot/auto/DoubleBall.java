@@ -27,8 +27,6 @@ import io.github.frc5024.purepursuit.pathgen.Path;
  */
 public class DoubleBall implements AutonomousSequence{
 
-    private DriveTrain driveTrain = DriveTrain.getInstance();
-
 
     @Override
     public String getName() {
@@ -41,14 +39,20 @@ public class DoubleBall implements AutonomousSequence{
         
         SequentialCommandGroup completeCommand = new SequentialCommandGroup();
 
+		completeCommand.addCommands(new WaitCommand(2));
+
         // Shoot ball High Shot
 		completeCommand.addCommands(new AutoShoot(Constants.Shooter.closeTargetRPM));
 
         // Rotate 
         completeCommand.addCommands(new AutoRotate(180).withTimeout(3));
 
+
+		SequentialCommandGroup delayedDrive = new SequentialCommandGroup(new WaitCommand(.5), new ControlledForward(1.3));
+
         // Parallel Intake Command with Drive Forwards Command
-        completeCommand.addCommands(new ParallelDeadlineGroup(new IntakeCommand(), new ControlledForward(1.25)));
+        completeCommand.addCommands(new ParallelDeadlineGroup(new IntakeCommand().withTimeout(5), delayedDrive));
+		//completeCommand.addCommands(new ParallelDeadlineGroup(new IntakeCommand().withTimeout(5), new ControlledForward(1.3)));
 
 
         // Rotate

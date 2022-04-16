@@ -5,7 +5,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.SubsystemCommands.IntakeCommand;
 import frc.robot.commands.SubsystemCommands.ShootCommand;
 import frc.robot.commands.autocommands.ControlledForward;
 import frc.robot.subsystem.DriveTrain;
@@ -26,7 +28,9 @@ public class TestPath implements AutonomousSequence{
         
         SequentialCommandGroup completeCommand = new SequentialCommandGroup();
 
+
 		completeCommand.addCommands(new ControlledForward(1));
+		//completeCommand.addCommands(new ParallelDeadlineGroup(new IntakeCommand(), new ControlledForward(1.5)));
 
 
         return completeCommand;

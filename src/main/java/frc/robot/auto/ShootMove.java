@@ -30,7 +30,7 @@ public class ShootMove implements AutonomousSequence{
         SequentialCommandGroup completeCommand = new SequentialCommandGroup();
 
 
-		completeCommand.addCommands(new AutoShoot(Constants.Shooter.lineShotTargetRPM));
+		completeCommand.addCommands(new AutoShoot(Constants.Shooter.closeTargetRPM));
 
         completeCommand.addCommands(new RollBack().withTimeout(1));
 

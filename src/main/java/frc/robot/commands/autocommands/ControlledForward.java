@@ -25,7 +25,7 @@ public class ControlledForward extends CommandBase{
     private double speedValue = .2;
 
     // The constant speed to set the motor to this would be b in y = mx + b
-    private double speedConstant = .2;
+    private double speedConstant = .1;
 
 
     /**

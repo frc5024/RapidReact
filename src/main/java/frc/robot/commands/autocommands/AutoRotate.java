@@ -16,7 +16,8 @@ public class AutoRotate extends CommandBase {
 	public AutoRotate(double goal){
 		addRequirements(driveTrain);
 
-		turnController = new PIDController(.005, .006, 0);
+		//turnController = new PIDController(.005, .006, 0);
+		turnController = new PIDController(.003, 0.00030, 0);
 		this.goal = goal;
 		
 
@@ -28,7 +29,7 @@ public class AutoRotate extends CommandBase {
 		turnController.reset();
 		driveTrain.resetGyro();
 
-		turnController.setTolerance(4, 3);
+		turnController.setTolerance(3, 10);
 
 
 	}

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.auto.CurvedAuto;
 import frc.robot.auto.DoubleBall;
 import frc.robot.auto.OuttakeDrive;
 import frc.robot.auto.ShootMove;
@@ -94,12 +95,15 @@ public class Robot extends RobotProgram {
 
 
 		// Creating Auto Commands
+		setDefaultAutonomous(new DoubleBall());
+		addAutonomous(new ShootMove());
+		addAutonomous(new ShootWait());
+		addAutonomous(new CurvedAuto());
 		addAutonomous(new TestPath());
 		addAutonomous(new TestTurnPath());
-		addAutonomous(new ShootMove());
 		addAutonomous(new OuttakeDrive());
-		addAutonomous(new DoubleBall());
-		addAutonomous(new ShootWait());
+		
+		
 		
 	}
 
