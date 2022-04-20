@@ -140,6 +140,10 @@ public class OI {
 		return driverController.getXButtonPressed();
 	}
 
+	public boolean shouldPullup(){
+		return driverController.getLeftBumper();
+	}
+
 	public void rumbleOperator(boolean rumble){
 		if(rumble){
 			operatorController.setRumble(RumbleType.kLeftRumble, 1);

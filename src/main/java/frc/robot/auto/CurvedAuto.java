@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.SubsystemCommands.IntakeCommand;
+import frc.robot.commands.SubsystemCommands.SecondIntake;
 import frc.robot.commands.SubsystemCommands.ShootCommand;
 import frc.robot.commands.autocommands.AutoRotate;
 import frc.robot.commands.autocommands.AutoShoot;
@@ -33,6 +34,8 @@ public class CurvedAuto implements AutonomousSequence{
 		SequentialCommandGroup delayedDrive = new SequentialCommandGroup(new WaitCommand(.5), new ControlledForward(2));
 
 		completeCommand.addCommands(new ParallelDeadlineGroup(new IntakeCommand().withTimeout(4), delayedDrive));
+
+		completeCommand.addCommands(new SecondIntake());
 
 
 		

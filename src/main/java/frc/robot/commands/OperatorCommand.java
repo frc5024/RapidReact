@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.OI;
 import frc.robot.commands.SubsystemCommands.IntakeCommand;
+import frc.robot.commands.SubsystemCommands.SecondIntake;
 import frc.robot.commands.SubsystemCommands.ShootCommand;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.RestrictedMotor;
@@ -23,6 +24,8 @@ public class OperatorCommand extends CommandBase {
     private IntakeCommand intakeCommand;
 
 	private boolean manualFirstrun = true;
+
+	private SecondIntake secondIntake = new SecondIntake();
 
 
     /**
@@ -69,6 +72,12 @@ public class OperatorCommand extends CommandBase {
         }else if(!oi.shouldIntake() && intakeCommand.isScheduled()){
 			intakeCommand.cancel();
 			
+		}
+
+		if(OI.getInstance().shouldPullup()){
+			secondIntake.schedule();
+		}else{
+			secondIntake.cancel();	
 		}
 
 

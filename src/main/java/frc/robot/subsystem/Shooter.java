@@ -153,11 +153,12 @@ public class Shooter extends SubsystemBase {
 
 	}
 
+	public void setPreheat(){
+		stateMachine.setState(shooterState.PREHEAT);
+	}
 
 	private void handlePreheat(StateMetadata<shooterState> metadata){
-		if(metadata.isFirstRun()){
-			inPreheat = true;
-		}
+		
 
 		flywheelMotor.setVoltage(2);
 		
