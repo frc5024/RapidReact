@@ -13,6 +13,7 @@ public class DriveCommand extends CommandBase {
 
     private DriveTrain driveTrain = DriveTrain.getInstance();
     private OI oi = OI.getInstance();
+    private boolean slowModeEnable = false;
 
     public DriveCommand() {
         addRequirements(driveTrain);
@@ -26,14 +27,19 @@ public class DriveCommand extends CommandBase {
     @Override
     public void execute() {
 
+        if(oi.toggleSlowMode()){
+            slowModeEnable = !slowModeEnable;
+        }
 
 		
         //DriveTrain.getInstance().handleDriverInputs(oi.getSpeed(), oi.getRotation());
 		
-		double leftSpeed = InputUtils.scale(oi.getSpeed(), ScalingMode.CUBIC) + InputUtils.scale(oi.getRotation(), ScalingMode.CUBIC);
-		double rightSpeed = InputUtils.scale(oi.getSpeed(), ScalingMode.CUBIC) - InputUtils.scale(oi.getRotation(), ScalingMode.CUBIC);
-
+		double leftSpeed = InputUtils.scale(oi.getSpeed(), ScalingMode.CUBIC) + InputUtils.scale(oi.getRotation(), ScalingMode.CUBIC) * (slowModeEnable ? .6 : 1);
+		double rightSpeed = InputUtils.scale(oi.getSpeed(), ScalingMode.CUBIC) - InputUtils.scale(oi.getRotation(), ScalingMode.CUBIC) * (slowModeEnable ? .6 : 1);
+        
 		double max = Math.max(leftSpeed, rightSpeed);
+
+
 
 		if(max > 1){
 			leftSpeed /= max;

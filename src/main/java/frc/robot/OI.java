@@ -164,5 +164,10 @@ public class OI {
 		return operatorController.getAButtonPressed();
 	}
 
+	public boolean toggleSlowMode(){
+		return operatorController.getBButtonPressed();
+
+	}
+
 }
 
